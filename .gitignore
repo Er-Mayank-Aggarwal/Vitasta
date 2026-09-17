@@ -1,0 +1,15 @@
+# Ignore local image assets and chat extraction archives
+assets/
+extracted_chat/
+*.zip
+*.log
+.tempmediaStorage/
+__pycache__/
+.env
+.env.local
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

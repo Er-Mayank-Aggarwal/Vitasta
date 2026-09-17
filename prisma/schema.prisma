@@ -1,0 +1,174 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./vitasta.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  CLIENT
+  ADMIN
+  ARTISAN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_PRODUCTION
+  VIDEO_VERIFIED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  phone          String?
+  password       String
+  role           UserRole  @default(CLIENT)
+  membershipTier String    @default("Royal Patron")
+  avatar         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  addresses      Address[]
+  orders         Order[]
+  shortlist      ShortlistItem[]
+  sessions       Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id          String    @id
+  name        String
+  tagline     String?
+  fabric      String?
+  gradient    String?
+  createdAt   DateTime  @default(now())
+
+  products    Product[]
+}
+
+model Product {
+  id             Int       @id @default(autoincrement())
+  title          String
+  categoryId     String
+  category       Category  @relation(fields: [categoryId], references: [id])
+  price          Float
+  currency       String    @default("INR")
+  description    String
+  primaryImage   String
+  fabric         String
+  blouseFabric   String?
+  work           String
+  color          String
+  blouseColor    String?
+  sareeLength    String    @default("5.5 Metres")
+  blouseLength   String    @default("1 Metre")
+  materialCare   String    @default("Dry Clean Only")
+  origin         String    @default("Jodhpur, Rajasthan, India")
+  isFeatured     Boolean   @default(true)
+  stockStatus    String    @default("MADE_TO_ORDER")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  images         ProductImage[]
+  orderItems     OrderItem[]
+  shortlistedBy  ShortlistItem[]
+}
+
+model ProductImage {
+  id         String   @id @default(cuid())
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  assetPath  String
+  isPrimary  Boolean  @default(false)
+  sortOrder  Int      @default(0)
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName   String
+  phone      String
+  street     String
+  city       String
+  state      String
+  pinCode    String
+  country    String   @default("India")
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Order {
+  id                  String       @id
+  userId              String?
+  user                User?        @relation(fields: [userId], references: [id])
+  userName            String
+  userEmail           String
+  userPhone           String
+  orderStatus         OrderStatus  @default(PENDING)
+  statusLabel         String       @default("Pending Consultation")
+  trackingNumber      String?
+  preDispatchVideoUrl String?
+  estimatedDispatch   DateTime?
+  subtotal            Float
+  finishingCharges    Float        @default(0)
+  total               Float
+  notes               String?
+  shippingAddressJson String
+  timelineJson        String
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  items               OrderItem[]
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      Int
+  product        Product  @relation(fields: [productId], references: [id])
+  title          String
+  category       String
+  fabric         String
+  color          String
+  unitPrice      Float
+  quantity       Int      @default(1)
+  image          String
+}
+
+model ShortlistItem {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model BrandSettings {
+  id                 String   @id @default("singleton")
+  announcementText   String
+  whatsappSupport    String
+  emailSupport       String
+  dispatchTimeline   String
+  originHub          String
+  updatedAt          DateTime @updatedAt
+}

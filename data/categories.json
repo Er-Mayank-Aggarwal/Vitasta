@@ -1,0 +1,37 @@
+[
+  {
+    "id": "riwaayat-e-chiffon",
+    "name": "Riwaayat-e-Chiffon",
+    "fabric": "Pure Premium Chiffon",
+    "tagline": "Feather-Light Elegance & Fluid Drapes",
+    "description": "Crafted in pure premium-quality chiffon, known for its feather-light feel, fluid drape and effortless grace. Soft, airy and beautifully flowy, it falls elegantly on the body, making it perfect for refined festive and occasion wear."
+  },
+  {
+    "id": "georgette-reet",
+    "name": "Georgette Reet",
+    "fabric": "Khaddi & Satin Georgette",
+    "tagline": "Graceful Fall & Intricate Handwork",
+    "description": "Our premium georgette is loved for its soft texture, graceful fall and subtle structure. Lightweight yet beautifully draped, it holds intricate handwork exceptionally well while remaining comfortable and easy to carry."
+  },
+  {
+    "id": "silk-noorani",
+    "name": "Silk Noorani",
+    "fabric": "Habutai Silk, Dupion Silk & Satin Silk",
+    "tagline": "Rich Luster & Regal Splendor",
+    "description": "Rich, lustrous and timeless, our premium silk brings natural elegance to every drape. Its smooth texture, graceful sheen and luxurious feel make it ideal for sarees designed to look regal yet sophisticated."
+  },
+  {
+    "id": "organza-adaa",
+    "name": "Organza Adaa",
+    "fabric": "Pure Organza Silk",
+    "tagline": "Delicate Sheer & Statement Silhouette",
+    "description": "Delicate yet structured, our premium organza silk is known for its sheer texture, crisp fall and subtle luminous finish. It creates a graceful, statement silhouette while beautifully highlighting fine embroidery and handwork."
+  },
+  {
+    "id": "banarasi-virasat",
+    "name": "Banarasi Virasat",
+    "fabric": "Banarasi Khaddi Georgette & Weaves",
+    "tagline": "Rooted in Royal Heritage & Festive Grandeur",
+    "description": "Rooted in heritage, our premium Banarasi fabric reflects the richness of traditional Indian weaving. Known for its intricate motifs, luxurious texture and regal appeal, every drape carries a timeless sense of craftsmanship and celebration."
+  }
+]

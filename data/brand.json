@@ -1,0 +1,70 @@
+{
+  "name": "Vitasta",
+  "full_brand_name": "Vitasta by Smita Saraswat",
+  "business_entity": "VITASTA Lifestyle",
+  "tagline": "Unfolding Serenity",
+  "origin": "Jodhpur, Rajasthan, India",
+  "about": {
+    "title": "About Vitasta",
+    "description": "Vitasta by Smita Saraswat is a premium handcrafted saree brand from Jodhpur, Rajasthan, inspired by the timeless grace and grandeur of the queens and royal women of Rajasthan. Our designs are created keeping that regal heritage in mind—reimagining the richness of traditional royal craftsmanship for the modern woman.",
+    "craftsmanship": "Every saree is crafted using carefully selected premium fabrics and detailed handwork such as Aari, Gota Patti, Zardozi, Cutdana, Pitta and sequins. Much of this intricate work is done on a traditional adda, where skilled artisans spend weeks and sometimes even months, patiently working by hand to bring a single saree to life.",
+    "philosophy": "From the choice of fabric to the final finishing, each piece reflects precision, patience and craftsmanship. At Vitasta, we aim to preserve the beauty of traditional artistry while creating sarees that feel refined, elegant and timeless.",
+    "badge": "Proudly handcrafted in Jodhpur, Rajasthan, India"
+  },
+  "theme_palette": {
+    "primary": "#0B3B60",
+    "primary_dark": "#062238",
+    "primary_light": "#1B5585",
+    "secondary": "#C1272D",
+    "secondary_hover": "#A01B20",
+    "neutral_light": "#FFFFFF",
+    "neutral_cream": "#F9F8F6",
+    "neutral_dark": "#1A1A1A",
+    "accent_gold": "#D4AF37",
+    "description": "Primary theme consists strictly of Royal Blue, Classic White, and Regal Red accents as specified."
+  },
+  "contact_support": {
+    "address": {
+      "line1": "House No. 10A, Kanti, Paota B Road",
+      "line2": "Near Jalam Niwas",
+      "city": "Jodhpur",
+      "state": "Rajasthan",
+      "postal_code": "342001",
+      "country": "India"
+    },
+    "phone": "+91 88240 17443",
+    "phone_display": "+91 88240 17443",
+    "whatsapp": "918824017443",
+    "email": "vitastabysmita@gmail.com",
+    "packed_and_marketed_by": "VITASTA Lifestyle, House No. 10A, Kanti, Paota B Road, Near Jalam Niwas, Jodhpur, Rajasthan – 342001",
+    "country_of_origin": "India"
+  },
+  "policies": {
+    "crafting_and_shipping": {
+      "title": "Handcrafted Timeline & Dispatch",
+      "timeline": "15–30 days",
+      "description": "Every piece at Vitasta is thoughtfully handcrafted and may take 15–30 days to complete, depending on the intricacy of the work.",
+      "quality_assurance": "Before your order is packed and dispatched, our product undergoes multiple thorough quality checks to ensure that it reaches you in perfect condition. A detailed video of the complete product will also be shared before dispatch for complete transparency."
+    },
+    "return_policy": {
+      "title": "Return Policy",
+      "accepted": false,
+      "policy_text": "As our products are thoughtfully handcrafted, custom-made, and thoroughly inspected with video proof shared prior to dispatch, returns are not accepted.",
+      "disclaimer": "Please note: Slight variations in handcrafted details and colour may occur. Product colours may also vary slightly due to photography, lighting, and screen settings."
+    },
+    "saree_care_guide": {
+      "title": "Saree Care Guide",
+      "instructions": [
+        "Dry Clean Only – Avoid machine wash and regular hand wash.",
+        "Store in a clean, dry muslin or cotton bag; avoid plastic covers for long-term storage.",
+        "Keep away from moisture and direct sunlight to protect the fabric and colours.",
+        "For sarees with Zardozi, Gota Patti, Sequins, Aari, Cutdana or other handwork, fold gently to avoid snagging.",
+        "Use a low-heat iron from the reverse side or place a thin cotton cloth over delicate fabrics.",
+        "Avoid spraying perfume or deodorant directly on the saree.",
+        "After wearing, air it in shade before storing.",
+        "Refold silk and Banarasi sarees occasionally to prevent permanent crease lines."
+      ],
+      "closing_note": "Care for it with love, and your Vitasta saree will become a timeless heirloom—made to be cherished, preserved, and passed down through generations."
+    }
+  }
+}
