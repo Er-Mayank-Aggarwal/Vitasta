@@ -6,7 +6,7 @@ import ProductCard from './components/ProductCard';
 import { getProducts } from './actions/product-actions';
 import { Sparkles, ArrowRight, Video, CheckCircle2 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function HomePage() {
   const { products = [] } = await getProducts({ limit: 8 });

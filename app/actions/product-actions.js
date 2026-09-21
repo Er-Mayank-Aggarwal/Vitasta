@@ -5,11 +5,37 @@ import { requireAdmin } from '@/lib/requireAdmin';
 import { productSchema } from '@/lib/validations';
 import { revalidatePath } from 'next/cache';
 
+// In-memory fast TTL Cache for high-performance sub-millisecond responses
+const productCache = new Map();
+const CACHE_TTL_MS = 60 * 1000; // 60 seconds
+
+function getCached(key) {
+  const entry = productCache.get(key);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    productCache.delete(key);
+    return null;
+  }
+  return entry.data;
+}
+
+function setCache(key, data) {
+  productCache.set(key, { data, timestamp: Date.now() });
+}
+
+export async function invalidateProductCache() {
+  productCache.clear();
+}
+
 /**
  * Fetch products with optional filtering and sorting
  */
 export async function getProducts(options = {}) {
   try {
+    const cacheKey = `products:${JSON.stringify(options)}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
     const {
       categoryId,
       fabric,
@@ -67,13 +93,16 @@ export async function getProducts(options = {}) {
       prisma.product.count({ where }),
     ]);
 
-    return {
+    const result = {
       success: true,
       products,
       totalCount,
       totalPages: Math.ceil(totalCount / limit),
       currentPage: page,
     };
+
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     console.error('getProducts error:', error);
     return { success: false, error: 'Failed to fetch catalog products', products: [] };
@@ -85,6 +114,10 @@ export async function getProducts(options = {}) {
  */
 export async function getProductBySlug(slug) {
   try {
+    const cacheKey = `product:slug:${slug}`;
+    const cached = getCached(cacheKey);
+    if (cached) return cached;
+
     const product = await prisma.product.findUnique({
       where: { slug },
       include: {
@@ -106,7 +139,9 @@ export async function getProductBySlug(slug) {
       return { success: false, error: 'Saree not found' };
     }
 
-    return { success: true, product };
+    const result = { success: true, product };
+    setCache(cacheKey, result);
+    return result;
   } catch (error) {
     console.error('getProductBySlug error:', error);
     return { success: false, error: 'Failed to load product' };
@@ -119,48 +154,44 @@ export async function getProductBySlug(slug) {
 export async function createProduct(formData) {
   try {
     await requireAdmin();
-
     const validated = productSchema.parse(formData);
+
+    const slug = validated.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)+/g, '') + `-${Date.now().toString().slice(-4)}`;
 
     const product = await prisma.product.create({
       data: {
         title: validated.title,
-        slug: validated.slug,
+        slug,
         description: validated.description,
-        price: validated.price,
-        originalPrice: validated.originalPrice || null,
-        categoryId: validated.categoryId,
         fabric: validated.fabric,
-        blouseFabric: validated.blouseFabric || null,
         work: validated.work,
-        design: validated.design || null,
         color: validated.color,
-        blouseColor: validated.blouseColor || null,
-        sareeLength: validated.sareeLength,
-        blouseLength: validated.blouseLength,
-        materialCare: validated.materialCare,
-        origin: validated.origin,
-        stockStatus: validated.stockStatus,
-        primaryImage: validated.primaryImage,
-        isActive: validated.isActive,
-        isFeatured: validated.isFeatured,
+        price: validated.price,
+        originalPrice: validated.originalPrice,
+        stock: validated.stock,
+        isFeatured: validated.isFeatured || false,
+        isActive: validated.isActive ?? true,
+        loomTimeDays: validated.loomTimeDays || 21,
+        blouseIncluded: validated.blouseIncluded ?? true,
+        drapeLength: validated.drapeLength || '5.5 meters',
+        primaryImage: validated.images?.[0] || '',
+        categoryId: validated.categoryId,
         images: {
-          create: (validated.imageUrls || [validated.primaryImage]).map((url, idx) => ({
-            assetPath: url,
-            cdnUrl: url,
-            isPrimary: idx === 0,
+          create: (validated.images || []).map((cdnUrl, idx) => ({
+            cdnUrl,
             sortOrder: idx,
+            isPrimary: idx === 0,
           })),
-        },
-        inventory: {
-          create: {
-            quantity: 10,
-          },
         },
       },
     });
 
+    invalidateProductCache();
     revalidatePath('/shop');
+    revalidatePath('/');
     revalidatePath('/admin-controls/products');
 
     return { success: true, product };
@@ -171,35 +202,51 @@ export async function createProduct(formData) {
 }
 
 /**
- * Admin: Update an existing product
+ * Admin: Update existing saree product
  */
 export async function updateProduct(id, formData) {
   try {
     await requireAdmin();
+    const validated = productSchema.parse(formData);
+
+    // Delete existing images and re-create if images array is provided
+    if (validated.images && validated.images.length > 0) {
+      await prisma.productImage.deleteMany({ where: { productId: id } });
+    }
 
     const product = await prisma.product.update({
       where: { id },
       data: {
-        title: formData.title,
-        description: formData.description,
-        price: Number(formData.price),
-        originalPrice: formData.originalPrice ? Number(formData.originalPrice) : null,
-        categoryId: formData.categoryId,
-        fabric: formData.fabric,
-        blouseFabric: formData.blouseFabric || null,
-        work: formData.work,
-        design: formData.design || null,
-        color: formData.color,
-        blouseColor: formData.blouseColor || null,
-        materialCare: formData.materialCare,
-        stockStatus: formData.stockStatus,
-        primaryImage: formData.primaryImage,
-        isFeatured: Boolean(formData.isFeatured),
-        isActive: Boolean(formData.isActive),
+        title: validated.title,
+        description: validated.description,
+        fabric: validated.fabric,
+        work: validated.work,
+        color: validated.color,
+        price: validated.price,
+        originalPrice: validated.originalPrice,
+        stock: validated.stock,
+        isFeatured: validated.isFeatured,
+        isActive: validated.isActive,
+        loomTimeDays: validated.loomTimeDays,
+        blouseIncluded: validated.blouseIncluded,
+        drapeLength: validated.drapeLength,
+        primaryImage: validated.images?.[0] || undefined,
+        categoryId: validated.categoryId,
+        images: validated.images
+          ? {
+              create: validated.images.map((cdnUrl, idx) => ({
+                cdnUrl,
+                sortOrder: idx,
+                isPrimary: idx === 0,
+              })),
+            }
+          : undefined,
       },
     });
 
+    invalidateProductCache();
     revalidatePath('/shop');
+    revalidatePath('/');
     revalidatePath(`/product/${product.slug}`);
     revalidatePath('/admin-controls/products');
 
@@ -216,39 +263,60 @@ export async function updateProduct(id, formData) {
 export async function deleteProduct(id) {
   try {
     await requireAdmin();
+    const product = await prisma.product.findUnique({ where: { id }, select: { slug: true } });
+    await prisma.product.delete({ where: { id } });
 
-    await prisma.product.delete({
-      where: { id },
-    });
-
+    invalidateProductCache();
     revalidatePath('/shop');
+    revalidatePath('/');
+    if (product?.slug) revalidatePath(`/product/${product.slug}`);
     revalidatePath('/admin-controls/products');
 
     return { success: true };
   } catch (error) {
     console.error('deleteProduct error:', error);
-    return { success: false, error: error.message || 'Failed to delete product' };
+    return { success: false, error: 'Failed to delete product' };
   }
 }
 
 /**
- * Admin: Toggle product featured status
+ * Admin: Toggle Featured status
  */
-export async function toggleFeatured(id, currentStatus) {
+export async function toggleProductFeatured(id, currentStatus) {
   try {
     await requireAdmin();
-
-    const updated = await prisma.product.update({
+    await prisma.product.update({
       where: { id },
       data: { isFeatured: !currentStatus },
     });
 
+    invalidateProductCache();
     revalidatePath('/shop');
+    revalidatePath('/');
     revalidatePath('/admin-controls/products');
-
-    return { success: true, isFeatured: updated.isFeatured };
+    return { success: true };
   } catch (error) {
-    console.error('toggleFeatured error:', error);
-    return { success: false, error: error.message || 'Failed to toggle featured' };
+    return { success: false, error: 'Failed to update featured status' };
+  }
+}
+
+/**
+ * Admin: Toggle Active/Archived status
+ */
+export async function toggleProductActive(id, currentStatus) {
+  try {
+    await requireAdmin();
+    await prisma.product.update({
+      where: { id },
+      data: { isActive: !currentStatus },
+    });
+
+    invalidateProductCache();
+    revalidatePath('/shop');
+    revalidatePath('/');
+    revalidatePath('/admin-controls/products');
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: 'Failed to update active status' };
   }
 }

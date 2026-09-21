@@ -93,3 +93,49 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Infinite Marquee Running Line - Mobile-safe & Hardware-accelerated */
+@-webkit-keyframes marquee {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    -webkit-transform: translate3d(-50%, 0, 0);
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  width: max-content !important;
+  -webkit-animation: marquee 25s linear infinite !important;
+  animation: marquee 25s linear infinite !important;
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* Pause marquee ONLY on actual mouse hover (desktop), never on mobile touch */
+@media (hover: hover) and (pointer: fine) {
+  .animate-marquee:hover {
+    -webkit-animation-play-state: paused;
+    animation-play-state: paused;
+  }
+}
+

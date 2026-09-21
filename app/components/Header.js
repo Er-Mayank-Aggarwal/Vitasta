@@ -131,17 +131,20 @@ export default function Header() {
     setIsCollectionsHovered(false);
   }, [pathname]);
 
-  // Lock body scroll when mobile menu is open
+  // Lock body scroll when mobile menu or auth modal is open
   useEffect(() => {
-    if (isMobileMenuOpen) {
+    if (isMobileMenuOpen || isAuthModalOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     };
-  }, [isMobileMenuOpen]);
+  }, [isMobileMenuOpen, isAuthModalOpen]);
 
   const handleNavClick = (e, href) => {
     setIsMobileMenuOpen(false);
@@ -200,33 +203,43 @@ export default function Header() {
           isVisible ? 'translate-y-0' : '-translate-y-full'
         }`}
       >
-        {/* Top Royal Announcement Bar */}
+        {/* Top Royal Announcement Bar - Infinite Running Line (Right to Left) */}
         <div
-          className={`bg-[#071E3D] text-[#FAF9F6] text-[11px] sm:text-xs px-3 sm:px-4 flex justify-between items-center tracking-wider transition-all duration-300 ${
-            isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden' : 'py-2 opacity-100'
+          className={`bg-[#071E3D] text-[#FAF9F6] text-[10px] sm:text-xs overflow-hidden border-b border-white/10 tracking-wider transition-all duration-300 select-none ${
+            isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden' : 'py-1.5 opacity-100'
           }`}
         >
-          <div className="flex items-center gap-2 mx-auto sm:mx-0">
-            <span className="inline-block bg-[rgba(193,39,45,0.25)] border border-[rgba(193,39,45,0.4)] text-[#ff8a8e] px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider">
-              Royal Atelier
-            </span>
-            <span>
-              Thoughtfully Handcrafted in Jodhpur •{' '}
-              <span className="text-[#90c4ff] font-semibold">
-                Pre-Dispatch Video Verification for Every Saree
-              </span>
-            </span>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-4 text-xs">
-            <a
-              href="https://wa.me/918824017443"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-[#90c4ff] hover:underline flex items-center gap-1"
-            >
-              <Phone className="w-3 h-3" /> +91 88240 17443
-            </a>
+          <div className="relative w-full overflow-hidden whitespace-nowrap pointer-events-none">
+            <div className="animate-marquee flex items-center shrink-0">
+              {[0, 1].map((trackIdx) => (
+                <div key={trackIdx} className="inline-flex items-center space-x-6 sm:space-x-8 px-3 sm:px-4 shrink-0">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-block bg-[rgba(193,39,45,0.3)] border border-[rgba(193,39,45,0.5)] text-[#ff8a8e] px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider">
+                      Royal Atelier
+                    </span>
+                    <span>Thoughtfully Handcrafted in Jodhpur, Rajasthan</span>
+                  </div>
+                  <span className="text-[#90c4ff]/50 text-[10px]">◆</span>
+                  <span className="text-[#90c4ff] font-semibold">
+                    Pre-Dispatch HD Video Verification for Every Drape
+                  </span>
+                  <span className="text-[#90c4ff]/50 text-[10px]">◆</span>
+                  <span>Pure Chiffon, Banarasi Khaddi Georgette, Organza & Silk</span>
+                  <span className="text-[#90c4ff]/50 text-[10px]">◆</span>
+                  <span>Sovereign Insured Doorstep Courier Across India</span>
+                  <span className="text-[#90c4ff]/50 text-[10px]">◆</span>
+                  <a
+                    href="https://wa.me/918824017443"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#90c4ff] hover:underline font-semibold inline-flex items-center gap-1 pointer-events-auto"
+                  >
+                    <Phone className="w-2.5 h-2.5" /> +91 88240 17443
+                  </a>
+                  <span className="text-[#90c4ff]/50 text-[10px]">◆</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -415,7 +428,7 @@ export default function Header() {
                   <button
                     type="button"
                     onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                    className="flex items-center gap-1.5 py-1 px-2.5 rounded-full border border-neutral-200 hover:border-[#0B3B60] transition bg-white shadow-xs cursor-pointer"
+                    className="flex items-center gap-1.5 py-1 px-2 sm:px-2.5 rounded-full border border-neutral-200 hover:border-[#0B3B60] transition bg-white shadow-xs cursor-pointer"
                   >
                     <div className="w-6 h-6 rounded-full bg-[#0B3B60] text-white flex items-center justify-center text-xs font-bold uppercase">
                       {session.user.name?.charAt(0) || 'P'}
@@ -474,10 +487,12 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="flex items-center gap-1.5 py-1.5 px-3.5 rounded-full bg-white border border-[#0B3B60]/30 hover:border-[#0B3B60] text-[#0B3B60] text-xs font-semibold tracking-wider uppercase transition shadow-xs cursor-pointer"
+                  className="flex items-center gap-1.5 p-1.5 sm:py-1.5 sm:px-3.5 rounded-full bg-white border border-[#0B3B60]/30 hover:border-[#0B3B60] text-[#0B3B60] text-xs font-semibold tracking-wider uppercase transition shadow-xs cursor-pointer"
+                  title="Sign In to Royal Atelier"
+                  aria-label="Sign In"
                 >
-                  <User className="w-3.5 h-3.5" />
-                  <span>Sign In</span>
+                  <User className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+                  <span className="hidden sm:inline">Sign In</span>
                 </button>
               )}
             </div>
@@ -707,8 +722,14 @@ export default function Header() {
 
       {/* Auth Modal */}
       {isAuthModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="relative w-full max-w-md">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={() => setIsAuthModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               type="button"
               onClick={() => setIsAuthModalOpen(false)}

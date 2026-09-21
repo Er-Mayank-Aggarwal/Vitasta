@@ -3,7 +3,7 @@ import ProductCard from '@/app/components/ProductCard';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 const categories = [
   { id: 'all', name: 'All Sarees' },
