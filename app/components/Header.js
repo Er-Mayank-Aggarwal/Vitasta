@@ -17,8 +17,10 @@ import {
   Phone,
   ChevronDown,
   ChevronRight,
-  ArrowRight,
-  Sparkle,
+  Home,
+  Layers,
+  Video,
+  Building2,
 } from 'lucide-react';
 import { useSession, signOut } from '@/lib/auth-client';
 import { useCart } from '@/app/context/CartContext';
@@ -374,7 +376,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="p-1.5 sm:p-2 text-[#0B3B60] hover:text-[#C1272D] transition"
+                className="p-1.5 sm:p-2 text-[#0B3B60] hover:text-[#C1272D] transition cursor-pointer"
                 title="Search Sarees"
                 aria-label="Search"
               >
@@ -395,7 +397,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setIsDrawerOpen(true)}
-                className="p-1.5 sm:p-2 text-[#0B3B60] hover:text-[#C1272D] transition relative"
+                className="p-1.5 sm:p-2 text-[#0B3B60] hover:text-[#C1272D] transition relative cursor-pointer"
                 title="Atelier Bag"
                 aria-label="Shopping Bag"
               >
@@ -413,7 +415,7 @@ export default function Header() {
                   <button
                     type="button"
                     onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                    className="flex items-center gap-1.5 py-1 px-2.5 rounded-full border border-neutral-200 hover:border-[#0B3B60] transition bg-white shadow-xs"
+                    className="flex items-center gap-1.5 py-1 px-2.5 rounded-full border border-neutral-200 hover:border-[#0B3B60] transition bg-white shadow-xs cursor-pointer"
                   >
                     <div className="w-6 h-6 rounded-full bg-[#0B3B60] text-white flex items-center justify-center text-xs font-bold uppercase">
                       {session.user.name?.charAt(0) || 'P'}
@@ -433,7 +435,7 @@ export default function Header() {
                         </p>
                         <p className="text-[10px] text-neutral-500 truncate">{session.user.email}</p>
                         <span className="inline-block mt-1 text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-[#0B3B60] font-semibold border border-blue-200">
-                          {session.user.role === 'ADMIN' ? '👑 Atelier Admin' : '⚜️ Royal Patron'}
+                          {session.user.role === 'ADMIN' ? 'Atelier Administrator' : 'Royal Patron'}
                         </span>
                       </div>
 
@@ -498,13 +500,13 @@ export default function Header() {
                   <button
                     type="button"
                     onClick={() => setIsSearchOpen(false)}
-                    className="px-2 py-1 text-neutral-400 hover:text-neutral-700 text-xs"
+                    className="px-2 py-1 text-neutral-400 hover:text-neutral-700 text-xs cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
                   <button
                     type="submit"
-                    className="px-3.5 py-1.5 bg-[#0B3B60] text-white rounded-full text-xs font-semibold hover:bg-[#062238] transition"
+                    className="px-3.5 py-1.5 bg-[#0B3B60] text-white rounded-full text-xs font-semibold hover:bg-[#062238] transition cursor-pointer"
                   >
                     Search
                   </button>
@@ -516,72 +518,91 @@ export default function Header() {
 
         {/* Luxury Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 top-[60px] sm:top-[70px] z-50 bg-[#071E3D] px-6 py-6 overflow-y-auto flex flex-col justify-between border-t border-white/10 lg:hidden animate-in fade-in duration-200 text-white min-h-[calc(100vh-70px)]">
+          <div className="fixed inset-0 top-0 z-50 bg-[#071E3D] px-5 py-5 overflow-y-auto flex flex-col justify-between lg:hidden animate-in fade-in duration-200 text-white min-h-screen">
             <div className="space-y-6">
-              {/* Brand in Drawer */}
+              {/* Drawer Header with Prominent Close Button */}
               <div className="border-b border-white/10 pb-4 flex items-center justify-between">
-                <div>
-                  <span className="font-serif text-2xl font-bold text-white tracking-tight">
-                    Vit<span className="text-[#ff8a8e]">a</span>sta
-                  </span>
-                  <p className="font-serif italic text-xs text-[#90c4ff] mt-0.5">
-                    unfolding serenity
-                  </p>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg overflow-hidden relative border border-white/20">
+                    <Image
+                      src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg"
+                      alt="Vitasta logo"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div>
+                    <span className="font-serif text-lg font-bold text-white tracking-wider">
+                      VITASTA
+                    </span>
+                    <span className="block text-[10px] text-[#90c4ff] font-serif italic">
+                      unfolding serenity
+                    </span>
+                  </div>
                 </div>
-                <span className="text-[10px] uppercase tracking-widest text-[#FAF9F6]/70 border border-white/20 px-2 py-1 rounded-full">
-                  Jodhpur Atelier
-                </span>
+
+                {/* Clear Close Cross Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition cursor-pointer flex items-center justify-center border border-white/10"
+                  aria-label="Close navigation menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               </div>
 
-              {/* Mobile Nav Links */}
-              <div className="space-y-2 text-sm font-medium">
+              {/* Standard Luxury Navigation Links (No Emojis) */}
+              <div className="space-y-1 text-xs uppercase tracking-widest font-medium">
                 <Link
                   href="/"
                   onClick={(e) => handleNavClick(e, '/')}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-white/10 transition"
+                  className="flex items-center justify-between py-3 px-3.5 rounded-xl hover:bg-white/10 transition"
                 >
-                  <span className="flex items-center gap-2.5">
-                    <span>🏰</span> Home
+                  <span className="flex items-center gap-3">
+                    <Home className="w-4 h-4 text-[#90c4ff]" />
+                    <span>Home</span>
                   </span>
-                  <ChevronRight className="w-4 h-4 text-white/40" />
+                  <ChevronRight className="w-4 h-4 text-white/30" />
                 </Link>
 
-                {/* Mobile Collections Expandable */}
+                {/* Mobile Collections Expandable Accordion */}
                 <div>
                   <button
                     type="button"
                     onClick={() => setIsMobileCollectionsOpen(!isMobileCollectionsOpen)}
-                    className="w-full flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-white/10 transition text-left"
+                    className="w-full flex items-center justify-between py-3 px-3.5 rounded-xl hover:bg-white/10 transition text-left cursor-pointer"
                   >
-                    <span className="flex items-center gap-2.5 text-[#ff8a8e] font-semibold">
-                      <span>👑</span> The 5 Royal Collections
+                    <span className="flex items-center gap-3 text-white">
+                      <Layers className="w-4 h-4 text-[#90c4ff]" />
+                      <span>Collections</span>
                     </span>
                     <ChevronDown
-                      className={`w-4 h-4 text-white/40 transition-transform ${
+                      className={`w-4 h-4 text-white/40 transition-transform duration-200 ${
                         isMobileCollectionsOpen ? 'rotate-180' : ''
                       }`}
                     />
                   </button>
 
                   {isMobileCollectionsOpen && (
-                    <div className="pl-6 pr-2 py-2 space-y-1.5 border-l-2 border-[#C1272D]/50 ml-4 my-1">
+                    <div className="pl-6 pr-2 py-2 space-y-1 border-l border-white/15 ml-5 my-1">
                       {collectionsList.map((col) => (
                         <Link
                           key={col.slug}
                           href={col.href}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2 px-3 rounded-lg text-xs hover:bg-white/10 text-neutral-200"
+                          className="flex items-center justify-between py-2 px-3 rounded-lg text-xs normal-case tracking-normal hover:bg-white/10 text-neutral-300 hover:text-white"
                         >
                           <span className="font-serif font-medium">{col.name}</span>
-                          <span className="text-[9px] text-[#90c4ff]">{col.count}</span>
+                          <span className="text-[10px] text-[#90c4ff]">{col.count}</span>
                         </Link>
                       ))}
                       <Link
                         href="/#collections"
                         onClick={(e) => handleNavClick(e, '/#collections')}
-                        className="block text-xs font-bold text-[#90c4ff] hover:underline pt-1 px-3"
+                        className="block text-[11px] font-semibold text-[#90c4ff] hover:underline pt-1 px-3 normal-case tracking-normal"
                       >
-                        Explore Visual Slideshow →
+                        View Interactive Slideshow →
                       </Link>
                     </div>
                   )}
@@ -590,54 +611,59 @@ export default function Header() {
                 <Link
                   href="/shop"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-white/10 transition"
+                  className="flex items-center justify-between py-3 px-3.5 rounded-xl hover:bg-white/10 transition"
                 >
-                  <span className="flex items-center gap-2.5">
-                    <span>📜</span> Complete Catalog (21 Sarees)
+                  <span className="flex items-center gap-3">
+                    <ShoppingBag className="w-4 h-4 text-[#90c4ff]" />
+                    <span>Saree Catalog (21)</span>
                   </span>
-                  <ChevronRight className="w-4 h-4 text-white/40" />
-                </Link>
-
-                <Link
-                  href="/#values"
-                  onClick={(e) => handleNavClick(e, '/#values')}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-white/10 transition"
-                >
-                  <span className="flex items-center gap-2.5">
-                    <span>🛡️</span> Video Proof & Promise
-                  </span>
-                  <ChevronRight className="w-4 h-4 text-white/40" />
+                  <ChevronRight className="w-4 h-4 text-white/30" />
                 </Link>
 
                 <Link
                   href="/about"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-white/10 transition"
+                  className="flex items-center justify-between py-3 px-3.5 rounded-xl hover:bg-white/10 transition"
                 >
-                  <span className="flex items-center gap-2.5">
-                    <span>🪡</span> Heritage & Adda Craft
+                  <span className="flex items-center gap-3">
+                    <Sparkles className="w-4 h-4 text-[#90c4ff]" />
+                    <span>Heritage & Craft</span>
                   </span>
-                  <ChevronRight className="w-4 h-4 text-white/40" />
+                  <ChevronRight className="w-4 h-4 text-white/30" />
+                </Link>
+
+                <Link
+                  href="/#values"
+                  onClick={(e) => handleNavClick(e, '/#values')}
+                  className="flex items-center justify-between py-3 px-3.5 rounded-xl hover:bg-white/10 transition"
+                >
+                  <span className="flex items-center gap-3">
+                    <Video className="w-4 h-4 text-[#90c4ff]" />
+                    <span>Video Proof & Promise</span>
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-white/30" />
                 </Link>
 
                 <Link
                   href="/contact"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-white/10 transition"
+                  className="flex items-center justify-between py-3 px-3.5 rounded-xl hover:bg-white/10 transition"
                 >
-                  <span className="flex items-center gap-2.5">
-                    <span>🏛️</span> Jodhpur Royal Atelier
+                  <span className="flex items-center gap-3">
+                    <Building2 className="w-4 h-4 text-[#90c4ff]" />
+                    <span>Jodhpur Atelier</span>
                   </span>
-                  <ChevronRight className="w-4 h-4 text-white/40" />
+                  <ChevronRight className="w-4 h-4 text-white/30" />
                 </Link>
 
                 <Link
                   href="/account"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-white/5 border border-white/10 text-[#90c4ff] hover:bg-white/10 transition font-semibold"
+                  className="flex items-center justify-between py-3 px-3.5 rounded-xl bg-white/5 border border-white/10 text-white hover:bg-white/10 transition mt-2"
                 >
-                  <span className="flex items-center gap-2.5">
-                    <span>👤</span> My Royal Account & Orders
+                  <span className="flex items-center gap-3">
+                    <User className="w-4 h-4 text-[#90c4ff]" />
+                    <span>My Account & Orders</span>
                   </span>
                   <ChevronRight className="w-4 h-4 text-[#90c4ff]" />
                 </Link>
@@ -646,10 +672,11 @@ export default function Header() {
                   <Link
                     href="/admin-controls"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-between py-2.5 px-3 rounded-xl bg-[#C1272D]/20 border border-[#C1272D]/40 text-[#ff8a8e] font-bold transition"
+                    className="flex items-center justify-between py-3 px-3.5 rounded-xl bg-[#C1272D]/20 border border-[#C1272D]/40 text-[#ff8a8e] font-semibold transition mt-1"
                   >
-                    <span className="flex items-center gap-2.5">
-                      <span>👑</span> Atelier Admin Controls
+                    <span className="flex items-center gap-3">
+                      <ShieldCheck className="w-4 h-4 text-[#ff8a8e]" />
+                      <span>Admin Management</span>
                     </span>
                     <ChevronRight className="w-4 h-4 text-[#ff8a8e]" />
                   </Link>
@@ -657,18 +684,18 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Mobile Footer WhatsApp Contact */}
-            <div className="pt-6 border-t border-white/10 text-xs space-y-3 mt-6">
+            {/* Mobile Drawer Footer with WhatsApp Concierge */}
+            <div className="pt-6 border-t border-white/10 text-xs space-y-3 mt-8">
               <a
                 href="https://wa.me/918824017443?text=Hello%20Vitasta%20Atelier,%20I%20would%20like%20to%20inquire%20about%20your%20handcrafted%20sarees."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 rounded-full bg-[#25D366] hover:bg-[#1da851] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg"
+                className="w-full py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition"
               >
-                <Phone className="w-4 h-4" /> Chat with Master Artisan (+91 88240 17443)
+                <Phone className="w-4 h-4" /> WhatsApp Atelier Concierge
               </a>
-              <p className="text-[10px] text-neutral-400 text-center">
-                Thoughtfully Handcrafted in Jodhpur, Rajasthan • 100% Authentic Handloom
+              <p className="text-[10px] text-neutral-400 text-center tracking-wide">
+                Thoughtfully Handcrafted in Jodhpur, Rajasthan
               </p>
             </div>
           </div>
