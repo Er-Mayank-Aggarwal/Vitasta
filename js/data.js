@@ -1026,12 +1026,242 @@ window.VITASTA_DATA = {
       "primary_image": "https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675027/vitasta/products/dusty-onion-pink-habutai-silk-saree/idfqdbwvbevy0vw33lt3.jpg"
     }
   ],
+  "reviews": [
+    {
+      "id": "rev_1",
+      "product_id": "sunset-ombre-chiffon-cutdana-moti-sequin-saree",
+      "product_title": "Sunset Ombre Pure Chiffon Cutdana & Moti Saree",
+      "product_category": "Riwaayat-e-Chiffon",
+      "author": "Maharani Padmini Rathore",
+      "location": "Jodhpur, Rajasthan",
+      "rating": 5,
+      "date": "2026-09-12",
+      "verified": true,
+      "title": "Breathtaking Adda Jaal & Feather-Light Drape",
+      "comment": "The delicate Cutdana, Moti and micro-sequin hand embroidery on this sunset ombre chiffon is a true heirloom piece. The pre-dispatch loom video gave me complete confidence before shipping. The packaging with satin dust cover was fit for royalty!",
+      "avatar_initial": "P"
+    },
+    {
+      "id": "rev_2",
+      "product_id": "red-banarasi-khaddi-georgette-zari-kadhwa-saree",
+      "product_title": "Crimson Red Banarasi Khaddi Georgette Zari Kadhwa Saree",
+      "product_category": "Banarasi Virasat",
+      "author": "Dr. Ananya Mukherjee",
+      "location": "Kolkata, West Bengal",
+      "rating": 5,
+      "date": "2026-09-08",
+      "verified": true,
+      "title": "Pure Royal Splendor for My Reception",
+      "comment": "Wore this Banarasi Virasat Khaddi Georgette for my wedding reception. The authentic pure zari Kadhwa borders caught the ambient palace lighting gloriously. Masterful weaving and unhurried handwork!",
+      "avatar_initial": "A"
+    },
+    {
+      "id": "rev_3",
+      "product_id": "magenta-pink-georgette-aari-tilla-gota-patti-saree",
+      "product_title": "Magenta Pink Satin Georgette Aari-Tilla & Gota Patti Saree",
+      "product_category": "Georgette Reet",
+      "author": "Radhika Singhania",
+      "location": "Mumbai, Maharashtra",
+      "rating": 5,
+      "date": "2026-09-02",
+      "verified": true,
+      "title": "Authentic Rajasthani Adda Handwork",
+      "comment": "The traditional Marwar Gota Patti, Pitta, and Tilla zari handwork is exceptional. You can immediately feel the 20+ days of generational artisan labor. Smita ji's concierge consultation on WhatsApp was so gracious.",
+      "avatar_initial": "R"
+    },
+    {
+      "id": "rev_4",
+      "product_id": "sky-blue-organza-cutwork-resham-moti-saree",
+      "product_title": "Sky Blue Sheer Organza Silk Resham & Moti Scallop Saree",
+      "product_category": "Organza Adaa",
+      "author": "Devyani Scindia",
+      "location": "New Delhi",
+      "rating": 5,
+      "date": "2026-08-28",
+      "verified": true,
+      "title": "Impeccable Scalloped Edges & Pearl Detailing",
+      "comment": "Ultra-lightweight organza with graceful structure and fine scalloped resham borders. The pearls are hand-sewn with absolute perfection. Received endless compliments at the royal gathering.",
+      "avatar_initial": "D"
+    },
+    {
+      "id": "rev_5",
+      "product_id": "deep-rani-pink-habutai-silk-gotapatti-zardozi-saree",
+      "product_title": "Deep Rani Pink Habutai Silk Handcrafted Zardozi Saree",
+      "product_category": "Silk Noorani",
+      "author": "Gayatri Devi Choudhary",
+      "location": "Jaipur, Rajasthan",
+      "rating": 5,
+      "date": "2026-08-20",
+      "verified": true,
+      "title": "Luxurious Habutai Sheen & Heavy Royal Border",
+      "comment": "The lustre of pure Habutai silk combined with handcrafted heavy Zardozi Adda work makes this drape a collector's dream. The pre-dispatch video verification is a gold standard in luxury Indian fashion.",
+      "avatar_initial": "G"
+    },
+    {
+      "id": "rev_6",
+      "product_id": "emerald-green-banarasi-meenakari-silk-saree",
+      "product_title": "Emerald Green Banarasi Meenakari Silk Saree",
+      "product_category": "Banarasi Virasat",
+      "author": "Sunita Agarwal",
+      "location": "Bengaluru, Karnataka",
+      "rating": 5,
+      "date": "2026-08-14",
+      "verified": true,
+      "title": "Heirloom Quality & Exquisite Packaging",
+      "comment": "Rich jewel-toned emerald green with multi-colored Meenakari floral boota. Arrived in pristine condition in Vitasta's signature royal keepsake box with personalized artisan note. 10/10 experience!",
+      "avatar_initial": "S"
+    }
+  ],
+  "values": [
+    {
+      "icon": "👑",
+      "title": "100% Pure Silks & Chiffons",
+      "desc": "Certified Habutai Silk, Pure Khaddi Georgette, and Fluid Chiffons with zero synthetic blends."
+    },
+    {
+      "icon": "🪡",
+      "title": "Ancestral Adda Craftsmanship",
+      "desc": "15 to 30 days of unhurried handwork by generational master artisans rooted in Jodhpur."
+    },
+    {
+      "icon": "📹",
+      "title": "Pre-Dispatch Video Verification",
+      "desc": "Every patron receives a private 1080p loom inspection video prior to courier handover."
+    },
+    {
+      "icon": "📦",
+      "title": "Royal Pan-India Delivery",
+      "desc": "Complimentary insured express transit in signature tamper-proof luxury keepsake boxes."
+    }
+  ],
+  "faqs": [
+    {
+      "q": "How does the Pre-Dispatch Video Verification work?",
+      "a": "Once your handcrafted saree finishes the final Quality Control inspection in our Jodhpur atelier, our team records an HD 1080p walkthrough video showing the entire saree, blouse piece, zari borders, and corner tassels. The video is sent directly to your WhatsApp for 100% transparent approval prior to dispatch."
+    },
+    {
+      "q": "What is the crafting and dispatch timeline?",
+      "a": "Because every saree features authentic Adda handwork (Aari-Tari, Gota Patti, Zardozi, Cutdana, Pitta), creations generally require between 15 to 30 days of meticulous artisanal handwork. Ready-to-ship creations are dispatched within 24–48 hours."
+    },
+    {
+      "q": "Can I request custom colorways or blouse tailoring?",
+      "a": "Yes. As a bespoke haute couture atelier, we accommodate custom dye palettes, contrast blouse fabrics (such as Gaji Silk or Dupion), and custom neckline embroidery. Simply reach out via our WhatsApp Concierge."
+    },
+    {
+      "q": "How should I care for my handcrafted Adda saree?",
+      "a": "We strictly recommend professional Dry Clean Only. Avoid direct perfume or chemical spray on gold/silver zari, store wrapped in pure cotton or muslin cloth, and change fold lines every 3–4 months to preserve fiber resilience."
+    },
+    {
+      "q": "Do you offer international express shipping?",
+      "a": "Yes, we ship globally across the United States, United Kingdom, UAE, Singapore, Canada, and Australia via DHL Express with full tracking and insurance."
+    }
+  ],
   "stats": {
     "total_sarees": 21,
     "total_collections": 5,
     "price_range": "₹8,000 – ₹25,500",
     "dispatch_timeline": "10-12 business days (Made to Order)",
     "origin": "Jodhpur, Rajasthan, India",
-    "cdn_provider": "Cloudinary (Global CDN)"
-  }
+    "cdn_provider": "Cloudinary (Global CDN)",
+    "rating_average": 4.96,
+    "total_reviews": 158
+  },
+  "reviews": [
+    {
+      "id": "rev_001",
+      "author": "Maharani Gayatri Devi",
+      "avatar_initial": "M",
+      "location": "Jaipur, Rajasthan",
+      "rating": 5,
+      "verified": true,
+      "product_title": "Royal Rose Pure Chiffon Saree",
+      "title": "Absolutely Mesmerizing Craftsmanship",
+      "comment": "The Adda handwork on this saree is beyond exceptional. Every thread tells a story of royal heritage. The pre-dispatch video gave me complete confidence. I felt like a true Rajputana queen wearing this masterpiece at my daughter's reception.",
+      "date": "2026-08-22T10:30:00Z"
+    },
+    {
+      "id": "rev_002",
+      "author": "Priya Sharma",
+      "avatar_initial": "P",
+      "location": "Mumbai, Maharashtra",
+      "rating": 5,
+      "verified": true,
+      "product_title": "Ivory Off-White Chiffon Gota Patti Saree",
+      "title": "Worth Every Penny – Pure Luxury",
+      "comment": "I ordered this for my engagement ceremony and it arrived beautifully packaged in the signature keepsake box. The Gota Patti work is so intricate and delicate. Smita ji personally called to discuss the blouse design. Such personal attention to detail!",
+      "date": "2026-07-15T14:20:00Z"
+    },
+    {
+      "id": "rev_003",
+      "author": "Ananya Krishnan",
+      "avatar_initial": "A",
+      "location": "Bengaluru, Karnataka",
+      "rating": 5,
+      "verified": true,
+      "product_title": "Banarasi Khaddi Georgette Royal Saree",
+      "title": "Heritage Meets Modern Elegance",
+      "comment": "Being from South India, I was looking for something that bridges Rajasthani royalty with modern elegance. This Banarasi Khaddi Georgette saree is perfection. The Zardozi borders are exquisite and the fabric drapes like a dream. Already planning my next order!",
+      "date": "2026-06-28T08:15:00Z"
+    },
+    {
+      "id": "rev_004",
+      "author": "Sunita Rathore",
+      "avatar_initial": "S",
+      "location": "Udaipur, Rajasthan",
+      "rating": 5,
+      "verified": true,
+      "product_title": "Sunset Ombré Cutdana Moti Sequin Saree",
+      "title": "A True Work of Art",
+      "comment": "The colour gradient on this saree is breathtaking in person – photos don't do it justice. The Cutdana and Moti work catches light beautifully. I wore it to a Mewar royal gathering and received countless compliments. Vitasta has earned a patron for life.",
+      "date": "2026-09-02T16:45:00Z"
+    },
+    {
+      "id": "rev_005",
+      "author": "Dr. Kavita Mehta",
+      "avatar_initial": "K",
+      "location": "New Delhi",
+      "rating": 5,
+      "verified": true,
+      "product_title": "Emerald Green Organza Saree",
+      "title": "Impeccable Quality & Service",
+      "comment": "From ordering to delivery, the experience was seamless. The pre-dispatch video was a wonderful touch – I could see every detail before it shipped. The Organza fabric is lightweight yet the handwork feels substantial and regal. Five stars aren't enough!",
+      "date": "2026-08-10T11:00:00Z"
+    },
+    {
+      "id": "rev_006",
+      "author": "Meera Jodhawat",
+      "avatar_initial": "M",
+      "location": "Jodhpur, Rajasthan",
+      "rating": 5,
+      "verified": true,
+      "product_title": "Dusty Pink Silk Pitta Work Saree",
+      "title": "Jodhpur's Pride – World-Class Sarees",
+      "comment": "As a Jodhpur local, I'm so proud that Vitasta is putting our city's handloom craft on the global map. The Pitta work on my Dusty Pink Silk saree is museum-worthy. Smita ji's vision of preserving traditional Adda artistry is truly commendable.",
+      "date": "2026-05-18T09:30:00Z"
+    },
+    {
+      "id": "rev_007",
+      "author": "Ritu Kapoor",
+      "avatar_initial": "R",
+      "location": "Chandigarh, Punjab",
+      "rating": 5,
+      "verified": true,
+      "product_title": "Magenta Pink Chiffon Aari Sequin Saree",
+      "title": "Stunning Beyond Expectations",
+      "comment": "I gifted this to my mother for her anniversary and she was moved to tears. The Aari handwork is extraordinarily detailed – you can tell each stitch was placed with love. The WhatsApp consultation made customizing the blouse so easy. Thank you Vitasta!",
+      "date": "2026-07-30T13:20:00Z"
+    },
+    {
+      "id": "rev_008",
+      "author": "Nisha Patel",
+      "avatar_initial": "N",
+      "location": "Ahmedabad, Gujarat",
+      "rating": 5,
+      "verified": true,
+      "product_title": "Navy Blue Banarasi Khaddi Georgette Saree",
+      "title": "Elegance Personified",
+      "comment": "The deep navy colour with gold Zardozi accents is absolutely regal. I wore it to a corporate gala and it was the perfect blend of tradition and sophistication. The tamper-proof packaging ensured it arrived in pristine condition. Highly recommend!",
+      "date": "2026-08-05T15:10:00Z"
+    }
+  ]
 };

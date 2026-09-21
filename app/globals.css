@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'Playfair Display', Georgia, serif;
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --royal-navy: #0B3B60;
+    --midnight: #062238;
+    --heritage-gold: #D4AF37;
+    --gold-light: #F3E5AB;
+    --regal-red: #C1272D;
+    --ivory-warm: #F9F8F6;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: #1a1a1a;
+    background-color: var(--ivory-warm);
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: var(--font-serif);
+  }
+
+  /* Accessible touch targets on mobile */
+  button, a {
+    touch-action: manipulation;
+  }
+}
+
+/* Custom Gold Shimmer Effect */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(212, 175, 55, 0.1) 0%,
+    rgba(212, 175, 55, 0.4) 50%,
+    rgba(212, 175, 55, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Luxury Royal Saree Shadow Utilities */
+.royal-shadow {
+  box-shadow: 0 10px 30px -10px rgba(6, 34, 56, 0.12), 0 4px 12px -4px rgba(212, 175, 55, 0.08);
+}
+
+.royal-shadow-hover:hover {
+  box-shadow: 0 20px 40px -12px rgba(6, 34, 56, 0.2), 0 6px 16px -4px rgba(212, 175, 55, 0.15);
+}
+
+/* Responsive Table Scroll Container */
+.table-responsive-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4af37;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b5922f;
+}
+
+/* Hide scrollbar for category pills on mobile */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -378,6 +378,160 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // PRODUCT DETAIL MODAL
   // ==========================================
+  // PRODUCT DETAIL MODAL (With Reviews & Comments Tab - Thar Delight Style)
+  // ==========================================
+  function getProductReviews(product) {
+    try {
+      const allReviews = window.VitastaDB ? (JSON.parse(localStorage.getItem('vitasta_db_reviews') || '[]')) : (data.reviews || []);
+      const pIdStr = String(product.id);
+      const pTitleLower = (product.title || '').toLowerCase();
+      
+      return allReviews.filter(r => {
+        if (r.product_id && (String(r.product_id) === pIdStr || r.product_id === product.id)) return true;
+        if (r.product_title && r.product_title.toLowerCase().includes(pTitleLower.slice(0, 15))) return true;
+        return false;
+      });
+    } catch (e) {
+      return (data.reviews || []).slice(0, 2);
+    }
+  }
+
+  function renderModalReviewsList(product) {
+    const reviewsList = document.getElementById('modal-reviews-list');
+    const pill = document.getElementById('modal-reviews-pill');
+    const ratingVal = document.getElementById('modal-rating-val');
+    const ratingCount = document.getElementById('modal-rating-count');
+    const starsDisplay = document.getElementById('modal-stars-display');
+    if (!reviewsList) return;
+
+    const reviews = getProductReviews(product);
+    if (pill) pill.textContent = reviews.length;
+
+    // Calculate rating
+    const avgRating = reviews.length > 0
+      ? (reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / reviews.length).toFixed(1)
+      : '5.0';
+
+    if (ratingVal) ratingVal.textContent = avgRating;
+    if (ratingCount) ratingCount.textContent = `(${reviews.length})`;
+    if (starsDisplay) {
+      const starNum = Math.round(parseFloat(avgRating));
+      starsDisplay.textContent = '★'.repeat(starNum) + '☆'.repeat(5 - starNum);
+    }
+
+    if (reviews.length === 0) {
+      reviewsList.innerHTML = `
+        <div class="modal-no-reviews">
+          <span style="font-size:2rem; display:block; margin-bottom:0.35rem;">💬</span>
+          <strong>No customer reviews yet for this creation</strong>
+          <p style="font-size:0.75rem; color:var(--color-text-muted);">Be the first royal patron to share your experience with this saree!</p>
+        </div>
+      `;
+      return;
+    }
+
+    reviewsList.innerHTML = reviews.map(r => `
+      <div class="modal-review-card">
+        <div class="modal-review-header">
+          <div class="review-author-wrap">
+            <div class="review-avatar">${r.avatar_initial || (r.author || 'P').charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="review-author-name">
+                ${r.author || 'Royal Patron'}
+                ${r.verified !== false ? '<span class="verified-badge">✓ Verified Patron</span>' : ''}
+              </div>
+              <div class="review-location">${r.location || 'Rajasthan, India'} • ${r.date ? new Date(r.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Recently'}</div>
+            </div>
+          </div>
+          <div class="review-stars-pill">${'★'.repeat(r.rating || 5)}</div>
+        </div>
+        ${r.title ? `<div class="review-headline">${r.title}</div>` : ''}
+        <p class="review-comment-text">${r.comment}</p>
+      </div>
+    `).join('');
+  }
+
+  function setupModalTabs() {
+    const tabButtons = document.querySelectorAll('.modal-tab-btn');
+    const specsView = document.getElementById('modal-tab-specs-view');
+    const reviewsView = document.getElementById('modal-tab-reviews-view');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.modalTab;
+        if (tab === 'specs') {
+          if (specsView) specsView.style.display = 'block';
+          if (reviewsView) reviewsView.style.display = 'none';
+        } else {
+          if (specsView) specsView.style.display = 'none';
+          if (reviewsView) reviewsView.style.display = 'block';
+        }
+      });
+    });
+
+    // Star rating selector inside modal
+    const starButtons = document.querySelectorAll('#star-rating-selector .star-btn');
+    const ratingInput = document.getElementById('review-selected-rating');
+    starButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rating = parseInt(btn.dataset.rating, 10);
+        if (ratingInput) ratingInput.value = rating;
+        starButtons.forEach((b, idx) => {
+          if (idx < rating) {
+            b.classList.add('active');
+          } else {
+            b.classList.remove('active');
+          }
+        });
+      });
+    });
+
+    // Form submit inside modal
+    const modalRevForm = document.getElementById('form-modal-add-review');
+    if (modalRevForm) {
+      modalRevForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const activeProd = state.activeModalProduct;
+        if (!activeProd) return;
+
+        const name = document.getElementById('modal-rev-name')?.value.trim();
+        const location = document.getElementById('modal-rev-location')?.value.trim();
+        const comment = document.getElementById('modal-rev-comment')?.value.trim();
+        const rating = parseInt(document.getElementById('review-selected-rating')?.value || '5', 10);
+
+        const newReview = {
+          id: 'rev_' + Date.now(),
+          product_id: activeProd.id,
+          product_title: activeProd.title,
+          product_category: activeProd.category_name,
+          author: name,
+          location: location,
+          rating: rating,
+          date: new Date().toISOString().split('T')[0],
+          verified: true,
+          title: 'Royal Handcraft Review',
+          comment: comment,
+          avatar_initial: name.charAt(0).toUpperCase()
+        };
+
+        if (window.VitastaDB && window.VitastaDB.review) {
+          window.VitastaDB.review.create(newReview);
+        } else {
+          const stored = JSON.parse(localStorage.getItem('vitasta_db_reviews') || '[]');
+          stored.unshift(newReview);
+          localStorage.setItem('vitasta_db_reviews', JSON.stringify(stored));
+        }
+
+        modalRevForm.reset();
+        showToast('Thank you! Your royal review has been published. ✨');
+        renderModalReviewsList(activeProd);
+        renderMainPageReviews();
+      });
+    }
+  }
+
   function openProductModal(product) {
     if (!product || !modalBackdrop) return;
     state.activeModalProduct = product;
@@ -386,6 +540,15 @@ document.addEventListener('DOMContentLoaded', () => {
     modalTitle.textContent = product.title;
     modalPrice.textContent = product.price_formatted;
     modalDesc.textContent = product.description;
+
+    // Reset tabs to specs
+    document.querySelectorAll('.modal-tab-btn').forEach((b, idx) => {
+      b.classList.toggle('active', idx === 0);
+    });
+    const specsView = document.getElementById('modal-tab-specs-view');
+    const reviewsView = document.getElementById('modal-tab-reviews-view');
+    if (specsView) specsView.style.display = 'block';
+    if (reviewsView) reviewsView.style.display = 'none';
 
     // Gallery & Thumbnails
     const images = product.images || [];
@@ -437,6 +600,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update Shortlist button inside modal
     updateModalShortlistBtn(product);
 
+    // Render reviews for this product
+    renderModalReviewsList(product);
+
     modalBackdrop.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -482,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast(`Removed "${product.title.slice(0, 24)}..." from Shortlist`);
     } else {
       state.shortlist.push(product);
-      showToast(`Added "${product.title.slice(0, 24)}..." to Shortlist`);
+      showToast(`Added "${product.title.slice(0, 24)}..." to Shortlist ❤️`);
     }
 
     localStorage.setItem('vitasta_shortlist', JSON.stringify(state.shortlist));
@@ -511,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let total = 0;
         drawerItemsContainer.innerHTML = state.shortlist.map(p => {
           total += p.price;
-          const img = p.primary_image || (p.images[0] && p.images[0].asset_path) || '';
+          const img = p.primary_image || (p.images[0] && (p.images[0].cdn_url || p.images[0].asset_path)) || '';
           return `
             <div class="drawer-item">
               <img src="${img}" alt="${p.title}" class="drawer-item-img">
@@ -568,13 +734,206 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
+  // RENDER THE VITASTA ROYAL PROMISE (Values Section - Thar Delight Style)
+  // ==========================================
+  function renderValuesSection() {
+    const grid = document.getElementById('values-grid');
+    if (!grid) return;
+    const values = data.values || [];
+
+    grid.innerHTML = values.map((val, idx) => `
+      <div class="value-card-box">
+        <div class="value-icon-circle">${val.icon}</div>
+        <h3 class="value-card-title">${val.title}</h3>
+        <p class="value-card-desc">${val.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  // ==========================================
+  // RENDER MAIN PAGE CUSTOMER REVIEWS & COMMENTS
+  // ==========================================
+  function renderMainPageReviews() {
+    const grid = document.getElementById('main-reviews-grid');
+    if (!grid) return;
+
+    let reviews = [];
+    try {
+      reviews = JSON.parse(localStorage.getItem('vitasta_db_reviews') || '[]');
+      if (!reviews || reviews.length === 0) reviews = data.reviews || [];
+    } catch (e) {
+      reviews = data.reviews || [];
+    }
+
+    grid.innerHTML = reviews.map(rev => `
+      <div class="main-review-card">
+        <div class="main-review-top">
+          <div class="review-author-wrap">
+            <div class="review-avatar" style="background:var(--color-blue-royal); color:white;">${rev.avatar_initial || (rev.author || 'P').charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="review-author-name">
+                ${rev.author}
+                ${rev.verified !== false ? '<span class="verified-badge">✓ Verified Patron</span>' : ''}
+              </div>
+              <div class="review-location">${rev.location || 'Rajasthan'}</div>
+            </div>
+          </div>
+          <div class="stars-gold">★★★★★</div>
+        </div>
+        ${rev.product_title ? `
+          <div class="review-product-pill">
+            <span>👗 ${rev.product_title}</span>
+          </div>
+        ` : ''}
+        ${rev.title ? `<h4 class="main-review-headline">&ldquo;${rev.title}&rdquo;</h4>` : ''}
+        <p class="main-review-body">${rev.comment}</p>
+        <div class="main-review-footer">
+          <span class="review-date">${rev.date ? new Date(rev.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Verified Order'}</span>
+          <span class="review-origin">📍 Jodhpur Handloom</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ==========================================
+  // RENDER FAQ ACCORDION (Thar Delight Style)
+  // ==========================================
+  function renderFaqsSection() {
+    const container = document.getElementById('faq-accordion-list');
+    if (!container) return;
+    const faqs = data.faqs || [];
+
+    container.innerHTML = faqs.map((faq, idx) => `
+      <div class="faq-item-card ${idx === 0 ? 'open' : ''}">
+        <button class="faq-question-btn" type="button">
+          <span class="faq-q-text">${faq.q}</span>
+          <span class="faq-arrow-icon">${idx === 0 ? '−' : '+'}</span>
+        </button>
+        <div class="faq-answer-pane" style="${idx === 0 ? 'display:block;' : 'display:none;'}">
+          <p class="faq-a-text">${faq.a}</p>
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.faq-question-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const card = btn.closest('.faq-item-card');
+        const pane = card.querySelector('.faq-answer-pane');
+        const icon = card.querySelector('.faq-arrow-icon');
+        const isOpen = card.classList.contains('open');
+
+        // Toggle
+        if (isOpen) {
+          card.classList.remove('open');
+          pane.style.display = 'none';
+          icon.textContent = '+';
+        } else {
+          card.classList.add('open');
+          pane.style.display = 'block';
+          icon.textContent = '−';
+        }
+      });
+    });
+  }
+
+  // ==========================================
+  // STANDALONE REVIEW MODAL HANDLING
+  // ==========================================
+  function setupStandaloneReviewModal() {
+    const modal = document.getElementById('review-modal-backdrop');
+    const openBtn = document.getElementById('btn-open-review-modal');
+    const closeBtn = document.getElementById('review-modal-close');
+    const productSelect = document.getElementById('standalone-rev-product');
+    const form = document.getElementById('form-standalone-review');
+
+    if (productSelect && state.products) {
+      productSelect.innerHTML = state.products.map(p => `
+        <option value="${p.id}">${p.title} (${p.category_name})</option>
+      `).join('');
+    }
+
+    if (openBtn && modal) {
+      openBtn.addEventListener('click', () => {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    }
+
+    function closeReviewModal() {
+      if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', closeReviewModal);
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeReviewModal();
+      });
+    }
+
+    // Star selector in standalone modal
+    const starBtns = document.querySelectorAll('#standalone-star-selector .star-btn');
+    const ratingHidden = document.getElementById('standalone-selected-rating');
+    starBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rating = parseInt(btn.dataset.rating, 10);
+        if (ratingHidden) ratingHidden.value = rating;
+        starBtns.forEach((b, idx) => {
+          b.classList.toggle('active', idx < rating);
+        });
+      });
+    });
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const pId = document.getElementById('standalone-rev-product')?.value;
+        const selectedProd = state.products.find(p => String(p.id) === String(pId)) || state.products[0];
+        const name = document.getElementById('standalone-rev-name')?.value.trim();
+        const location = document.getElementById('standalone-rev-location')?.value.trim();
+        const title = document.getElementById('standalone-rev-title')?.value.trim();
+        const comment = document.getElementById('standalone-rev-comment')?.value.trim();
+        const rating = parseInt(document.getElementById('standalone-selected-rating')?.value || '5', 10);
+
+        const newReview = {
+          id: 'rev_' + Date.now(),
+          product_id: selectedProd.id,
+          product_title: selectedProd.title,
+          product_category: selectedProd.category_name,
+          author: name,
+          location: location,
+          rating: rating,
+          date: new Date().toISOString().split('T')[0],
+          verified: true,
+          title: title,
+          comment: comment,
+          avatar_initial: name.charAt(0).toUpperCase()
+        };
+
+        if (window.VitastaDB && window.VitastaDB.review) {
+          window.VitastaDB.review.create(newReview);
+        } else {
+          const stored = JSON.parse(localStorage.getItem('vitasta_db_reviews') || '[]');
+          stored.unshift(newReview);
+          localStorage.setItem('vitasta_db_reviews', JSON.stringify(stored));
+        }
+
+        form.reset();
+        closeReviewModal();
+        showToast('Your royal review has been published across the atelier! ✨');
+        renderMainPageReviews();
+      });
+    }
+  }
+
+  // ==========================================
   // SAREE CARE GUIDE RENDERING
   // ==========================================
   function renderCareGuide() {
     if (!careGuideGrid) return;
     const instructions = data.brand.policies.saree_care_guide.instructions || [];
-    
-    // Icons for each care step
     const careIcons = ['🧴', '🧊', '☀️', '📦', '🧹', '💎', '🌿', '👗'];
     
     careGuideGrid.innerHTML = instructions.map((inst, idx) => `
@@ -585,7 +944,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `).join('');
 
-    // Add stagger animation
     careGuideGrid.classList.add('stagger-children');
   }
 
@@ -600,6 +958,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const phone = document.getElementById('form-phone')?.value || '';
       const category = document.getElementById('form-category')?.value || 'General Inquiry';
       const message = document.getElementById('form-message')?.value || '';
+
+      // Save inquiry to DB
+      if (window.VitastaDB && window.VitastaDB.message) {
+        window.VitastaDB.message.create({
+          name: name,
+          phone: phone,
+          email: '',
+          category: category,
+          message: message,
+          status: 'UNREAD'
+        });
+      }
 
       const waMsg = `*Bespoke Inquiry - Vitasta Atelier*\nName: ${name}\nPhone: ${phone}\nInterest: ${category}\nMessage: ${message}`;
       window.open(createWhatsAppLink(waMsg), '_blank');
@@ -670,11 +1040,16 @@ document.addEventListener('DOMContentLoaded', () => {
       closeModal();
       closeDrawer();
       closeMobileMenu();
+      const revModal = document.getElementById('review-modal-backdrop');
+      if (revModal) {
+        revModal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
     }
   });
 
   // ==========================================
-  // HEADER SCROLL BEHAVIOR (Thar Delight Style)
+  // HEADER SCROLL BEHAVIOR (Thar Delight Exact Pattern)
   // ==========================================
   const siteHeader = document.querySelector('.site-header');
   const announcementBar = document.querySelector('.announcement-bar');
@@ -683,26 +1058,36 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', () => {
     const currentScrollY = window.scrollY;
 
-    // Add scrolled class for compact header + glass blur
+    // Scrolled past 20px (Compact glass header + collapse announcement)
     if (currentScrollY > 20) {
       siteHeader?.classList.add('scrolled');
-    } else {
-      siteHeader?.classList.remove('scrolled');
-    }
-
-    // Collapse announcement bar on scroll
-    if (announcementBar) {
-      if (currentScrollY > 50) {
+      if (announcementBar) {
         announcementBar.style.height = '0';
         announcementBar.style.padding = '0';
         announcementBar.style.opacity = '0';
         announcementBar.style.overflow = 'hidden';
-      } else {
+      }
+    } else {
+      siteHeader?.classList.remove('scrolled');
+      if (announcementBar) {
         announcementBar.style.height = '';
         announcementBar.style.padding = '';
         announcementBar.style.opacity = '';
         announcementBar.style.overflow = '';
       }
+    }
+
+    // Hide navbar when scrolling DOWN past 150px, show immediately when scrolling UP anywhere (Thar Delight)
+    const isMenuOpen = document.querySelector('.mobile-nav-backdrop')?.classList.contains('open') ||
+                       document.querySelector('.header-user-dropdown')?.classList.contains('show') ||
+                       document.getElementById('review-modal-backdrop')?.classList.contains('open');
+
+    if (!isMenuOpen && currentScrollY > 150 && currentScrollY > lastScrollY) {
+      siteHeader?.classList.remove('header-visible');
+      siteHeader?.classList.add('header-hidden');
+    } else {
+      siteHeader?.classList.remove('header-hidden');
+      siteHeader?.classList.add('header-visible');
     }
 
     lastScrollY = currentScrollY;
@@ -711,15 +1096,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // INITIALIZE
   // ==========================================
+  setupModalTabs();
+  setupStandaloneReviewModal();
+
   window.renderVitastaCatalog = function () {
     state.products = data.products || [];
     applyFilters();
     renderCategories();
+    renderMainPageReviews();
   };
 
   renderCategories();
   renderCategoryTabs();
   renderProducts();
+  renderValuesSection();
+  renderMainPageReviews();
+  renderFaqsSection();
   renderCareGuide();
   updateShortlistUI();
 });

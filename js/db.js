@@ -29,6 +29,19 @@
     }
   }
 
+  // Default Coupons Seed
+  const DEFAULT_COUPONS = [
+    { id: 'cpn_1', code: 'ROYAL10', discountType: 'PERCENTAGE', discountValue: 10, minOrder: 15000, maxDiscount: 3000, isActive: true, usageCount: 42, expiry: '2026-12-31' },
+    { id: 'cpn_2', code: 'JODHPUR5', discountType: 'PERCENTAGE', discountValue: 5, minOrder: 10000, maxDiscount: 1500, isActive: true, usageCount: 68, expiry: '2026-12-31' },
+    { id: 'cpn_3', code: 'ATELIER2000', discountType: 'FLAT', discountValue: 2000, minOrder: 25000, maxDiscount: 2000, isActive: true, usageCount: 19, expiry: '2026-12-31' }
+  ];
+
+  // Default Messages Seed
+  const DEFAULT_MESSAGES = [
+    { id: 'msg_1', name: 'Princess Rohini', phone: '+91 98290 11223', email: 'rohini@udaipurpalace.in', category: 'Banarasi Virasat', message: 'Inquiring for a bespoke crimson red kadhwa georgette for an October royal banquet. Can we add custom Gaji silk blouse embroidery?', status: 'READ', createdAt: '2026-09-15T14:30:00Z' },
+    { id: 'msg_2', name: 'Meenakshi Sundaram', phone: '+91 94440 55667', email: 'meenakshi.s@gmail.com', category: 'Riwaayat-e-Chiffon', message: 'Looking for sunset ombre chiffon with heavy cutdana tassels for my daughter’s sangeet in Chennai.', status: 'UNREAD', createdAt: '2026-09-18T09:15:00Z' }
+  ];
+
   // Initialize DB Tables from seed data if not present
   function initDB() {
     const rawData = window.VITASTA_DATA || {};
@@ -38,6 +51,15 @@
     }
     if (!localStorage.getItem(DB_PREFIX + 'categories') && rawData.categories) {
       setTable('categories', rawData.categories);
+    }
+    if (!localStorage.getItem(DB_PREFIX + 'reviews') && rawData.reviews) {
+      setTable('reviews', rawData.reviews);
+    }
+    if (!localStorage.getItem(DB_PREFIX + 'coupons')) {
+      setTable('coupons', DEFAULT_COUPONS);
+    }
+    if (!localStorage.getItem(DB_PREFIX + 'messages')) {
+      setTable('messages', DEFAULT_MESSAGES);
     }
     if (!localStorage.getItem(DB_PREFIX + 'brand') && rawData.brand) {
       setTable('brand', rawData.brand);
@@ -188,6 +210,9 @@
     init: initDB,
     product: createEntityModel('products'),
     category: createEntityModel('categories'),
+    review: createEntityModel('reviews'),
+    coupon: createEntityModel('coupons'),
+    message: createEntityModel('messages'),
     order: createEntityModel('orders'),
     user: createEntityModel('users'),
     address: createEntityModel('addresses'),
@@ -201,6 +226,9 @@
         timestamp: new Date().toISOString(),
         products: getTable('products'),
         categories: getTable('categories'),
+        reviews: getTable('reviews'),
+        coupons: getTable('coupons'),
+        messages: getTable('messages'),
         orders: getTable('orders'),
         users: getTable('users'),
         addresses: getTable('addresses'),
@@ -215,6 +243,9 @@
       const rawData = window.VITASTA_DATA || {};
       setTable('products', rawData.products || []);
       setTable('categories', rawData.categories || []);
+      setTable('reviews', rawData.reviews || []);
+      setTable('coupons', DEFAULT_COUPONS);
+      setTable('messages', DEFAULT_MESSAGES);
       setTable('brand', rawData.brand || {});
       if (Cache) Cache.clearAll();
     }

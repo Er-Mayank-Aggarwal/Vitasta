@@ -46,8 +46,11 @@
         <ul class="nav-menu" id="nav-menu">
           <li><a href="#hero" class="nav-link">Home</a></li>
           <li><a href="#collections" class="nav-link">Collections</a></li>
-          <li><a href="#catalog" class="nav-link">Royal Catalog</a></li>
-          <li><a href="#craftsmanship" class="nav-link">Heritage & Craft</a></li>
+          <li><a href="#catalog" class="nav-link">Catalog</a></li>
+          <li><a href="#values" class="nav-link">Promise</a></li>
+          <li><a href="#craftsmanship" class="nav-link">Craft</a></li>
+          <li><a href="#reviews" class="nav-link">Reviews</a></li>
+          <li><a href="#faqs" class="nav-link">FAQs</a></li>
           <li><a href="#contact" class="nav-link">Atelier</a></li>
         </ul>
       </nav>
@@ -74,7 +77,10 @@
               <span>👤 My Royal Profile</span>
             </button>
             <button class="dropdown-item" id="dropdown-opt-orders">
-              <span>📦 My Orders & Tracking</span>
+              <span>📦 My Orders</span>
+            </button>
+            <button class="dropdown-item" id="dropdown-opt-tracking">
+              <span>🔍 Track My Order</span>
             </button>
             <button class="dropdown-item" id="dropdown-opt-addresses">
               <span>🏠 Saved Delivery Addresses</span>
@@ -138,9 +144,24 @@
           <span class="mobile-nav-label">Saree Catalog (21)</span>
           <span class="mobile-nav-arrow">&rsaquo;</span>
         </a>
+        <a href="#values" class="mobile-nav-link" data-nav-target="values">
+          <span class="mobile-nav-icon">✨</span>
+          <span class="mobile-nav-label">The Royal Promise</span>
+          <span class="mobile-nav-arrow">&rsaquo;</span>
+        </a>
         <a href="#craftsmanship" class="mobile-nav-link" data-nav-target="craftsmanship">
           <span class="mobile-nav-icon">🪡</span>
           <span class="mobile-nav-label">Heritage & Adda Craft</span>
+          <span class="mobile-nav-arrow">&rsaquo;</span>
+        </a>
+        <a href="#reviews" class="mobile-nav-link" data-nav-target="reviews">
+          <span class="mobile-nav-icon">💬</span>
+          <span class="mobile-nav-label">Patron Reviews</span>
+          <span class="mobile-nav-arrow">&rsaquo;</span>
+        </a>
+        <a href="#faqs" class="mobile-nav-link" data-nav-target="faqs">
+          <span class="mobile-nav-icon">❓</span>
+          <span class="mobile-nav-label">Atelier FAQs</span>
           <span class="mobile-nav-arrow">&rsaquo;</span>
         </a>
         <a href="#policies" class="mobile-nav-link" data-nav-target="policies">
@@ -286,6 +307,21 @@
     </div>
   </section>
 
+  <!-- The Vitasta Royal Promise (Values Section - Thar Delight Style) -->
+  <section class="values-section" id="values">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Why Vitasta Atelier</span>
+        <h2 class="section-title">The Royal Heritage Promise</h2>
+        <p class="section-subtitle">We honor generational Adda artistry, pristine silk drapes, and complete video transparency for every royal creation</p>
+      </div>
+
+      <div class="values-grid" id="values-grid">
+        <!-- Rendered dynamically by app.js from data.values -->
+      </div>
+    </div>
+  </section>
+
   <!-- Royal Heritage & Craftsmanship Section -->
   <section class="craftsmanship-section" id="craftsmanship">
     <div class="container craft-grid">
@@ -338,6 +374,53 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Voices of Royal Patrons (Customer Reviews & Feedback - Thar Delight Style) -->
+  <section class="reviews-section" id="reviews">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Royal Experiences</span>
+        <h2 class="section-title">Voices of Our Royal Patrons</h2>
+        <p class="section-subtitle">Real feedback and heartfelt words from royal connoisseurs who celebrate ancestral Adda craftsmanship</p>
+      </div>
+
+      <!-- Rating Telemetry Summary Card -->
+      <div class="reviews-summary-card">
+        <div class="rating-overall-box">
+          <span class="rating-big-num">4.96</span>
+          <div class="stars-gold-wrap">
+            <span>★★★★★</span>
+          </div>
+          <span class="rating-subtext">Based on 150+ Verified Handloom Patrons</span>
+        </div>
+        <div class="rating-divider-v"></div>
+        <div class="reviews-highlight-stats">
+          <div class="stat-pill">
+            <strong>100%</strong>
+            <span>Verified Pre-Dispatch Video Quality</span>
+          </div>
+          <div class="stat-pill">
+            <strong>15–30 Days</strong>
+            <span>Patient Handcrafting Time</span>
+          </div>
+          <div class="stat-pill">
+            <strong>Pan-India & Global</strong>
+            <span>Express Insured Transit</span>
+          </div>
+        </div>
+        <div class="rating-action-box">
+          <button class="btn-primary-red" id="btn-open-review-modal" style="border:none; cursor:pointer;">
+            <span>✍️ Write a Royal Review</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Reviews Carousel / Grid -->
+      <div class="reviews-cards-grid" id="main-reviews-grid">
+        <!-- Rendered dynamically by app.js from data.reviews / VitastaDB.review -->
       </div>
     </div>
   </section>
@@ -411,6 +494,21 @@
             Handcrafted Authenticity
           </div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Royal Atelier Concierge FAQs Section (Thar Delight Style Accordion) -->
+  <section class="faq-section" id="faqs">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Atelier Concierge</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Everything you need to know about our handcrafted Adda timelines, video inspections, custom drapes, and worldwide shipping</p>
+      </div>
+
+      <div class="faq-accordion-container" id="faq-accordion-list">
+        <!-- Rendered dynamically by app.js from data.faqs -->
       </div>
     </div>
   </section>
@@ -536,24 +634,28 @@
             <li><a href="#policies" class="footer-link">Dispatch Timeline</a></li>
             <li><a href="#policies" class="footer-link">Pre-Dispatch Video</a></li>
             <li><a href="#policies" class="footer-link">Handcrafted Policy</a></li>
+            <li><a href="#reviews" class="footer-link">Patron Reviews</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="footer-heading">Royal Atelier</h4>
-          <p class="footer-desc" style="margin-bottom: 0.75rem;">
-            House No. 10A, Kanti, Paota B Road, Near Jalam Niwas, Jodhpur, Rajasthan – 342001
+          <h4 class="footer-heading">Royal Atelier & Portals</h4>
+          <p class="footer-desc" style="margin-bottom: 0.5rem;">
+            House No. 10A, Paota B Road, Jodhpur – 342001
           </p>
-          <p class="footer-desc">
-            <strong>Call:</strong> +91 88240 17443<br>
-            <strong>Email:</strong> vitastabysmita@gmail.com
-          </p>
+          <ul class="footer-links-list" style="margin-top: 0.5rem;">
+            <li><a href="#account" class="footer-link" id="footer-link-account">👤 My Royal Account</a></li>
+            <li><a href="#track-order" class="footer-link" id="footer-link-tracking">🔍 Track Saree Order</a></li>
+            <li><a href="#admin-controls" class="footer-link" id="footer-link-admin" style="color:var(--color-red-regal); font-weight:700;">👑 Atelier Admin Portal</a></li>
+          </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
         <div>&copy; 2026 VITASTA Lifestyle. All Rights Reserved. Handcrafted in Jodhpur, Rajasthan.</div>
-        <div>Royal Theme: Jaipur Blue &bull; Pure White &bull; Regal Red</div>
+        <div>
+          <a href="#admin-controls" id="footer-bottom-admin-link" style="color:rgba(255,255,255,0.7); text-decoration:underline;">👑 Atelier Admin Controls</a>
+        </div>
       </div>
     </div>
   </footer>
@@ -573,7 +675,15 @@
         </div>
 
         <div class="modal-details-wrap">
-          <div class="modal-category-badge" id="modal-category">Chiffon Saree</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <div class="modal-category-badge" id="modal-category">Chiffon Saree</div>
+            <div class="modal-rating-badge" id="modal-rating-badge">
+              <span class="stars-gold" id="modal-stars-display">★★★★★</span>
+              <span class="rating-val" id="modal-rating-val">5.0</span>
+              <span class="rating-count" id="modal-rating-count">(0)</span>
+            </div>
+          </div>
+
           <h2 class="modal-title" id="modal-title">Product Name</h2>
 
           <div class="modal-price-box">
@@ -581,13 +691,67 @@
             <div class="modal-tax-note">Includes Handcrafted Finishing & Blouse Piece</div>
           </div>
 
-          <p class="modal-description" id="modal-description"></p>
+          <!-- Modal Tabs Switcher (Thar Delight Style) -->
+          <div class="modal-tab-nav">
+            <button class="modal-tab-btn active" data-modal-tab="specs">✨ Saree Specifications</button>
+            <button class="modal-tab-btn" data-modal-tab="reviews">💬 Patron Reviews (<span id="modal-reviews-pill">0</span>)</button>
+          </div>
 
-          <table class="modal-specs-table">
-            <tbody id="modal-specs-body">
-              <!-- Specs rendered by app.js -->
-            </tbody>
-          </table>
+          <!-- Tab Content: Specifications -->
+          <div class="modal-tab-content" id="modal-tab-specs-view">
+            <p class="modal-description" id="modal-description"></p>
+            <table class="modal-specs-table">
+              <tbody id="modal-specs-body">
+                <!-- Specs rendered by app.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tab Content: Customer Reviews & Feedback -->
+          <div class="modal-tab-content" id="modal-tab-reviews-view" style="display:none;">
+            <!-- Reviews List -->
+            <div class="modal-reviews-container" id="modal-reviews-list">
+              <!-- Rendered dynamically by app.js -->
+            </div>
+
+            <!-- Add Review Form Inside Modal -->
+            <div class="modal-add-review-box">
+              <h4 class="add-review-heading">✍️ Leave Your Royal Feedback</h4>
+              <form id="form-modal-add-review" class="modal-review-form">
+                <div class="form-rating-selector">
+                  <span class="rating-label">Your Rating:</span>
+                  <div class="star-rating-buttons" id="star-rating-selector">
+                    <button type="button" class="star-btn active" data-rating="1">★</button>
+                    <button type="button" class="star-btn active" data-rating="2">★</button>
+                    <button type="button" class="star-btn active" data-rating="3">★</button>
+                    <button type="button" class="star-btn active" data-rating="4">★</button>
+                    <button type="button" class="star-btn active" data-rating="5">★</button>
+                  </div>
+                  <input type="hidden" id="review-selected-rating" value="5">
+                </div>
+
+                <div class="modal-form-row-2">
+                  <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-input" id="modal-rev-name" placeholder="e.g. Maharani Gayatri" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">City / State</label>
+                    <input type="text" class="form-input" id="modal-rev-location" placeholder="e.g. Jaipur, Rajasthan" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Your Handcraft Experience & Comments</label>
+                  <textarea class="form-textarea" id="modal-rev-comment" rows="2" placeholder="Tell us about the fabric drape, Adda embroidery, zari shine, or video verification..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary-red" style="border:none; cursor:pointer; width:100%; padding:0.65rem 1rem; font-size:0.82rem;">
+                  Submit Royal Review
+                </button>
+              </form>
+            </div>
+          </div>
 
           <div class="modal-actions-wrap">
             <a href="#" target="_blank" rel="noopener" class="btn-modal-wa-order" id="btn-modal-wa-order">
@@ -667,6 +831,21 @@
             <input type="password" class="form-input" id="login-password" placeholder="••••••••" required>
           </div>
           <button type="submit" class="btn-primary-red btn-auth-submit">Sign In to Royal Account</button>
+          
+          <div style="display:flex; align-items:center; gap:0.5rem; margin:1rem 0 0.5rem; color:var(--color-text-muted); font-size:0.75rem;">
+            <div style="flex:1; height:1px; background:var(--color-sand);"></div>
+            <span>or 1-click quick demo login</span>
+            <div style="flex:1; height:1px; background:var(--color-sand);"></div>
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+            <button type="button" id="btn-quick-login-admin" class="btn-demo-quick" style="padding:0.6rem 0.5rem; border-radius:0.75rem; background:rgba(193,39,45,0.08); border:1px solid rgba(193,39,45,0.3); color:var(--color-red-regal); font-weight:700; font-size:0.75rem; cursor:pointer; transition:all 0.2s;">
+              👑 Demo Atelier Admin
+            </button>
+            <button type="button" id="btn-quick-login-client" class="btn-demo-quick" style="padding:0.6rem 0.5rem; border-radius:0.75rem; background:rgba(11,59,96,0.08); border:1px solid rgba(11,59,96,0.25); color:var(--color-blue-royal); font-weight:700; font-size:0.75rem; cursor:pointer; transition:all 0.2s;">
+              👤 Demo Royal Patron
+            </button>
+          </div>
         </form>
       </div>
 
@@ -738,6 +917,9 @@
             <button class="account-nav-item" data-account-tab="orders">
               <span>📦</span> Orders & Tracking
             </button>
+            <button class="account-nav-item" data-account-tab="tracking">
+              <span>🔍</span> Track My Order
+            </button>
             <button class="account-nav-item" data-account-tab="addresses">
               <span>🏠</span> Saved Addresses
             </button>
@@ -751,6 +933,7 @@
         <main class="portal-main-content">
           <div class="account-tab-content" id="account-profile-view"></div>
           <div class="account-tab-content" id="account-orders-view" style="display:none;"></div>
+          <div class="account-tab-content" id="account-tracking-view" style="display:none;"></div>
           <div class="account-tab-content" id="account-addresses-view" style="display:none;"></div>
           <div class="account-tab-content" id="account-shortlist-view" style="display:none;"></div>
         </main>
@@ -786,11 +969,20 @@
             <button class="admin-nav-item" data-admin-tab="orders">
               <span>🪡</span> Dispatch & Video Pipeline
             </button>
+            <button class="admin-nav-item" data-admin-tab="reviews">
+              <span>💬</span> Reviews & Feedback
+            </button>
+            <button class="admin-nav-item" data-admin-tab="coupons">
+              <span>🏷️</span> Royal Coupons
+            </button>
             <button class="admin-nav-item" data-admin-tab="customers">
               <span>👥</span> Royal Clients
             </button>
+            <button class="admin-nav-item" data-admin-tab="messages">
+              <span>✉️</span> Inquiries
+            </button>
             <button class="admin-nav-item" data-admin-tab="settings">
-              <span>⚙️</span> Atelier Brand Settings
+              <span>⚙️</span> Atelier & DB Cache
             </button>
           </nav>
         </aside>
@@ -800,10 +992,74 @@
           <div class="admin-tab-content" id="admin-dashboard-view"></div>
           <div class="admin-tab-content" id="admin-products-view" style="display:none;"></div>
           <div class="admin-tab-content" id="admin-orders-view" style="display:none;"></div>
+          <div class="admin-tab-content" id="admin-reviews-view" style="display:none;"></div>
+          <div class="admin-tab-content" id="admin-coupons-view" style="display:none;"></div>
           <div class="admin-tab-content" id="admin-customers-view" style="display:none;"></div>
+          <div class="admin-tab-content" id="admin-messages-view" style="display:none;"></div>
           <div class="admin-tab-content" id="admin-settings-view" style="display:none;"></div>
         </main>
       </div>
+    </div>
+  </div>
+
+  <!-- ================================================================
+       STANDALONE WRITE A ROYAL REVIEW MODAL
+       ================================================================ -->
+  <div class="app-portal-modal" id="review-modal-backdrop">
+    <div class="portal-modal-container auth-modal-box">
+      <button class="portal-modal-close" id="review-modal-close" aria-label="Close">&times;</button>
+      
+      <div class="auth-modal-header">
+        <div class="auth-royal-crown">💬</div>
+        <h3 class="auth-modal-title">Share Your Royal Experience</h3>
+        <p class="auth-modal-subtitle">Help other royal connoisseurs discover the art of Adda hand embroidery</p>
+      </div>
+
+      <form id="form-standalone-review" class="auth-form-body">
+        <div class="form-group">
+          <label class="form-label">Select Saree Purchased / Inquired</label>
+          <select class="form-input" id="standalone-rev-product" required>
+            <!-- Populated dynamically by app.js -->
+          </select>
+        </div>
+
+        <div class="form-rating-selector" style="margin-bottom:1rem;">
+          <span class="rating-label">Overall Rating:</span>
+          <div class="star-rating-buttons" id="standalone-star-selector">
+            <button type="button" class="star-btn active" data-rating="1">★</button>
+            <button type="button" class="star-btn active" data-rating="2">★</button>
+            <button type="button" class="star-btn active" data-rating="3">★</button>
+            <button type="button" class="star-btn active" data-rating="4">★</button>
+            <button type="button" class="star-btn active" data-rating="5">★</button>
+          </div>
+          <input type="hidden" id="standalone-selected-rating" value="5">
+        </div>
+
+        <div class="modal-form-row-2">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-input" id="standalone-rev-name" placeholder="e.g. Maharani Gayatri Devi" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">City, State</label>
+            <input type="text" class="form-input" id="standalone-rev-location" placeholder="e.g. Jaipur, Rajasthan" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Review Headline</label>
+          <input type="text" class="form-input" id="standalone-rev-title" placeholder="e.g. Sublime Craftsmanship & Fluid Drape" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Your Handcraft Experience & Comments</label>
+          <textarea class="form-textarea" id="standalone-rev-comment" rows="3" placeholder="Describe your experience with the fabric texture, zari shine, pre-dispatch video verification, or packaging..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary-red btn-auth-submit" style="border:none; cursor:pointer;">
+          Publish Royal Review ✨
+        </button>
+      </form>
     </div>
   </div>
 

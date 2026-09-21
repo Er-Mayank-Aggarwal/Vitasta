@@ -214,7 +214,18 @@
 
     login(email, password) {
       const users = getStored('vitasta_users', DEFAULT_USERS);
-      const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+      const cleanEmail = (email || '').trim().toLowerCase();
+      const cleanPass = (password || '').trim();
+
+      // Check against stored users or master demo credentials
+      let user = users.find(u => u.email.toLowerCase() === cleanEmail && (u.password === cleanPass || (cleanEmail === 'admin@vitasta.com' && (cleanPass === 'vitasta@admin' || cleanPass === 'password123' || cleanPass === 'admin')) || ((cleanEmail === 'client@vitasta.com' || cleanEmail === 'patron@vitasta.luxury') && (cleanPass === 'vitasta@patron' || cleanPass === 'password123' || cleanPass === 'patron'))));
+
+      if (!user && cleanEmail === 'admin@vitasta.com' && (cleanPass === 'vitasta@admin' || cleanPass === 'password123' || cleanPass === 'admin')) {
+        user = DEFAULT_USERS[0];
+      } else if (!user && (cleanEmail === 'patron@vitasta.luxury' || cleanEmail === 'client@vitasta.com') && (cleanPass === 'vitasta@patron' || cleanPass === 'password123')) {
+        user = DEFAULT_USERS[1];
+      }
+
       if (!user) {
         throw new Error('Invalid email or password. Please check your credentials and try again.');
       }
@@ -425,6 +436,7 @@
 
     if (tabName === 'profile') renderAccountProfile();
     if (tabName === 'orders') renderAccountOrders();
+    if (tabName === 'tracking') renderAccountTracking();
     if (tabName === 'addresses') renderAccountAddresses();
     if (tabName === 'shortlist') renderAccountShortlist();
   }
@@ -457,7 +469,10 @@
     if (tabName === 'dashboard') renderAdminDashboard();
     if (tabName === 'products') renderAdminProducts();
     if (tabName === 'orders') renderAdminOrders();
+    if (tabName === 'reviews') renderAdminReviews();
+    if (tabName === 'coupons') renderAdminCoupons();
     if (tabName === 'customers') renderAdminCustomers();
+    if (tabName === 'messages') renderAdminMessages();
     if (tabName === 'settings') renderAdminSettings();
   }
 
@@ -802,6 +817,207 @@
   }
 
   // ==========================================
+  // ACCOUNT ORDER TRACKING VIEW (Thar Delight Style)
+  // ==========================================
+  
+  function renderAccountTracking(searchId = '') {
+    const container = document.getElementById('account-tracking-view');
+    if (!container) return;
+
+    const allOrders = getStored('vitasta_orders', DEFAULT_ORDERS);
+    const userOrders = currentUser 
+      ? allOrders.filter(o => o.userId === currentUser.id || o.userEmail === currentUser.email)
+      : allOrders;
+
+    let targetOrder = null;
+    if (searchId) {
+      const q = searchId.toLowerCase().trim();
+      targetOrder = allOrders.find(o => 
+        o.id.toLowerCase() === q ||
+        o.id.toLowerCase().replace('vit-ord-', '') === q ||
+        (o.userPhone && o.userPhone.replace(/\D/g, '').includes(q.replace(/\D/g, ''))) ||
+        (o.trackingNumber && o.trackingNumber.toLowerCase().includes(q))
+      );
+    } else if (userOrders.length > 0) {
+      targetOrder = userOrders[0];
+    } else if (allOrders.length > 0) {
+      targetOrder = allOrders[0];
+    }
+
+    container.innerHTML = `
+      <div class="account-card-header">
+        <div>
+          <h3 class="account-card-title">Royal Handcraft & Order Tracking</h3>
+          <p class="account-card-subtitle">Live 6-stage artisan production timeline, Loom QC & pre-dispatch video verification</p>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div class="tracker-search-container">
+        <form id="form-track-order-search" class="tracker-search-form">
+          <div class="tracker-input-group">
+            <span class="tracker-search-icon">🔍</span>
+            <input type="text" id="track-search-input" class="tracker-search-input" placeholder="Enter Order ID (e.g. VIT-ORD-8821) or phone number..." value="${targetOrder ? targetOrder.id : ''}">
+            <button type="submit" class="btn-primary-red tracker-search-btn" style="border:none; cursor:pointer;">Track Order</button>
+          </div>
+        </form>
+        <div class="tracker-demo-chips">
+          <span class="demo-label">Quick Demo Tracking:</span>
+          ${allOrders.map(o => `
+            <button type="button" class="btn-demo-chip ${targetOrder && targetOrder.id === o.id ? 'active' : ''}" data-order-id="${o.id}">
+              #${o.id} (${o.orderStatus})
+            </button>
+          `).join('')}
+        </div>
+      </div>
+
+      ${targetOrder ? `
+        <div class="tracker-results-card">
+          <!-- Order Summary Top Bar -->
+          <div class="tracker-summary-header">
+            <div class="tracker-meta-item">
+              <span class="tracker-meta-label">ORDER ID</span>
+              <span class="tracker-meta-value">#${targetOrder.id}</span>
+            </div>
+            <div class="tracker-meta-item">
+              <span class="tracker-meta-label">ROYAL PATRON</span>
+              <span class="tracker-meta-value">${targetOrder.userName}</span>
+            </div>
+            <div class="tracker-meta-item">
+              <span class="tracker-meta-label">ESTIMATED DISPATCH</span>
+              <span class="tracker-meta-value">${targetOrder.estimatedDispatch ? new Date(targetOrder.estimatedDispatch).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '15–30 Days'}</span>
+            </div>
+            <div class="tracker-meta-item">
+              <span class="tracker-meta-label">CURRENT STAGE</span>
+              <span class="order-status-badge status-${targetOrder.orderStatus.toLowerCase()}">${targetOrder.statusLabel || targetOrder.orderStatus}</span>
+            </div>
+          </div>
+
+          <!-- Pre-Dispatch Video Alert (If Present) -->
+          ${targetOrder.preDispatchVideoUrl ? `
+            <div class="pre-dispatch-video-alert tracker-video-highlight">
+              <div class="video-alert-icon">📹</div>
+              <div class="video-alert-content">
+                <strong>Pre-Dispatch Video Verification Ready:</strong>
+                <span>Our Jodhpur atelier has prepared a detailed quality inspection and drape video for your saree.</span>
+              </div>
+              <a href="${targetOrder.preDispatchVideoUrl}" target="_blank" rel="noopener" class="btn-watch-video">Watch Video Verification</a>
+            </div>
+          ` : `
+            <div class="pre-dispatch-video-alert" style="background: rgba(11, 59, 96, 0.05); border-color: rgba(11, 59, 96, 0.15);">
+              <div class="video-alert-icon">🪡</div>
+              <div class="video-alert-content">
+                <strong>Atelier Handcrafting In Progress:</strong>
+                <span>A personalized pre-dispatch inspection video will be sent to your WhatsApp (${targetOrder.userPhone || '+91 88240 17443'}) prior to courier dispatch.</span>
+              </div>
+            </div>
+          `}
+
+          <!-- 6-Stage Visual Tracker Timeline -->
+          <div class="tracker-timeline-section">
+            <h4 class="tracker-section-heading">👑 Handcrafting & Atelier Progress (6 Stages)</h4>
+            <div class="tracker-stages-flow">
+              ${[
+                { stage: 1, title: 'Bespoke Order Confirmed', desc: 'Fabric reserved & master artisan assigned', matchStatus: ['PENDING', 'CONFIRMED', 'IN_PRODUCTION', 'VIDEO_VERIFIED', 'SHIPPED', 'DELIVERED'] },
+                { stage: 2, title: 'Pure Fabric Selection & Dyeing', desc: 'Pure silk / chiffon drape natural dyeing', matchStatus: ['CONFIRMED', 'IN_PRODUCTION', 'VIDEO_VERIFIED', 'SHIPPED', 'DELIVERED'] },
+                { stage: 3, title: 'Artisan Adda Hand Embroidery', desc: 'Aari, Gota Patti, Pitta & Zardozi handwork', matchStatus: ['IN_PRODUCTION', 'VIDEO_VERIFIED', 'SHIPPED', 'DELIVERED'] },
+                { stage: 4, title: 'Finishing & Atelier Quality Check', desc: 'Tassel work, fall & hand hem finishing', matchStatus: ['VIDEO_VERIFIED', 'SHIPPED', 'DELIVERED'] },
+                { stage: 5, title: 'Pre-Dispatch Video Verification', desc: 'HD video proof shared with royal patron', matchStatus: ['VIDEO_VERIFIED', 'SHIPPED', 'DELIVERED'] },
+                { stage: 6, title: 'Insured Express Courier Dispatch', desc: targetOrder.trackingNumber ? `Tracking: ${targetOrder.trackingNumber}` : 'Dispatched via premium express transit', matchStatus: ['SHIPPED', 'DELIVERED'] }
+              ].map((step, idx) => {
+                const isCompleted = step.matchStatus.includes(targetOrder.orderStatus);
+                const isCurrent = targetOrder.orderStatus === step.matchStatus[0] || (idx === 2 && targetOrder.orderStatus === 'IN_PRODUCTION');
+                return `
+                  <div class="tracker-stage-step ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}">
+                    <div class="stage-step-dot">
+                      ${isCompleted ? '✓' : idx + 1}
+                    </div>
+                    <div class="stage-step-content">
+                      <div class="stage-step-title">${step.title}</div>
+                      <div class="stage-step-desc">${step.desc}</div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Items Ordered in this Creation -->
+          <div class="tracker-items-section">
+            <h4 class="tracker-section-heading">👗 Ordered Saree Masterpieces</h4>
+            <div class="tracker-items-grid">
+              ${targetOrder.items.map(item => `
+                <div class="tracker-item-card">
+                  <img src="${item.image}" alt="${item.title}" class="tracker-item-thumb">
+                  <div class="tracker-item-details">
+                    <h5 class="tracker-item-title">${item.title}</h5>
+                    <p class="tracker-item-spec">${item.fabric} · ${item.color} · Qty: ${item.quantity}</p>
+                    <span class="tracker-item-price">${item.priceFormatted}</span>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Shipping Details & Actions -->
+          <div class="tracker-footer-card">
+            <div>
+              <span class="sub-label">DELIVERY DESTINATION</span>
+              <div style="font-weight:600; color:var(--color-blue-royal); margin-top:0.25rem;">${targetOrder.shippingAddress?.fullName || targetOrder.userName}</div>
+              <div style="font-size:0.8rem; color:var(--color-text-body);">${targetOrder.shippingAddress ? `${targetOrder.shippingAddress.street}, ${targetOrder.shippingAddress.city}, ${targetOrder.shippingAddress.state} – ${targetOrder.shippingAddress.pinCode}` : 'Palace Address, Jodhpur, Rajasthan'}</div>
+              <div style="font-size:0.75rem; color:var(--color-text-muted); margin-top:0.2rem;">Contact: ${targetOrder.userPhone}</div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.5rem; align-items:flex-end;">
+              ${targetOrder.trackingNumber ? `
+                <div class="courier-pill-box">
+                  <span style="font-size:0.72rem; color:var(--color-text-muted);">COURIER AWB:</span>
+                  <strong style="color:var(--color-blue-royal);">${targetOrder.trackingNumber}</strong>
+                  <button type="button" class="btn-copy-tracking" data-tracking="${targetOrder.trackingNumber}">📋 Copy</button>
+                </div>
+              ` : ''}
+              <button class="btn-view-invoice" data-order-id="${targetOrder.id}" style="font-size:0.8rem; padding:0.45rem 1rem;">🧾 View GST Invoice</button>
+            </div>
+          </div>
+        </div>
+      ` : `
+        <div class="empty-state-box">
+          <div class="empty-state-icon">🔍</div>
+          <h3 class="empty-state-title">No Royal Order Found</h3>
+          <p class="empty-state-desc">Please verify your Order ID or contact our Jodhpur Atelier Concierge on WhatsApp with your phone number.</p>
+          <a href="https://wa.me/918824017443?text=Hello%20Vitasta,%20I%20need%20help%20tracking%20my%20order." target="_blank" rel="noopener" class="btn-primary-red" style="text-decoration:none;">Chat with Atelier Concierge</a>
+        </div>
+      `}
+    `;
+
+    document.getElementById('form-track-order-search')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = document.getElementById('track-search-input').value.trim();
+      renderAccountTracking(q);
+    });
+
+    container.querySelectorAll('.btn-demo-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        renderAccountTracking(btn.dataset.orderId);
+      });
+    });
+
+    container.querySelectorAll('.btn-copy-tracking').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(btn.dataset.tracking);
+        notify('Tracking AWB copied to clipboard! 📋');
+      });
+    });
+
+    container.querySelectorAll('.btn-view-invoice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const orderId = btn.dataset.orderId;
+        const order = allOrders.find(o => o.id === orderId);
+        if (order) openInvoiceModal(order);
+      });
+    });
+  }
+
+  // ==========================================
   // ROYAL ADMIN ATELIER DASHBOARD RENDERERS
   // ==========================================
   
@@ -812,9 +1028,24 @@
     const products = window.VITASTA_DATA ? window.VITASTA_DATA.products : [];
     const orders = getStored('vitasta_orders', DEFAULT_ORDERS);
     const users = getStored('vitasta_users', DEFAULT_USERS);
+    const reviews = getStored('vitasta_db_reviews', window.VITASTA_DATA?.reviews || []);
+    const coupons = getStored('vitasta_db_coupons', [
+      { id: 'cpn_1', code: 'ROYAL10', isActive: true },
+      { id: 'cpn_2', code: 'JODHPUR5', isActive: true },
+      { id: 'cpn_3', code: 'ATELIER2000', isActive: true }
+    ]);
+    const messages = getStored('vitasta_db_messages', [
+      { id: 'msg_1', status: 'READ' },
+      { id: 'msg_2', status: 'UNREAD' }
+    ]);
 
     const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
     const activeProduction = orders.filter(o => o.orderStatus === 'IN_PRODUCTION' || o.orderStatus === 'PENDING').length;
+    const activeCoupons = coupons.filter(c => c.isActive).length;
+    const unreadMessages = messages.filter(m => m.status === 'UNREAD').length;
+    const avgRating = reviews.length > 0
+      ? (reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / reviews.length).toFixed(2)
+      : '4.96';
 
     container.innerHTML = `
       <div class="admin-stats-strip">
@@ -840,10 +1071,24 @@
           </div>
         </div>
         <div class="admin-stat-card">
-          <div class="stat-icon-wrap" style="background: rgba(11,59,96,0.1); color: var(--color-blue-light);">👤</div>
+          <div class="stat-icon-wrap" style="background: rgba(212,175,55,0.15); color: var(--color-gold);">⭐</div>
           <div class="stat-info">
-            <span class="stat-number">${users.length}</span>
-            <span class="stat-label">Royal Registered Clients</span>
+            <span class="stat-number">${avgRating} (${reviews.length})</span>
+            <span class="stat-label">Patron Reviews</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrap" style="background: rgba(11,59,96,0.1); color: var(--color-blue-royal);">🏷️</div>
+          <div class="stat-info">
+            <span class="stat-number">${activeCoupons} Active</span>
+            <span class="stat-label">Royal Coupons</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrap" style="background: rgba(193,39,45,0.1); color: var(--color-red-regal);">✉️</div>
+          <div class="stat-info">
+            <span class="stat-number">${messages.length} (${unreadMessages} New)</span>
+            <span class="stat-label">Patron Inquiries</span>
           </div>
         </div>
       </div>
@@ -854,7 +1099,10 @@
         <div style="display:flex; flex-wrap:wrap; gap:0.75rem;">
           <button class="btn-primary-red" onclick="window.VitastaAdmin.switchTab('products')" style="border:none; cursor:pointer;">+ Add / Manage Sarees</button>
           <button class="btn-outline-royal" onclick="window.VitastaAdmin.switchTab('orders')">Update Dispatch Pipeline (${orders.length})</button>
-          <button class="btn-outline-royal" onclick="window.VitastaAdmin.switchTab('settings')">Edit Brand Policies</button>
+          <button class="btn-outline-royal" onclick="window.VitastaAdmin.switchTab('reviews')">Moderate Reviews (${reviews.length})</button>
+          <button class="btn-outline-royal" onclick="window.VitastaAdmin.switchTab('coupons')">Royal Coupons (${coupons.length})</button>
+          <button class="btn-outline-royal" onclick="window.VitastaAdmin.switchTab('messages')">Inquiries (${unreadMessages} Unread)</button>
+          <button class="btn-outline-royal" onclick="window.VitastaAdmin.switchTab('settings')">⚡ Multi-Tier Caching & Policies</button>
         </div>
       </div>
 
@@ -887,7 +1135,7 @@
                   <td>${o.items.map(i => i.title).join(', ').slice(0, 35)}...</td>
                   <td><strong>₹${o.total.toLocaleString('en-IN')}</strong></td>
                   <td><span class="order-status-badge status-${o.orderStatus.toLowerCase()}">${o.statusLabel || o.orderStatus}</span></td>
-                  <td><button class="btn-table-action" onclick="window.VitastaAdmin.editOrder('${o.id}')">Manage</button></td>
+                  <td><button class="btn-table-action" onclick="window.VitastaAdmin.switchTab('orders')">Manage</button></td>
                 </tr>
               `).join('')}
             </tbody>
@@ -1205,6 +1453,469 @@
     });
   }
 
+  // ==========================================
+  // ROYAL ADMIN REVIEWS & MODERATION (Thar Delight Style)
+  // ==========================================
+
+  function renderAdminReviews() {
+    const container = document.getElementById('admin-reviews-view');
+    if (!container) return;
+
+    const reviews = getStored('vitasta_db_reviews', window.VITASTA_DATA?.reviews || []);
+    const avgRating = reviews.length > 0 
+      ? (reviews.reduce((acc, r) => acc + (r.rating || 5), 0) / reviews.length).toFixed(2)
+      : '5.00';
+    const fiveStarCount = reviews.filter(r => r.rating === 5).length;
+
+    container.innerHTML = `
+      <div class="account-card-header">
+        <div>
+          <h3 class="account-card-title">Customer Reviews & Feedback Moderation (${reviews.length})</h3>
+          <p class="account-card-subtitle">Manage patron testimonials, feature reviews on home page, and verify handcraft feedback</p>
+        </div>
+        <button class="btn-primary-red" id="btn-admin-add-review" style="border:none; cursor:pointer;">+ Add Verified Review</button>
+      </div>
+
+      <!-- Reviews Summary Metrics -->
+      <div class="admin-stats-strip" style="margin-bottom:1.5rem;">
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrap" style="background:rgba(212,175,55,0.15); color:var(--color-gold);">⭐</div>
+          <div class="stat-info">
+            <span class="stat-number">${avgRating} / 5.0</span>
+            <span class="stat-label">Average Patron Rating</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrap" style="background:rgba(11,59,96,0.1); color:var(--color-blue-royal);">👑</div>
+          <div class="stat-info">
+            <span class="stat-number">${reviews.length}</span>
+            <span class="stat-label">Published Reviews</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrap" style="background:rgba(22,163,74,0.1); color:#16a34a);">✨</div>
+          <div class="stat-info">
+            <span class="stat-number">${fiveStarCount}</span>
+            <span class="stat-label">5-Star Testimonials</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Review Form (Collapsible) -->
+      <div id="admin-review-form-wrap" style="display:none; margin-bottom:2rem; padding:1.75rem; background:var(--color-cream); border-radius:1rem; border:1px solid var(--color-sand);">
+        <h4 style="font-family:var(--font-royal); color:var(--color-blue-royal); margin-bottom:1rem;">Add Verified Royal Patron Review</h4>
+        <form id="form-admin-save-review" class="account-form-grid">
+          <div class="form-group">
+            <label class="form-label">Patron Full Name</label>
+            <input type="text" class="form-input" id="adm-rev-name" placeholder="e.g. Maharani Radhika Raje" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">City, State</label>
+            <input type="text" class="form-input" id="adm-rev-loc" placeholder="e.g. Vadodara, Gujarat" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Associated Royal Saree / Collection</label>
+            <select class="form-input" id="adm-rev-prod">
+              ${(window.VITASTA_DATA?.products || []).map(p => `<option value="${p.title}">${p.title} (${p.category_name})</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Star Rating</label>
+            <select class="form-input" id="adm-rev-rating">
+              <option value="5" selected>★★★★★ (5 Stars - Exceptional)</option>
+              <option value="4">★★★★☆ (4 Stars - Very Good)</option>
+              <option value="3">★★★☆☆ (3 Stars)</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label">Review Headline</label>
+            <input type="text" class="form-input" id="adm-rev-headline" placeholder="e.g. Masterpiece Adda Embroidery & Ethereal Drape" required>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label">Detailed Patron Feedback</label>
+            <textarea class="form-textarea" id="adm-rev-comment" rows="3" placeholder="Patron's words regarding the craftsmanship, fabric quality, pre-dispatch video..." required></textarea>
+          </div>
+          <div class="form-action-full" style="display:flex; gap:1rem;">
+            <button type="submit" class="btn-primary-red" style="border:none; cursor:pointer;">Publish Review</button>
+            <button type="button" class="btn-outline-royal" id="btn-admin-cancel-review">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Reviews List Cards -->
+      <div class="admin-reviews-list-grid">
+        ${reviews.map(rev => `
+          <div class="admin-review-card-box">
+            <div class="admin-review-top-row">
+              <div class="admin-reviewer-meta">
+                <div class="reviewer-avatar-circle">${rev.author ? rev.author.charAt(0).toUpperCase() : '👑'}</div>
+                <div>
+                  <h4 class="reviewer-name-text">${rev.author}</h4>
+                  <div class="reviewer-loc-text">${rev.location || 'Patron'} · ${rev.date || 'Sep 2026'}</div>
+                </div>
+              </div>
+              <div class="review-stars-badge">
+                <span class="stars-gold">${'★'.repeat(rev.rating || 5)}${'☆'.repeat(5 - (rev.rating || 5))}</span>
+                <span class="rating-num">${rev.rating || 5}.0</span>
+              </div>
+            </div>
+
+            <div class="admin-review-product-tag">
+              👗 ${rev.product_title || rev.product_category || 'Handcrafted Saree'}
+            </div>
+
+            <h5 class="admin-review-title">&ldquo;${rev.title || 'Exceptional Royal Craftsmanship'}&rdquo;</h5>
+            <p class="admin-review-comment">${rev.comment}</p>
+
+            <div class="admin-review-actions-bar">
+              <span class="verified-badge-chip">✓ Verified Patron</span>
+              <div style="display:flex; gap:0.5rem;">
+                <button type="button" class="btn-delete-review btn-table-action-danger" data-rev-id="${rev.id}">Delete</button>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    document.getElementById('btn-admin-add-review')?.addEventListener('click', () => {
+      document.getElementById('admin-review-form-wrap').style.display = 'block';
+    });
+    document.getElementById('btn-admin-cancel-review')?.addEventListener('click', () => {
+      document.getElementById('admin-review-form-wrap').style.display = 'none';
+    });
+
+    document.getElementById('form-admin-save-review')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newRev = {
+        id: 'rev_' + Date.now(),
+        author: document.getElementById('adm-rev-name').value.trim(),
+        location: document.getElementById('adm-rev-loc').value.trim(),
+        product_title: document.getElementById('adm-rev-prod').value,
+        product_category: 'Bespoke Atelier Creation',
+        rating: parseInt(document.getElementById('adm-rev-rating').value, 10),
+        title: document.getElementById('adm-rev-headline').value.trim(),
+        comment: document.getElementById('adm-rev-comment').value.trim(),
+        date: new Date().toISOString().split('T')[0],
+        verified: true,
+        avatar_initial: document.getElementById('adm-rev-name').value.trim().charAt(0).toUpperCase()
+      };
+
+      if (window.VitastaDB && window.VitastaDB.review) {
+        window.VitastaDB.review.create(newRev);
+      } else {
+        const stored = getStored('vitasta_db_reviews', window.VITASTA_DATA?.reviews || []);
+        stored.unshift(newRev);
+        setStored('vitasta_db_reviews', stored);
+      }
+
+      notify('New verified patron review published! ⭐');
+      renderAdminReviews();
+      if (typeof window.renderVitastaCatalog === 'function') {
+        window.renderVitastaCatalog();
+      }
+    });
+
+    container.querySelectorAll('.btn-delete-review').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (confirm('Delete this patron review?')) {
+          const id = btn.dataset.revId;
+          if (window.VitastaDB && window.VitastaDB.review) {
+            window.VitastaDB.review.delete({ where: { id: id } });
+          }
+          let stored = getStored('vitasta_db_reviews', window.VITASTA_DATA?.reviews || []);
+          stored = stored.filter(r => r.id !== id);
+          setStored('vitasta_db_reviews', stored);
+          notify('Review removed.');
+          renderAdminReviews();
+          if (typeof window.renderVitastaCatalog === 'function') {
+            window.renderVitastaCatalog();
+          }
+        }
+      });
+    });
+  }
+
+  // ==========================================
+  // ROYAL ADMIN COUPONS & PROMOS (Thar Delight Style)
+  // ==========================================
+
+  function renderAdminCoupons() {
+    const container = document.getElementById('admin-coupons-view');
+    if (!container) return;
+
+    const coupons = getStored('vitasta_db_coupons', [
+      { id: 'cpn_1', code: 'ROYAL10', discountType: 'PERCENTAGE', discountValue: 10, minOrder: 15000, maxDiscount: 3000, isActive: true, usageCount: 42, expiry: '2026-12-31' },
+      { id: 'cpn_2', code: 'JODHPUR5', discountType: 'PERCENTAGE', discountValue: 5, minOrder: 10000, maxDiscount: 1500, isActive: true, usageCount: 68, expiry: '2026-12-31' },
+      { id: 'cpn_3', code: 'ATELIER2000', discountType: 'FLAT', discountValue: 2000, minOrder: 25000, maxDiscount: 2000, isActive: true, usageCount: 19, expiry: '2026-12-31' }
+    ]);
+
+    const activeCount = coupons.filter(c => c.isActive).length;
+    const totalRedemptions = coupons.reduce((sum, c) => sum + (c.usageCount || 0), 0);
+
+    container.innerHTML = `
+      <div class="account-card-header">
+        <div>
+          <h3 class="account-card-title">Royal Atelier Coupons & Promo Codes (${coupons.length})</h3>
+          <p class="account-card-subtitle">Manage promotional vouchers, festival privileges and WhatsApp booking discounts</p>
+        </div>
+        <button class="btn-primary-red" id="btn-admin-add-coupon" style="border:none; cursor:pointer;">+ Create Royal Coupon</button>
+      </div>
+
+      <!-- Coupon Metrics -->
+      <div class="admin-stats-strip" style="margin-bottom:1.5rem;">
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrap" style="background:rgba(11,59,96,0.1); color:var(--color-blue-royal);">🏷️</div>
+          <div class="stat-info">
+            <span class="stat-number">${activeCount} Active</span>
+            <span class="stat-label">Live Atelier Vouchers</span>
+          </div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="stat-icon-wrap" style="background:rgba(22,163,74,0.1); color:#16a34a);">🎁</div>
+          <div class="stat-info">
+            <span class="stat-number">${totalRedemptions}</span>
+            <span class="stat-label">Patron Redemptions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Coupon Form (Collapsible) -->
+      <div id="admin-coupon-form-wrap" style="display:none; margin-bottom:2rem; padding:1.75rem; background:var(--color-cream); border-radius:1rem; border:1px solid var(--color-sand);">
+        <h4 style="font-family:var(--font-royal); color:var(--color-blue-royal); margin-bottom:1rem;">Create New Royal Promo Voucher</h4>
+        <form id="form-admin-save-coupon" class="account-form-grid">
+          <div class="form-group">
+            <label class="form-label">Coupon Code (Uppercase)</label>
+            <input type="text" class="form-input" id="cpn-code" placeholder="e.g. DIWALI15" required style="text-transform:uppercase; font-weight:700; letter-spacing:1px;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Discount Type</label>
+            <select class="form-input" id="cpn-type" required>
+              <option value="PERCENTAGE">Percentage (%) Discount</option>
+              <option value="FLAT">Flat INR (₹) Amount Off</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Discount Value</label>
+            <input type="number" class="form-input" id="cpn-val" placeholder="e.g. 15 for 15% or 2000 for ₹2000" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Minimum Order Requirement (₹)</label>
+            <input type="number" class="form-input" id="cpn-min" placeholder="e.g. 15000" value="10000" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Maximum Discount Limit (₹)</label>
+            <input type="number" class="form-input" id="cpn-max" placeholder="e.g. 3000" value="3000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Expiry Date</label>
+            <input type="date" class="form-input" id="cpn-expiry" value="2026-12-31" required>
+          </div>
+          <div class="form-action-full" style="display:flex; gap:1rem;">
+            <button type="submit" class="btn-primary-red" style="border:none; cursor:pointer;">Save Royal Voucher</button>
+            <button type="button" class="btn-outline-royal" id="btn-admin-cancel-coupon">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Coupons Grid Cards -->
+      <div class="admin-coupons-grid">
+        ${coupons.map(cpn => `
+          <div class="admin-coupon-card-box ${cpn.isActive ? 'active-coupon' : 'inactive-coupon'}">
+            <div class="coupon-header-row">
+              <div class="coupon-code-chip">${cpn.code}</div>
+              <span class="coupon-status-badge ${cpn.isActive ? 'status-active' : 'status-inactive'}">
+                ${cpn.isActive ? '● Active' : '○ Disabled'}
+              </span>
+            </div>
+
+            <div class="coupon-discount-text">
+              ${cpn.discountType === 'PERCENTAGE' ? `${cpn.discountValue}% OFF` : `₹${cpn.discountValue.toLocaleString('en-IN')} FLAT OFF`}
+            </div>
+
+            <div class="coupon-terms-text">
+              Min. Order: <strong>₹${(cpn.minOrder || 0).toLocaleString('en-IN')}</strong> · Max Cap: <strong>₹${(cpn.maxDiscount || 0).toLocaleString('en-IN')}</strong>
+            </div>
+
+            <div class="coupon-meta-row">
+              <span>Expires: ${cpn.expiry || '2026-12-31'}</span>
+              <span><strong>${cpn.usageCount || 0}</strong> Patrons Used</span>
+            </div>
+
+            <div class="coupon-actions-row">
+              <button type="button" class="btn-toggle-coupon btn-table-action" data-cpn-id="${cpn.id}">
+                ${cpn.isActive ? 'Pause Code' : 'Activate Code'}
+              </button>
+              <button type="button" class="btn-delete-coupon btn-table-action-danger" data-cpn-id="${cpn.id}">Delete</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    document.getElementById('btn-admin-add-coupon')?.addEventListener('click', () => {
+      document.getElementById('admin-coupon-form-wrap').style.display = 'block';
+    });
+    document.getElementById('btn-admin-cancel-coupon')?.addEventListener('click', () => {
+      document.getElementById('admin-coupon-form-wrap').style.display = 'none';
+    });
+
+    document.getElementById('form-admin-save-coupon')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newCpn = {
+        id: 'cpn_' + Date.now(),
+        code: document.getElementById('cpn-code').value.trim().toUpperCase(),
+        discountType: document.getElementById('cpn-type').value,
+        discountValue: parseFloat(document.getElementById('cpn-val').value),
+        minOrder: parseFloat(document.getElementById('cpn-min').value) || 0,
+        maxDiscount: parseFloat(document.getElementById('cpn-max').value) || 0,
+        expiry: document.getElementById('cpn-expiry').value,
+        isActive: true,
+        usageCount: 0
+      };
+
+      if (window.VitastaDB && window.VitastaDB.coupon) {
+        window.VitastaDB.coupon.create(newCpn);
+      } else {
+        const stored = getStored('vitasta_db_coupons', []);
+        stored.unshift(newCpn);
+        setStored('vitasta_db_coupons', stored);
+      }
+
+      notify(`Royal Voucher "${newCpn.code}" is now active! 🏷️`);
+      renderAdminCoupons();
+    });
+
+    container.querySelectorAll('.btn-toggle-coupon').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.cpnId;
+        const stored = getStored('vitasta_db_coupons', []);
+        const cpn = stored.find(c => c.id === id);
+        if (cpn) {
+          cpn.isActive = !cpn.isActive;
+          setStored('vitasta_db_coupons', stored);
+          if (window.VitastaDB && window.VitastaDB.coupon) {
+            window.VitastaDB.coupon.update({ where: { id: id }, data: { isActive: cpn.isActive } });
+          }
+          notify(`Coupon ${cpn.code} ${cpn.isActive ? 'activated' : 'paused'}.`);
+          renderAdminCoupons();
+        }
+      });
+    });
+
+    container.querySelectorAll('.btn-delete-coupon').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (confirm('Delete this royal coupon code?')) {
+          const id = btn.dataset.cpnId;
+          let stored = getStored('vitasta_db_coupons', []);
+          stored = stored.filter(c => c.id !== id);
+          setStored('vitasta_db_coupons', stored);
+          if (window.VitastaDB && window.VitastaDB.coupon) {
+            window.VitastaDB.coupon.delete({ where: { id: id } });
+          }
+          notify('Coupon deleted.');
+          renderAdminCoupons();
+        }
+      });
+    });
+  }
+
+  // ==========================================
+  // ROYAL ADMIN BESPOKE INQUIRIES (Thar Delight Style)
+  // ==========================================
+
+  function renderAdminMessages() {
+    const container = document.getElementById('admin-messages-view');
+    if (!container) return;
+
+    const messages = getStored('vitasta_db_messages', [
+      { id: 'msg_1', name: 'Princess Rohini', phone: '+91 98290 11223', email: 'rohini@udaipurpalace.in', category: 'Banarasi Virasat', message: 'Inquiring for a bespoke crimson red kadhwa georgette for an October royal banquet. Can we add custom Gaji silk blouse embroidery?', status: 'READ', createdAt: '2026-09-15T14:30:00Z' },
+      { id: 'msg_2', name: 'Meenakshi Sundaram', phone: '+91 94440 55667', email: 'meenakshi.s@gmail.com', category: 'Riwaayat-e-Chiffon', message: 'Looking for sunset ombre chiffon with heavy cutdana tassels for my daughter’s sangeet in Chennai.', status: 'UNREAD', createdAt: '2026-09-18T09:15:00Z' }
+    ]);
+
+    const unreadCount = messages.filter(m => m.status === 'UNREAD').length;
+
+    container.innerHTML = `
+      <div class="account-card-header">
+        <div>
+          <h3 class="account-card-title">Patron Inquiries & Bespoke Messages (${messages.length})</h3>
+          <p class="account-card-subtitle">Consultation requests, custom color requests, and WhatsApp inquiry log</p>
+        </div>
+        ${unreadCount > 0 ? `<span class="membership-badge" style="background:var(--color-red-regal);">${unreadCount} Unread Requests</span>` : ''}
+      </div>
+
+      <div class="admin-messages-list-grid">
+        ${messages.map(msg => `
+          <div class="admin-message-card-box ${msg.status === 'UNREAD' ? 'unread-msg' : ''}">
+            <div class="admin-msg-header-row">
+              <div>
+                <div style="display:flex; align-items:center; gap:0.5rem;">
+                  <h4 class="msg-sender-name">${msg.name}</h4>
+                  <span class="msg-status-tag ${msg.status === 'UNREAD' ? 'tag-unread' : 'tag-resolved'}">${msg.status}</span>
+                </div>
+                <div class="msg-sender-contact">
+                  📞 <strong>${msg.phone || '—'}</strong> ${msg.email ? `· ✉️ ${msg.email}` : ''}
+                </div>
+              </div>
+              <div class="msg-time-text">
+                ${new Date(msg.createdAt || Date.now()).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+
+            <div class="msg-category-chip">
+              👑 Interest: <strong>${msg.category || 'General Consultation'}</strong>
+            </div>
+
+            <p class="msg-body-text">${msg.message}</p>
+
+            <div class="msg-actions-row">
+              <a href="https://wa.me/${(msg.phone || '').replace(/\D/g, '')}?text=${encodeURIComponent(`Hello ${msg.name}, Greetings from Vitasta by Smita Saraswat Atelier. Regarding your bespoke inquiry for ${msg.category}...`)}" target="_blank" rel="noopener" class="btn-primary-red" style="font-size:0.75rem; padding:0.4rem 0.9rem; text-decoration:none;">
+                💬 Open WhatsApp Chat
+              </a>
+              <button type="button" class="btn-resolve-msg btn-table-action" data-msg-id="${msg.id}">
+                ${msg.status === 'UNREAD' ? '✓ Mark as Read' : '↺ Mark Unread'}
+              </button>
+              <button type="button" class="btn-delete-msg btn-table-action-danger" data-msg-id="${msg.id}">Delete</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+
+    container.querySelectorAll('.btn-resolve-msg').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.msgId;
+        const stored = getStored('vitasta_db_messages', []);
+        const msg = stored.find(m => m.id === id);
+        if (msg) {
+          msg.status = msg.status === 'UNREAD' ? 'READ' : 'UNREAD';
+          setStored('vitasta_db_messages', stored);
+          if (window.VitastaDB && window.VitastaDB.message) {
+            window.VitastaDB.message.update({ where: { id: id }, data: { status: msg.status } });
+          }
+          notify(`Inquiry marked as ${msg.status}.`);
+          renderAdminMessages();
+        }
+      });
+    });
+
+    container.querySelectorAll('.btn-delete-msg').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (confirm('Delete this bespoke inquiry message?')) {
+          const id = btn.dataset.msgId;
+          let stored = getStored('vitasta_db_messages', []);
+          stored = stored.filter(m => m.id !== id);
+          setStored('vitasta_db_messages', stored);
+          if (window.VitastaDB && window.VitastaDB.message) {
+            window.VitastaDB.message.delete({ where: { id: id } });
+          }
+          notify('Inquiry deleted.');
+          renderAdminMessages();
+        }
+      });
+    });
+  }
+
   function renderAdminCustomers() {
     const container = document.getElementById('admin-customers-view');
     if (!container) return;
@@ -1451,6 +2162,15 @@
   // ATELIER ADMIN GLOBAL OBJECT
   // ==========================================
   
+  window.VitastaAccount = {
+    open: openAccountModal,
+    switchTab: switchAccountTab,
+    trackOrder(orderId) {
+      openAccountModal('tracking');
+      renderAccountTracking(orderId);
+    }
+  };
+
   window.VitastaAdmin = {
     open: openAdminModal,
     switchTab: switchAdminTab,
@@ -1522,17 +2242,70 @@
       document.getElementById('header-user-dropdown')?.classList.remove('show');
       openAccountModal('orders');
     });
+    document.getElementById('dropdown-opt-tracking')?.addEventListener('click', () => {
+      document.getElementById('header-user-dropdown')?.classList.remove('show');
+      openAccountModal('tracking');
+    });
     document.getElementById('dropdown-opt-addresses')?.addEventListener('click', () => {
       document.getElementById('header-user-dropdown')?.classList.remove('show');
       openAccountModal('addresses');
     });
     document.getElementById('dropdown-opt-admin')?.addEventListener('click', () => {
       document.getElementById('header-user-dropdown')?.classList.remove('show');
+      if (!currentUser || currentUser.role !== 'ADMIN') {
+        Auth.quickLogin('admin');
+      }
       openAdminModal('dashboard');
     });
     document.getElementById('dropdown-opt-logout')?.addEventListener('click', () => {
       document.getElementById('header-user-dropdown')?.classList.remove('show');
       Auth.logout();
+    });
+
+    // Quick 1-Click Demo Login Handlers
+    document.getElementById('btn-quick-login-admin')?.addEventListener('click', () => {
+      Auth.quickLogin('admin');
+      closeAllModals();
+      openAdminModal('dashboard');
+    });
+
+    document.getElementById('btn-quick-login-client')?.addEventListener('click', () => {
+      Auth.quickLogin('client');
+      closeAllModals();
+      openAccountModal('profile');
+    });
+
+    // Footer Quick Links
+    document.getElementById('footer-link-admin')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!currentUser || currentUser.role !== 'ADMIN') {
+        Auth.quickLogin('admin');
+      }
+      openAdminModal('dashboard');
+    });
+
+    document.getElementById('footer-bottom-admin-link')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!currentUser || currentUser.role !== 'ADMIN') {
+        Auth.quickLogin('admin');
+      }
+      openAdminModal('dashboard');
+    });
+
+    document.getElementById('footer-link-account')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!currentUser) {
+        Auth.quickLogin('client');
+      }
+      openAccountModal('profile');
+    });
+
+    document.getElementById('footer-link-tracking')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!currentUser) {
+        Auth.quickLogin('client');
+      }
+      openAccountModal('tracking');
     });
 
     // Auth Modal tab buttons
@@ -1606,6 +2379,42 @@
     document.querySelectorAll('.admin-nav-item').forEach(btn => {
       btn.addEventListener('click', () => switchAdminTab(btn.dataset.adminTab));
     });
+
+    // Hash Route Support (#admin, #admin-controls, #account, #track-order)
+    function handleHashRoute() {
+      const hash = window.location.hash;
+      if (hash === '#admin' || hash === '#admin-controls') {
+        if (!currentUser || currentUser.role !== 'ADMIN') {
+          Auth.quickLogin('admin');
+        }
+        openAdminModal('dashboard');
+      } else if (hash === '#account' || hash === '#profile') {
+        if (!currentUser) {
+          Auth.quickLogin('client');
+        }
+        openAccountModal('profile');
+      } else if (hash === '#track-order' || hash === '#tracking') {
+        if (!currentUser) {
+          Auth.quickLogin('client');
+        }
+        openAccountModal('tracking');
+      }
+    }
+
+    window.addEventListener('hashchange', handleHashRoute);
+    handleHashRoute();
+
+    // Global Key Shortcut: Ctrl+Shift+A or Alt+A to directly open Admin Controls
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) || (e.altKey && (e.key === 'A' || e.key === 'a'))) {
+        e.preventDefault();
+        if (!currentUser || currentUser.role !== 'ADMIN') {
+          Auth.quickLogin('admin');
+        }
+        openAdminModal('dashboard');
+      }
+    });
   });
 
 })();
+
