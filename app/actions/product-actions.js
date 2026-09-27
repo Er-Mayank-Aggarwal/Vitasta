@@ -82,6 +82,7 @@ export async function getProducts(options = {}) {
         where,
         include: {
           category: true,
+          inventory: true,
           images: {
             orderBy: { sortOrder: 'asc' },
           },
@@ -114,14 +115,18 @@ export async function getProducts(options = {}) {
  */
 export async function getProductBySlug(slug) {
   try {
-    const cacheKey = `product:slug:${slug}`;
+    if (!slug) return { success: false, error: 'Slug is required' };
+    const cleanSlug = decodeURIComponent(slug).trim();
+
+    const cacheKey = `product:slug:${cleanSlug}`;
     const cached = getCached(cacheKey);
     if (cached) return cached;
 
-    const product = await prisma.product.findUnique({
-      where: { slug },
+    let product = await prisma.product.findUnique({
+      where: { slug: cleanSlug },
       include: {
         category: true,
+        inventory: true,
         images: {
           orderBy: { sortOrder: 'asc' },
         },
@@ -134,6 +139,26 @@ export async function getProductBySlug(slug) {
         },
       },
     });
+
+    if (!product) {
+      product = await prisma.product.findFirst({
+        where: { slug: { equals: cleanSlug, mode: 'insensitive' } },
+        include: {
+          category: true,
+          inventory: true,
+          images: {
+            orderBy: { sortOrder: 'asc' },
+          },
+          reviews: {
+            where: { isPublished: true },
+            include: {
+              user: { select: { name: true, membershipTier: true, image: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      });
+    }
 
     if (!product) {
       return { success: false, error: 'Saree not found' };

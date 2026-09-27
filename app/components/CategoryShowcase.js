@@ -13,7 +13,7 @@ const collections = [
     tagline: 'Feather-Light Elegance & Fluid Drapes',
     sareesCount: '7 Royal Creations',
     images: [
-      'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675057/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/xztu76kgnn59tlhoc8zo.jpg',
+      'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675059/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/kqlh8uk0uo22iu4z4751.jpg',
       'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675063/vitasta/products/wine-mauve-ombre-chiffon-pitta-aari-tari-sequin-saree/az5ne1ehzgmwvuhhokv9.jpg',
       'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675034/vitasta/products/ivory-off-white-chiffon-gota-patti-pitta-sequin-saree/rpziy0rqmrqhup9objis.jpg',
       'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675046/vitasta/products/peacock-teal-emerald-green-chiffon-pitta-cutdana-sequin-saree/xm99qwsucsvntsnjftx5.jpg',

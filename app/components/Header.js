@@ -279,6 +279,7 @@ export default function Header() {
                   src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg"
                   alt="Vitasta unfolding serenity logo"
                   fill
+                  sizes="40px"
                   className="object-cover"
                 />
               </div>
@@ -543,6 +544,7 @@ export default function Header() {
                       src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg"
                       alt="Vitasta logo"
                       fill
+                      sizes="32px"
                       className="object-cover"
                     />
                   </div>

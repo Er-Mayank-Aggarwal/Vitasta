@@ -13,10 +13,13 @@ import {
   Eye,
   ExternalLink,
   CheckCircle2,
+  UploadCloud,
+  ImageIcon,
 } from 'lucide-react';
 import { createProduct, updateProduct, deleteProduct } from '@/app/actions/product-actions';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import MediaUploader from '@/app/components/MediaUploader';
 
 export default function AdminProductsClient({ initialProducts = [], categories = [] }) {
   const router = useRouter();
@@ -45,6 +48,7 @@ export default function AdminProductsClient({ initialProducts = [], categories =
     isActive: true,
     isFeatured: true,
     primaryImage: '',
+    galleryImages: [],
   };
 
   const [formData, setFormData] = useState(emptyForm);
@@ -66,6 +70,10 @@ export default function AdminProductsClient({ initialProducts = [], categories =
 
   const handleEdit = (product) => {
     setEditingProduct(product);
+    const existingImages = (product.images || [])
+      .map((img) => (typeof img === 'string' ? img : img.cdnUrl || img.assetPath))
+      .filter(Boolean);
+
     setFormData({
       title: product.title || product.name || '',
       price: product.price || '',
@@ -81,7 +89,8 @@ export default function AdminProductsClient({ initialProducts = [], categories =
       stockStatus: product.stockStatus || 'MADE_TO_ORDER',
       isActive: product.isActive !== undefined ? product.isActive : true,
       isFeatured: product.isFeatured !== undefined ? product.isFeatured : true,
-      primaryImage: product.primaryImage || product.image || '',
+      primaryImage: product.primaryImage || product.image || existingImages[0] || '',
+      galleryImages: existingImages.filter((url) => url !== (product.primaryImage || product.image)),
     });
     setError(null);
     setShowModal(true);
@@ -95,6 +104,11 @@ export default function AdminProductsClient({ initialProducts = [], categories =
     }
     setSaving(true);
     setError(null);
+
+    const allImages = [
+      formData.primaryImage,
+      ...(formData.galleryImages || []).filter((img) => img !== formData.primaryImage),
+    ].filter(Boolean);
 
     const payload = {
       title: formData.title,
@@ -113,7 +127,7 @@ export default function AdminProductsClient({ initialProducts = [], categories =
       isActive: formData.isActive,
       isFeatured: formData.isFeatured,
       primaryImage: formData.primaryImage || 'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg',
-      imageUrls: [formData.primaryImage].filter(Boolean),
+      imageUrls: allImages,
     };
 
     let result;
@@ -398,14 +412,78 @@ export default function AdminProductsClient({ initialProducts = [], categories =
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-neutral-700 font-semibold">Primary Image (Cloudinary CDN URL)</label>
-                <input
-                  type="text"
+              {/* Primary Image Upload via Signed Cloudinary CDN */}
+              <div className="pt-1">
+                <MediaUploader
                   value={formData.primaryImage}
-                  onChange={(e) => setFormData({ ...formData, primaryImage: e.target.value })}
-                  placeholder="https://res.cloudinary.com/sjl1rfvu/image/upload/..."
-                  className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-3.5 py-2 text-neutral-900"
+                  onChange={(cdnUrl) => {
+                    setFormData((prev) => ({
+                      ...prev,
+                      primaryImage: cdnUrl,
+                    }));
+                  }}
+                  folder="vitasta/products"
+                  label="Primary Saree Drape Image (Cloudinary CDN)"
+                  description="Drag & drop high-resolution saree image (JPEG, PNG, WEBP), or click to upload"
+                />
+              </div>
+
+              {/* Additional Gallery Drapes */}
+              <div className="space-y-2 pt-2 border-t border-neutral-100">
+                <div className="flex items-center justify-between">
+                  <label className="text-neutral-700 font-semibold flex items-center gap-1.5">
+                    <ImageIcon className="w-3.5 h-3.5 text-[#0B3B60]" />
+                    Additional Gallery Drapes ({formData.galleryImages?.length || 0})
+                  </label>
+                  <span className="text-[11px] text-neutral-400">Optional detail & pallu angles</span>
+                </div>
+
+                {/* Gallery Thumbnails List */}
+                {formData.galleryImages && formData.galleryImages.length > 0 && (
+                  <div className="flex flex-wrap gap-2 py-1">
+                    {formData.galleryImages.map((imgUrl, idx) => (
+                      <div
+                        key={idx}
+                        className="relative w-16 h-20 rounded-xl overflow-hidden border border-neutral-200 bg-neutral-900 group shrink-0"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`Gallery drape ${idx + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              galleryImages: prev.galleryImages.filter((_, i) => i !== idx),
+                            }));
+                          }}
+                          className="absolute top-1 right-1 p-0.5 rounded-full bg-rose-600 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Remove from gallery"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Extra Image Uploader */}
+                <MediaUploader
+                  value=""
+                  onChange={(cdnUrl) => {
+                    if (cdnUrl) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        galleryImages: [...(prev.galleryImages || []), cdnUrl],
+                      }));
+                    }
+                  }}
+                  folder="vitasta/products"
+                  label="Add Another Gallery Angle"
+                  description="Upload close-up adda embroidery, pallu drape, or blouse angle"
+                  compact={true}
                 />
               </div>
 

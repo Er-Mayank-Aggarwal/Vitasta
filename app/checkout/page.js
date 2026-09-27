@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCart } from '@/app/context/CartContext';
 import { useSession } from '@/lib/auth-client';
 import { createOrder } from '@/app/actions/checkout-actions';
+import { getUserAddresses, getUserProfile } from '@/app/actions/user-actions';
 import {
   ShoppingBag,
   ShieldCheck,
@@ -17,28 +18,168 @@ import {
   AlertCircle,
   Clock,
   Phone,
+  MapPin,
+  CheckCircle2,
+  Plus,
+  User,
+  Check,
+  ChevronRight,
 } from 'lucide-react';
+
+const INDIAN_STATES = [
+  'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam',
+  'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu',
+  'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir',
+  'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh',
+  'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha',
+  'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana',
+  'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+];
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { data: session } = useSession();
   const { items, cartTotal, clearCart } = useCart();
 
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState('new');
+  const [isLoadingAddresses, setIsLoadingAddresses] = useState(true);
+
   const [formData, setFormData] = useState({
-    fullName: session?.user?.name || '',
-    email: session?.user?.email || '',
-    phone: session?.user?.phone || '',
+    fullName: '',
+    email: '',
+    phone: '',
     addressLine1: '',
     addressLine2: '',
-    city: '',
+    city: 'Jodhpur',
     state: 'Rajasthan',
     pincode: '',
     notes: '',
     saveAddress: true,
   });
 
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
+  const [pincodeError, setPincodeError] = useState('');
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Load user profile & saved addresses when session is available
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadUserData() {
+      setIsLoadingAddresses(true);
+      try {
+        const [addresses, profile] = await Promise.all([
+          getUserAddresses(),
+          getUserProfile(),
+        ]);
+
+        if (!isMounted) return;
+
+        if (profile) {
+          setFormData((prev) => ({
+            ...prev,
+            fullName: prev.fullName || profile.name || session?.user?.name || '',
+            email: prev.email || profile.email || session?.user?.email || '',
+            phone: prev.phone || profile.phone || session?.user?.phone || '',
+          }));
+        } else if (session?.user) {
+          setFormData((prev) => ({
+            ...prev,
+            fullName: prev.fullName || session.user.name || '',
+            email: prev.email || session.user.email || '',
+            phone: prev.phone || session.user.phone || '',
+          }));
+        }
+
+        if (addresses && addresses.length > 0) {
+          setSavedAddresses(addresses);
+          const defaultAddr = addresses.find((a) => a.isDefault) || addresses[0];
+          setSelectedAddressId(defaultAddr.id);
+          setFormData((prev) => ({
+            ...prev,
+            fullName: defaultAddr.fullName || prev.fullName,
+            phone: defaultAddr.phone || prev.phone,
+            addressLine1: defaultAddr.addressLine1 || '',
+            addressLine2: defaultAddr.addressLine2 || '',
+            city: defaultAddr.city || 'Jodhpur',
+            state: defaultAddr.state || 'Rajasthan',
+            pincode: defaultAddr.pincode || '',
+          }));
+        } else {
+          setSelectedAddressId('new');
+        }
+      } catch (err) {
+        console.error('Failed to load user address book:', err);
+      } finally {
+        if (isMounted) setIsLoadingAddresses(false);
+      }
+    }
+
+    loadUserData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [session]);
+
+  // Handle saved address selection change
+  const handleSelectAddress = (addr) => {
+    if (addr === 'new') {
+      setSelectedAddressId('new');
+      setFormData((prev) => ({
+        ...prev,
+        addressLine1: '',
+        addressLine2: '',
+        city: 'Jodhpur',
+        state: 'Rajasthan',
+        pincode: '',
+        saveAddress: true,
+      }));
+    } else {
+      setSelectedAddressId(addr.id);
+      setFormData((prev) => ({
+        ...prev,
+        fullName: addr.fullName || prev.fullName,
+        phone: addr.phone || prev.phone,
+        addressLine1: addr.addressLine1 || '',
+        addressLine2: addr.addressLine2 || '',
+        city: addr.city || 'Jodhpur',
+        state: addr.state || 'Rajasthan',
+        pincode: addr.pincode || '',
+      }));
+    }
+  };
+
+  // Indian Postal PIN Code Auto-Lookup
+  const handlePincodeChange = async (val) => {
+    const clean = val.replace(/\D/g, '').slice(0, 6);
+    setFormData((prev) => ({ ...prev, pincode: clean }));
+    setPincodeError('');
+
+    if (clean.length === 6) {
+      setIsFetchingLocation(true);
+      try {
+        const res = await fetch(`https://api.postalpincode.in/pincode/${clean}`);
+        const data = await res.json();
+        if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice?.length > 0) {
+          const po = data[0].PostOffice[0];
+          setFormData((prev) => ({
+            ...prev,
+            city: po.District || po.Block || prev.city,
+            state: po.State || prev.state,
+          }));
+        } else {
+          setPincodeError('Could not auto-verify PIN code. Please select state/city manually.');
+        }
+      } catch (err) {
+        setPincodeError('Postal lookup timed out. Please enter details manually.');
+      } finally {
+        setIsFetchingLocation(false);
+      }
+    }
+  };
 
   const formattedTotal = new Intl.NumberFormat('en-IN', {
     style: 'currency',
@@ -74,17 +215,20 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
+      const isExistingAddress = selectedAddressId !== 'new';
+
       const orderPayload = {
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
+        addressId: isExistingAddress ? selectedAddressId : null,
         addressLine1: formData.addressLine1,
         addressLine2: formData.addressLine2 || null,
         city: formData.city,
         state: formData.state,
         pincode: formData.pincode,
         notes: formData.notes || null,
-        saveAddress: formData.saveAddress,
+        saveAddress: isExistingAddress ? false : formData.saveAddress,
         items: items.map((item) => ({
           id: item.id,
           title: item.title,
@@ -116,6 +260,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen py-10 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Header Banner */}
       <div className="text-center max-w-2xl mx-auto mb-10">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest text-[#0B3B60] bg-[#0B3B60]/10 mb-2 border border-[#0B3B60]/20">
           <Lock className="w-3.5 h-3.5 text-[#C1272D]" /> Sovereign Atelier Checkout
@@ -128,6 +273,24 @@ export default function CheckoutPage() {
         </p>
       </div>
 
+      {/* Guest Patron Sign-In Suggestion */}
+      {!session?.user && (
+        <div className="max-w-4xl mx-auto mb-6 p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <Sparkles className="w-4 h-4 text-[#C1272D] shrink-0" />
+            <span>
+              Already a Royal Patron? Sign in to automatically access your saved addresses & order history.
+            </span>
+          </div>
+          <Link
+            href="/account"
+            className="px-4 py-1.5 rounded-full bg-[#0B3B60] hover:bg-[#071E3D] text-white font-bold text-[11px] uppercase tracking-wider transition shrink-0"
+          >
+            Patron Sign In
+          </Link>
+        </div>
+      )}
+
       {error && (
         <div className="max-w-4xl mx-auto mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-3">
           <AlertCircle className="w-5 h-5 shrink-0" />
@@ -136,11 +299,12 @@ export default function CheckoutPage() {
       )}
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-        {/* Left Form: Delivery Address */}
+        {/* Left Form: Delivery Address & Patron Details */}
         <div className="lg:col-span-7 space-y-6">
+          {/* Section 1: Contact Information */}
           <div className="bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200 shadow-sm space-y-4">
             <h2 className="font-serif text-lg font-bold text-[#0B3B60] flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#C1272D]" /> 1. Delivery & Royal Patron Contact
+              <User className="w-4 h-4 text-[#C1272D]" /> 1. Royal Patron Contact
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -160,7 +324,7 @@ export default function CheckoutPage() {
 
               <div>
                 <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                  Phone (WhatsApp for Loom Video) *
+                  Phone (WhatsApp for Loom HD Video) *
                 </label>
                 <input
                   type="tel"
@@ -175,7 +339,7 @@ export default function CheckoutPage() {
 
             <div>
               <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                Email Address *
+                Email Address (For Invoice & Dispatch Tracking) *
               </label>
               <input
                 type="email"
@@ -186,83 +350,213 @@ export default function CheckoutPage() {
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
               />
             </div>
+          </div>
 
-            <div className="pt-2 border-t border-neutral-100">
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                Street Address / House No. *
-              </label>
-              <input
-                type="text"
-                required
-                placeholder="Flat / House No., Apartment, Street name"
-                value={formData.addressLine1}
-                onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white mb-3"
-              />
-
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                Landmark / Area (Optional)
-              </label>
-              <input
-                type="text"
-                placeholder="Near landmark or colony name"
-                value={formData.addressLine2}
-                onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
-                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
-              />
+          {/* Section 2: Delivery Address Selection */}
+          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200 shadow-sm space-y-5">
+            <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
+              <h2 className="font-serif text-lg font-bold text-[#0B3B60] flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-[#C1272D]" /> 2. Sovereign Delivery Destination
+              </h2>
+              {savedAddresses.length > 0 && (
+                <span className="text-[11px] font-semibold text-neutral-500">
+                  {savedAddresses.length} Saved {savedAddresses.length === 1 ? 'Address' : 'Addresses'}
+                </span>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                  City *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Jaipur"
-                  value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
-                />
-              </div>
+            {/* Saved Address Cards Carousel / Selector */}
+            {savedAddresses.length > 0 && (
+              <div className="space-y-3">
+                <p className="text-xs font-semibold text-neutral-700">
+                  Select a Saved Palace / Residence Address:
+                </p>
 
-              <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                  State *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Rajasthan"
-                  value={formData.state}
-                  onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
-                />
-              </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {savedAddresses.map((addr) => {
+                    const isSelected = selectedAddressId === addr.id;
+                    return (
+                      <div
+                        key={addr.id}
+                        onClick={() => handleSelectAddress(addr)}
+                        className={`relative p-4 rounded-xl border-2 transition cursor-pointer text-xs space-y-1.5 ${
+                          isSelected
+                            ? 'border-[#0B3B60] bg-[#0B3B60]/5 shadow-sm'
+                            : 'border-neutral-200 hover:border-neutral-300 bg-white'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-serif font-bold text-[#0B3B60]">
+                              {addr.fullName}
+                            </span>
+                            {addr.isDefault && (
+                              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-200">
+                                Default
+                              </span>
+                            )}
+                          </div>
+                          <div
+                            className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                              isSelected
+                                ? 'bg-[#0B3B60] border-[#0B3B60] text-white'
+                                : 'border-neutral-300'
+                            }`}
+                          >
+                            {isSelected && <Check size={11} strokeWidth={3} />}
+                          </div>
+                        </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                  PIN Code *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. 342001"
-                  value={formData.pincode}
-                  onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
-                  className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
-                />
-              </div>
-            </div>
+                        <p className="text-neutral-600 leading-relaxed line-clamp-2">
+                          {addr.addressLine1}
+                          {addr.addressLine2 ? `, ${addr.addressLine2}` : ''}
+                        </p>
 
-            <div>
+                        <p className="text-neutral-700 font-medium">
+                          {addr.city}, {addr.state} – <span className="font-mono">{addr.pincode}</span>
+                        </p>
+
+                        <p className="text-[11px] text-neutral-500 pt-1 flex items-center gap-1">
+                          <Phone size={11} /> {addr.phone}
+                        </p>
+                      </div>
+                    );
+                  })}
+
+                  {/* Option: Deliver to a New Address */}
+                  <div
+                    onClick={() => handleSelectAddress('new')}
+                    className={`p-4 rounded-xl border-2 border-dashed transition cursor-pointer text-xs flex flex-col items-center justify-center text-center gap-1.5 min-h-[120px] ${
+                      selectedAddressId === 'new'
+                        ? 'border-[#0B3B60] bg-[#0B3B60]/5 text-[#0B3B60] font-bold'
+                        : 'border-neutral-300 hover:border-[#0B3B60] text-neutral-600'
+                    }`}
+                  >
+                    <Plus size={18} className="text-[#C1272D]" />
+                    <span>+ Deliver to a Different / New Address</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* New Address Input Form (Shown if 'new' is selected or no saved addresses) */}
+            {(selectedAddressId === 'new' || savedAddresses.length === 0) && (
+              <div className="pt-3 border-t border-neutral-100 space-y-4">
+                {savedAddresses.length > 0 && (
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#0B3B60]">
+                    Enter New Delivery Address Details
+                  </h4>
+                )}
+
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Street Address / Palace Wing / House No. *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="House No., Apartment, Street name"
+                    value={formData.addressLine1}
+                    onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
+                    className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white mb-3"
+                  />
+
+                  <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                    Landmark / Area (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Near landmark or colony name"
+                    value={formData.addressLine2}
+                    onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
+                    className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                      PIN Code (Auto-Lookup) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={6}
+                      placeholder="e.g. 342001"
+                      value={formData.pincode}
+                      onChange={(e) => handlePincodeChange(e.target.value)}
+                      className="w-full px-3.5 py-2.5 text-xs font-mono rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
+                    />
+                    {isFetchingLocation && (
+                      <span className="text-[10px] text-[#0B3B60] block mt-0.5 animate-pulse">
+                        Verifying postal circle...
+                      </span>
+                    )}
+                    {pincodeError && (
+                      <span className="text-[10px] text-amber-700 block mt-0.5">
+                        {pincodeError}
+                      </span>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                      City *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Jaipur"
+                      value={formData.city}
+                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-neutral-700 mb-1">
+                      State *
+                    </label>
+                    <select
+                      value={formData.state}
+                      onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                      className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
+                    >
+                      {INDIAN_STATES.map((s) => (
+                        <option key={s} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Save Address Checkbox for logged-in users */}
+                {session?.user && (
+                  <div className="pt-2 flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      id="saveAddress"
+                      checked={formData.saveAddress}
+                      onChange={(e) => setFormData({ ...formData, saveAddress: e.target.checked })}
+                      className="w-4 h-4 rounded text-[#0B3B60] focus:ring-[#0B3B60] border-neutral-300"
+                    />
+                    <label htmlFor="saveAddress" className="text-xs text-neutral-700 cursor-pointer">
+                      Save this delivery address to my Royal Patron account for future orders
+                    </label>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Customization / Adda Notes */}
+            <div className="pt-3 border-t border-neutral-100">
               <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                Special Tailoring / Adda Customization Notes (Optional)
+                Special Adda Customization / Event Date Notes (Optional)
               </label>
               <textarea
                 rows={2}
-                placeholder="Mention any specific blouse unstitched requirements or event date..."
+                placeholder="Mention any specific blouse unstitched requirements, auspicious dates, or custom fall-pico instructions..."
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                 className="w-full px-3.5 py-2 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
@@ -285,7 +579,7 @@ export default function CheckoutPage() {
             <div className="divide-y divide-neutral-100 max-h-60 overflow-y-auto pr-1">
               {items.map((item) => (
                 <div key={item.id} className="py-3 flex items-center gap-3">
-                  <div className="relative w-14 h-16 rounded-lg overflow-hidden shrink-0 bg-neutral-100">
+                  <div className="relative w-14 h-16 rounded-lg overflow-hidden shrink-0 bg-neutral-100 border border-neutral-200">
                     {item.image && (
                       <Image
                         src={item.image}
@@ -336,7 +630,7 @@ export default function CheckoutPage() {
                 <Video className="w-3.5 h-3.5 text-[#C1272D]" /> Pre-Dispatch Loom Video Included
               </div>
               <p>
-                A high-definition video of your saree will be recorded and sent to your WhatsApp ({formData.phone || 'provided number'}) before dispatch.
+                A high-definition video of your saree drape and zari finishing will be recorded and shared via WhatsApp ({formData.phone || 'your phone number'}) before sealing.
               </p>
             </div>
 

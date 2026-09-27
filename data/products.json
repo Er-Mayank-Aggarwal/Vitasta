@@ -24,15 +24,9 @@
     },
     "images": [
       {
-        "original_filename": "00000039-PHOTO-2026-09-16-16-35-07.jpg",
-        "asset_path": "https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675057/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/xztu76kgnn59tlhoc8zo.jpg",
-        "is_primary": true,
-        "cdn_url": "https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675057/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/xztu76kgnn59tlhoc8zo.jpg"
-      },
-      {
         "original_filename": "00000041-PHOTO-2026-09-16-16-36-21.jpg",
         "asset_path": "https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675059/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/kqlh8uk0uo22iu4z4751.jpg",
-        "is_primary": false,
+        "is_primary": true,
         "cdn_url": "https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675059/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/kqlh8uk0uo22iu4z4751.jpg"
       },
       {
@@ -54,7 +48,7 @@
         "cdn_url": "https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675061/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/zgvfbblkdzcmjwnpspyt.jpg"
       }
     ],
-    "primary_image": "https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675057/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/xztu76kgnn59tlhoc8zo.jpg"
+    "primary_image": "https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675059/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/kqlh8uk0uo22iu4z4751.jpg"
   },
   {
     "id": 2,

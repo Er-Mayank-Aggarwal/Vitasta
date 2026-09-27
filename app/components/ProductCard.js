@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, ShoppingBag, Sparkles, Check } from 'lucide-react';
+import { Heart, ShoppingBag, Sparkles, Check, Lock } from 'lucide-react';
 import { useCart } from '@/app/context/CartContext';
+import { useSession } from '@/lib/auth-client';
 import { toggleWishlist } from '@/app/actions/wishlist-actions';
 
 export default function ProductCard({ product, isShortlisted = false }) {
+  const { data: session } = useSession();
   const { addToCart } = useCart();
   const [shortlisted, setShortlisted] = useState(isShortlisted);
   const [isAdding, setIsAdding] = useState(false);
@@ -37,13 +39,15 @@ export default function ProductCard({ product, isShortlisted = false }) {
   const handleAddBag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsAdding(true);
-    addToCart(product, 1);
-    setAddedSuccess(true);
-    setTimeout(() => {
-      setIsAdding(false);
-      setAddedSuccess(false);
-    }, 1200);
+    const success = addToCart(product, 1);
+    if (success) {
+      setIsAdding(true);
+      setAddedSuccess(true);
+      setTimeout(() => {
+        setIsAdding(false);
+        setAddedSuccess(false);
+      }, 1200);
+    }
   };
 
   return (
@@ -90,11 +94,15 @@ export default function ProductCard({ product, isShortlisted = false }) {
             type="button"
             onClick={handleAddBag}
             disabled={isAdding}
-            className="w-full py-2.5 px-4 rounded-xl bg-[#0B3B60] hover:bg-[#062238] text-white font-medium text-xs tracking-wider uppercase shadow-lg transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 px-4 rounded-xl bg-[#0B3B60] hover:bg-[#062238] text-white font-medium text-xs tracking-wider uppercase shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
           >
             {addedSuccess ? (
               <>
                 <Check className="w-4 h-4 text-emerald-400" /> Added to Bag
+              </>
+            ) : !session?.user ? (
+              <>
+                <Lock className="w-4 h-4 text-amber-300" /> Sign In to Add
               </>
             ) : (
               <>

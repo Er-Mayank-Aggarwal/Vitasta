@@ -80,6 +80,7 @@ export default function HeroSection() {
                   alt="Vitasta unfolding serenity royal banner"
                   fill
                   priority
+                  sizes="(max-width: 1024px) 100vw, 500px"
                   className="object-contain object-center group-hover:scale-102 transition-transform duration-500"
                 />
               </div>

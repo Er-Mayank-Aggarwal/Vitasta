@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Mail, Phone, MapPin, Sparkles, Send, ShieldCheck, Video, CheckCircle2, Code2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Sparkles, Send, ShieldCheck, Video, CheckCircle2 } from 'lucide-react';
 import { subscribeNewsletter } from '@/app/actions/contact-actions';
 
 export default function Footer() {
@@ -157,11 +157,6 @@ export default function Footer() {
               <li>
                 <Link href="/account" className="hover:text-[#90c4ff] transition">
                   Patron Portal
-                </Link>
-              </li>
-              <li>
-                <Link href="/api-docs" className="hover:text-[#90c4ff] transition flex items-center gap-1 text-[#90c4ff]">
-                  <Code2 className="w-3.5 h-3.5" /> API Specs
                 </Link>
               </li>
             </ul>

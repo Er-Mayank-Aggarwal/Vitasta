@@ -70,15 +70,26 @@ export async function updateUserAvatar(imageDataUrl) {
 }
 
 /**
- * Get user orders with items and status timeline
+ * Get user orders with items, status timeline, shipment, and address
  */
 export async function getUserOrders() {
-  const userId = await getUserId();
-  if (!userId) return [];
+  const session = await getSession();
+  const userId = session?.userId || null;
+  const userEmail = session?.user?.email || null;
+
+  if (!userId && !userEmail) return [];
 
   try {
+    const orConditions = [];
+    if (userId) orConditions.push({ userId });
+    if (userEmail) {
+      orConditions.push({ userEmail: { equals: userEmail, mode: 'insensitive' } });
+    }
+
     const orders = await prisma.order.findMany({
-      where: { userId },
+      where: {
+        OR: orConditions,
+      },
       orderBy: { createdAt: 'desc' },
       include: {
         history: {

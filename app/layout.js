@@ -32,7 +32,7 @@ export const metadata = {
     description: 'Unfolding Serenity — Handcrafted royal sarees of Rajasthan.',
     images: [
       {
-        url: 'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675057/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/xztu76kgnn59tlhoc8zo.jpg',
+        url: 'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675059/vitasta/products/sunset-ombre-chiffon-cutdana-moti-sequin-saree/kqlh8uk0uo22iu4z4751.jpg',
         width: 1200,
         height: 800,
         alt: 'Vitasta Saree Atelier',

@@ -23,6 +23,7 @@ import {
 import { updateOrderStatus } from '@/app/actions/admin-actions';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import MediaUploader from '@/app/components/MediaUploader';
 
 const statusConfig = {
   pending: {
@@ -383,15 +384,19 @@ export default function AdminOrdersClient({ initialOrders = [] }) {
               </div>
 
               <div>
-                <label className="block text-neutral-700 font-semibold mb-1">
-                  Pre-Dispatch Loom Video Inspection URL (Cloudinary / Vimeo / YouTube)
-                </label>
-                <input
-                  type="url"
-                  placeholder="https://res.cloudinary.com/.../saree-inspection.mp4"
+                <MediaUploader
                   value={editFields.videoUrl}
-                  onChange={(e) => setEditFields({ ...editFields, videoUrl: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900"
+                  onChange={(cdnUrl) => {
+                    setEditFields((prev) => ({
+                      ...prev,
+                      videoUrl: cdnUrl,
+                    }));
+                  }}
+                  folder="vitasta/orders/loom-videos"
+                  resourceType="video"
+                  label="Pre-Dispatch Loom Video Inspection"
+                  description="Drag & drop MP4 loom inspection video, or click to upload directly to Cloudinary"
+                  compact={true}
                 />
               </div>
 

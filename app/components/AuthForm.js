@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { User, Lock, Mail, UserPlus, LogIn, CheckCircle2, AlertCircle, Eye, EyeOff, Sparkles, ShieldCheck } from 'lucide-react';
+import { User, Lock, Mail, UserPlus, LogIn, CheckCircle2, AlertCircle, Eye, EyeOff, Sparkles, ShieldCheck, X } from 'lucide-react';
 import { signIn, signUp } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 
@@ -28,7 +28,7 @@ function GoogleLogo({ size = 16 }) {
   );
 }
 
-export default function AuthForm({ onSuccess, isModal = false }) {
+export default function AuthForm({ onSuccess, onClose, isModal = false, customTitle, customSubtitle }) {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
@@ -62,40 +62,39 @@ export default function AuthForm({ onSuccess, isModal = false }) {
           return;
         }
 
-        setSuccess('Signed in successfully! Redirecting...');
+        setSuccess('Successfully signed in to Atelier!');
         setTimeout(() => {
           if (onSuccess) onSuccess();
-          router.push('/account');
           router.refresh();
-        }, 600);
+        }, 500);
       } else {
         const { data, error: authError } = await signUp.email({
+          name: formData.name,
           email: formData.email,
           password: formData.password,
-          name: formData.name,
+          phone: formData.phone,
         });
 
         if (authError) {
-          setError(authError.message || 'Could not register patron. Please try again.');
+          setError(authError.message || 'Failed to create patron account.');
           setIsLoading(false);
           return;
         }
 
-        setSuccess('Patron account created! Welcome to Vitasta Atelier.');
+        setSuccess('Royal Patron account created successfully!');
         setTimeout(() => {
           if (onSuccess) onSuccess();
-          router.push('/account');
           router.refresh();
-        }, 600);
+        }, 500);
       }
     } catch (err) {
-      setError(err.message || 'An unexpected error occurred. Please try again.');
+      setError(err.message || 'An unexpected error occurred.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleQuickLogin = (email, password, name = '') => {
+  const handleQuickLogin = (email, password, name) => {
     setFormData({
       name,
       email,
@@ -121,7 +120,19 @@ export default function AuthForm({ onSuccess, isModal = false }) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white border border-neutral-200 rounded-2xl shadow-xl p-4 sm:p-7 text-[#1A1A1A] max-h-[90vh] overflow-y-auto">
+    <div className="relative w-full max-w-md mx-auto bg-white border border-neutral-200 rounded-2xl shadow-xl p-4 sm:p-7 text-[#1A1A1A] max-h-[90vh] overflow-y-auto">
+      {/* Close button for modal */}
+      {isModal && onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1.5 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition cursor-pointer z-10"
+          aria-label="Close dialog"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      )}
+
       {/* Header */}
       <div className="text-center mb-4">
         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-[#0B3B60]/10 text-[#0B3B60] border border-[#0B3B60]/20 mb-1.5">
@@ -129,12 +140,12 @@ export default function AuthForm({ onSuccess, isModal = false }) {
           Vitasta Royal Portal
         </span>
         <h2 className="text-lg sm:text-2xl font-serif font-bold text-[#0B3B60] tracking-wide">
-          {isLogin ? 'Sign In to Atelier' : 'Become a Royal Patron'}
+          {customTitle || (isLogin ? 'Sign In to Atelier' : 'Become a Royal Patron')}
         </h2>
         <p className="text-[11px] sm:text-xs text-neutral-500 mt-0.5">
-          {isLogin
+          {customSubtitle || (isLogin
             ? 'Access your bespoke orders, Loom video proof & admin tools'
-            : 'Register for exclusive saree previews and concierge care'}
+            : 'Register for exclusive saree previews and concierge care')}
         </p>
       </div>
 

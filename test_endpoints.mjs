@@ -26,9 +26,7 @@ const endpoints = [
   { name: 'Admin Patron Directory', path: '/admin-controls/customers', expectedStatus: 200 },
   { name: 'Admin Concierge Inquiries', path: '/admin-controls/messages', expectedStatus: 200 },
 
-  // API Documentation & Authentication
-  { name: 'Interactive Swagger UI', path: '/api-docs', expectedStatus: 200 },
-  { name: 'OpenAPI 3.0 JSON Specification', path: '/api/docs/spec', expectedStatus: 200 },
+  // Authentication
   { name: 'Better Auth Session Endpoint', path: '/api/auth/get-session', expectedStatus: 200 },
 ];
 

@@ -1,12 +1,16 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useSession } from '@/lib/auth-client';
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
+  const { data: session } = useSession();
   const [items, setItems] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalSubtitle, setAuthModalSubtitle] = useState('');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,7 +35,21 @@ export function CartProvider({ children }) {
     }
   }, [items, mounted]);
 
+  const openAuthModal = (subtitle = '') => {
+    if (subtitle) setAuthModalSubtitle(subtitle);
+    setIsAuthModalOpen(true);
+  };
+
   const addToCart = (product, quantity = 1, openDrawer = false) => {
+    // Gate: User must be signed in to add items to bag
+    if (!session?.user) {
+      setAuthModalSubtitle(
+        `Please sign in or register your Royal Patron account to add "${product.title}" to your Atelier Bag.`
+      );
+      setIsAuthModalOpen(true);
+      return false;
+    }
+
     setItems((prev) => {
       const existingIndex = prev.findIndex((item) => item.id === product.id);
       if (existingIndex > -1) {
@@ -58,6 +76,7 @@ export function CartProvider({ children }) {
     if (openDrawer) {
       setIsDrawerOpen(true);
     }
+    return true;
   };
 
   const removeFromCart = (id) => {
@@ -97,6 +116,11 @@ export function CartProvider({ children }) {
         cartCount,
         isDrawerOpen,
         setIsDrawerOpen,
+        isAuthModalOpen,
+        setIsAuthModalOpen,
+        authModalSubtitle,
+        setAuthModalSubtitle,
+        openAuthModal,
       }}
     >
       {children}

@@ -63,7 +63,9 @@ export async function getAdminStats() {
       },
     };
   } catch (error) {
-    console.error('getAdminStats error:', error);
+    if (error.message !== 'Not authenticated' && !error.message?.includes('Not authorized')) {
+      console.error('getAdminStats error:', error);
+    }
     return { success: false, error: error.message };
   }
 }
@@ -106,7 +108,9 @@ export async function getAdminOrders(statusFilter = 'ALL') {
 
     return { success: true, orders: formattedOrders };
   } catch (error) {
-    console.error('getAdminOrders error:', error);
+    if (error.message !== 'Not authenticated' && !error.message?.includes('Not authorized')) {
+      console.error('getAdminOrders error:', error);
+    }
     return { success: false, error: error.message, orders: [] };
   }
 }
@@ -114,19 +118,33 @@ export async function getAdminOrders(statusFilter = 'ALL') {
 /**
  * Update order status, dispatch video, tracking number
  */
-export async function updateOrderStatus(params) {
+export async function updateOrderStatus(orderIdOrParams, optionalData = {}) {
   try {
     await requireAdmin();
 
+    let orderId;
+    let payload = {};
+
+    if (typeof orderIdOrParams === 'string') {
+      orderId = orderIdOrParams;
+      payload = optionalData || {};
+    } else if (orderIdOrParams && typeof orderIdOrParams === 'object') {
+      orderId = orderIdOrParams.orderId;
+      payload = orderIdOrParams;
+    }
+
+    if (!orderId) {
+      return { success: false, error: 'Order ID is required' };
+    }
+
     const {
-      orderId,
       orderStatus,
       statusLabel,
       preDispatchVideoUrl,
       trackingNumber,
       courierName,
       notes,
-    } = params;
+    } = payload;
 
     const dataToUpdate = {};
     if (orderStatus) dataToUpdate.orderStatus = orderStatus.toUpperCase();
@@ -136,25 +154,87 @@ export async function updateOrderStatus(params) {
     if (courierName !== undefined) dataToUpdate.courierName = courierName;
     if (notes !== undefined) dataToUpdate.notes = notes;
 
-    const updated = await prisma.order.update({
+    const existingOrder = await prisma.order.findUnique({
       where: { id: orderId },
-      data: {
-        ...dataToUpdate,
-        history: orderStatus ? {
+      include: { items: true },
+    });
+
+    if (!existingOrder) {
+      return { success: false, error: 'Order not found' };
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      // Check if order is transitioning to CANCELLED or RETURNED from an active state -> Restock inventory
+      const newStatusUpper = orderStatus ? orderStatus.toUpperCase() : null;
+      const wasActive = existingOrder.orderStatus !== 'CANCELLED' && existingOrder.orderStatus !== 'RETURNED';
+      const isNowCancelled = newStatusUpper === 'CANCELLED' || newStatusUpper === 'RETURNED';
+
+      if (wasActive && isNowCancelled && existingOrder.items.length > 0) {
+        for (const item of existingOrder.items) {
+          const inv = await tx.inventory.findUnique({ where: { productId: item.productId } });
+          if (inv) {
+            const newQty = inv.quantity + item.quantity;
+            const newReserved = Math.max(0, inv.reservedQuantity - item.quantity);
+            await tx.inventory.update({
+              where: { productId: item.productId },
+              data: {
+                quantity: newQty,
+                reservedQuantity: newReserved,
+              },
+            });
+
+            // If product was marked out of stock, restore it
+            await tx.product.update({
+              where: { id: item.productId },
+              data: { stockStatus: 'READY_TO_SHIP' },
+            });
+          }
+        }
+      }
+
+      const orderUpdated = await tx.order.update({
+        where: { id: orderId },
+        data: {
+          ...dataToUpdate,
+          history: orderStatus ? {
+            create: {
+              status: orderStatus.toUpperCase(),
+              note: notes || `Status updated to ${statusLabel || orderStatus}`,
+            },
+          } : undefined,
+        },
+        include: {
+          history: { orderBy: { createdAt: 'desc' } },
+          items: true,
+          shipment: true,
+        },
+      });
+
+      // Also sync or upsert Shipment table if tracking or courier provided
+      if (trackingNumber !== undefined || courierName !== undefined) {
+        await tx.shipment.upsert({
+          where: { orderId },
           create: {
-            status: orderStatus.toUpperCase(),
-            note: notes || `Status updated to ${orderStatus}`,
+            orderId,
+            trackingNumber: trackingNumber || orderUpdated.trackingNumber || null,
+            courierName: courierName || orderUpdated.courierName || 'BlueDart Sovereign Luxury Courier',
           },
-        } : undefined,
-      },
-      include: {
-        history: true,
-        items: true,
-      },
+          update: {
+            ...(trackingNumber !== undefined ? { trackingNumber } : {}),
+            ...(courierName !== undefined ? { courierName } : {}),
+          },
+        });
+      }
+
+      return orderUpdated;
     });
 
     revalidatePath('/admin-controls/orders');
+    revalidatePath('/admin-controls/inventory');
+    revalidatePath('/admin-controls/products');
+    revalidatePath('/shop');
     revalidatePath('/account');
+    revalidatePath(`/invoice/${orderId}`);
 
     return { success: true, order: updated };
   } catch (error) {
@@ -207,7 +287,9 @@ export async function getAdminCustomers() {
 
     return { success: true, customers };
   } catch (error) {
-    console.error('getAdminCustomers error:', error);
+    if (error.message !== 'Not authenticated' && !error.message?.includes('Not authorized')) {
+      console.error('getAdminCustomers error:', error);
+    }
     return { success: false, error: error.message, customers: [] };
   }
 }
@@ -227,7 +309,9 @@ export async function updateCustomerRole(userId, newRole) {
     revalidatePath('/admin-controls/customers');
     return { success: true, user: updated };
   } catch (error) {
-    console.error('updateCustomerRole error:', error);
+    if (error.message !== 'Not authenticated' && !error.message?.includes('Not authorized')) {
+      console.error('updateCustomerRole error:', error);
+    }
     return { success: false, error: error.message };
   }
 }
@@ -256,7 +340,9 @@ export async function getAdminMessages() {
 
     return { success: true, messages: formatted };
   } catch (error) {
-    console.error('getAdminMessages error:', error);
+    if (error.message !== 'Not authenticated' && !error.message?.includes('Not authorized')) {
+      console.error('getAdminMessages error:', error);
+    }
     return { success: false, error: error.message, messages: [] };
   }
 }
@@ -317,7 +403,9 @@ export async function getAdminSubscribers() {
 
     return { success: true, subscribers: formatted };
   } catch (error) {
-    console.error('getAdminSubscribers error:', error);
+    if (error.message !== 'Not authenticated' && !error.message?.includes('Not authorized')) {
+      console.error('getAdminSubscribers error:', error);
+    }
     return { success: false, error: error.message, subscribers: [] };
   }
 }
@@ -369,7 +457,9 @@ export async function getAdminReviews() {
 
     return { success: true, reviews: formatted };
   } catch (error) {
-    console.error('getAdminReviews error:', error);
+    if (error.message !== 'Not authenticated' && !error.message?.includes('Not authorized')) {
+      console.error('getAdminReviews error:', error);
+    }
     return { success: false, error: error.message, reviews: [] };
   }
 }
