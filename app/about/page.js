@@ -20,8 +20,8 @@ export default function AboutPage() {
         <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest text-[#C1272D] bg-rose-50 border border-rose-200">
           <Sparkles className="w-3.5 h-3.5" /> Born in Jodhpur, Rajasthan
         </span>
-        <h1 className="font-serif text-3xl sm:text-5xl font-bold text-[#0B3B60]">
-          Unfolding Serenity
+        <h1 className="font-brand font-samarkan text-4xl sm:text-6xl font-normal text-[#0B3B60] tracking-wide">
+          unfolding serenity
         </h1>
         <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-light">
           Vitasta by Smita Saraswat is a premium handcrafted saree atelier from Jodhpur, Rajasthan, inspired by the timeless grace and grandeur of the royal women of Rajasthan.

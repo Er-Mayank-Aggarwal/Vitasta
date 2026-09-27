@@ -274,7 +274,7 @@ export default function Header() {
               onClick={(e) => handleNavClick(e, '/')}
               className="flex items-center gap-2.5 group text-left"
             >
-              <div className="w-10 h-10 rounded-lg overflow-hidden relative shrink-0 border border-neutral-200">
+              <div className="w-10 h-10 rounded-lg overflow-hidden relative shrink-0 border border-neutral-200 shadow-2xs">
                 <Image
                   src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg"
                   alt="Vitasta unfolding serenity logo"
@@ -284,10 +284,10 @@ export default function Header() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="font-serif text-xl sm:text-2xl font-bold text-[#0B3B60] tracking-tight leading-none">
+                <span className="font-brand font-samarkan text-2xl sm:text-3xl font-normal text-[#0B3B60] tracking-wide leading-tight group-hover:text-[#C1272D] transition-colors">
                   <span className="text-[#C1272D]">V</span>itasta
                 </span>
-                <span className="font-serif italic text-[11px] text-neutral-500 tracking-wide mt-0.5">
+                <span className="font-brand font-samarkan text-[11px] text-neutral-500 tracking-wide">
                   unfolding serenity
                 </span>
               </div>
@@ -549,10 +549,10 @@ export default function Header() {
                     />
                   </div>
                   <div>
-                    <span className="font-serif text-lg font-bold text-white tracking-wider">
-                      <span className="text-[#C1272D]">V</span>ITASTA
+                    <span className="font-brand font-samarkan text-2xl font-normal text-white tracking-wide">
+                      <span className="text-[#C1272D]">V</span>itasta
                     </span>
-                    <span className="block text-[10px] text-[#90c4ff] font-serif italic">
+                    <span className="block text-[10px] text-[#90c4ff] font-brand font-samarkan tracking-wide">
                       unfolding serenity
                     </span>
                   </div>

@@ -105,8 +105,8 @@ export default function AdminLayoutClient({ children, user }) {
           {/* Logo Header */}
           <div className="p-6 border-b border-white/10 flex items-center justify-between">
             <Link href="/admin-controls" className="flex flex-col">
-              <span className="font-serif text-xl font-bold tracking-[0.2em] text-[#F3E5AB]">
-                VITASTA
+              <span className="font-brand font-samarkan text-2xl font-normal tracking-wide text-[#F3E5AB]">
+                <span className="text-[#ff8a8e]">V</span>itasta
               </span>
               <span className="text-[9px] uppercase tracking-[0.25em] text-[#D4AF37] font-semibold flex items-center gap-1 mt-0.5">
                 👑 Atelier Admin Panel

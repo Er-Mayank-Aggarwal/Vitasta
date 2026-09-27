@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vitasta Saree Atelier — Complete 0-to-1 Cloud Setup & Netlify Deployment Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0B3B60;
+      --primary-dark: #071E3D;
+      --crimson: #C1272D;
+      --gold: #C5A059;
+      --gold-light: #FBF6E9;
+      --bg: #FAF9F6;
+      --card-bg: #FFFFFF;
+      --text: #1F2937;
+      --text-muted: #6B7280;
+      --border: #E5E7EB;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 24px;
+      box-shadow: 0 12px 48px rgba(11, 59, 96, 0.08);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #ffffff;
+      padding: 44px 40px;
+      text-align: center;
+      position: relative;
+      border-bottom: 4px solid var(--gold);
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 140px;
+      height: 4px;
+      background: var(--crimson);
+    }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .brand-logo-img {
+      width: 80px;
+      height: 80px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+      border: 2px solid rgba(197, 160, 89, 0.6);
+      background: #ffffff;
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.35em;
+      color: #F4E8C1;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .doc-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .doc-badge {
+      display: inline-block;
+      background: rgba(197, 160, 89, 0.25);
+      border: 1px solid var(--gold);
+      color: #ffffff;
+      padding: 5px 16px;
+      border-radius: 50px;
+      font-size: 11.5px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    /* Content */
+    .content {
+      padding: 44px;
+    }
+
+    .intro-box {
+      background: #F8FAFC;
+      border-left: 4px solid var(--primary);
+      padding: 20px 24px;
+      border-radius: 0 14px 14px 0;
+      margin-bottom: 36px;
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.65;
+    }
+
+    .intro-box strong {
+      color: var(--primary);
+    }
+
+    /* Overview Cards */
+    .overview-grid {
+      display: grid;
+      grid-cols: 1;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    @media (min-width: 640px) {
+      .overview-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .overview-card {
+      background: #FAF9F6;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .overview-card-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--crimson);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .overview-card-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .overview-card-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Steps */
+    .step-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+      page-break-inside: avoid;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #F1F5F9;
+      padding-bottom: 14px;
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .step-badge {
+      font-size: 11px;
+      color: #0369A1;
+      background: #E0F2FE;
+      padding: 3px 10px;
+      border-radius: 50px;
+      font-weight: 600;
+      margin-left: auto;
+    }
+
+    .subheading {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 16px 0 8px 0;
+    }
+
+    ol.step-list, ul.step-list {
+      padding-left: 22px;
+      margin-bottom: 18px;
+      font-size: 13.5px;
+      color: #374151;
+      line-height: 1.7;
+    }
+
+    ol.step-list li, ul.step-list li {
+      margin-bottom: 10px;
+    }
+
+    .code-block {
+      background: #0F172A;
+      color: #E2E8F0;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      overflow-x: auto;
+      margin: 14px 0;
+      border: 1px solid #1E293B;
+      line-height: 1.6;
+    }
+
+    .code-var {
+      color: #38BDF8;
+      font-weight: 600;
+    }
+
+    .code-val {
+      color: #A7F3D0;
+    }
+
+    .code-comment {
+      color: #94A3B8;
+      font-style: italic;
+    }
+
+    .callout {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 12.5px;
+      color: #92400E;
+      margin: 14px 0;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      line-height: 1.55;
+    }
+
+    .callout-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    .callout-success {
+      background: #F0FDF4;
+      border-color: #BBF7D0;
+      color: #166534;
+    }
+
+    .callout-info {
+      background: #EFF6FF;
+      border-color: #BFDBFE;
+      color: #1E40AF;
+    }
+
+    /* Table */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      margin: 24px 0;
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .summary-table th {
+      background: var(--primary);
+      color: #ffffff;
+      text-align: left;
+      padding: 14px 16px;
+      font-weight: 600;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .summary-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: #374151;
+      vertical-align: top;
+    }
+
+    .summary-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .summary-table tr:nth-child(even) {
+      background: #F8FAFC;
+    }
+
+    .key-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--primary);
+      background: #EFF6FF;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #DBEAFE;
+      display: inline-block;
+    }
+
+    .btn-link {
+      display: inline-block;
+      background: var(--primary);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 8px;
+      margin-top: 6px;
+    }
+
+    /* Footer */
+    .footer {
+      background: #F8FAFC;
+      border-top: 1px solid var(--border);
+      padding: 28px 40px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .footer strong {
+      color: var(--primary);
+    }
+
+    @media print {
+      body {
+        padding: 0;
+        background: #ffffff;
+      }
+      .container {
+        box-shadow: none;
+        border: none;
+        max-width: 100%;
+      }
+      .step-card {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-container">
+        <img src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg" alt="Vitasta Saree Atelier Logo" class="brand-logo-img">
+      </div>
+      <div class="brand-subtitle">by Smita Saraswat • Jodhpur Atelier</div>
+      <h1 class="doc-title">Complete 0-to-1 Cloud Setup & Netlify Guide</h1>
+      <span class="doc-badge">Ground-Zero Account Creation & Production Deployment Manual</span>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="intro-box">
+        <strong>Namaste!</strong> If you are setting up <strong>Vitasta Saree Atelier</strong> for the very first time from scratch, follow this friendly step-by-step guide. You will create 4 free cloud services (Database, Photos, Google Sign-in, and Netlify Hosting) and launch your royal store live in under 20 minutes!
+      </div>
+
+      <!-- Overview Roadmap -->
+      <div class="overview-grid">
+        <div class="overview-card">
+          <div class="overview-card-num">Step 1</div>
+          <div class="overview-card-title">Neon Database</div>
+          <div class="overview-card-desc">Free PostgreSQL storage for sarees & orders</div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-card-num">Step 2</div>
+          <div class="overview-card-title">Cloudinary</div>
+          <div class="overview-card-desc">High-res photos & loom inspection videos</div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-card-num">Step 3</div>
+          <div class="overview-card-title">Google Login</div>
+          <div class="overview-card-desc">1-Click customer sign-in with Google</div>
+        </div>
+        <div class="overview-card">
+          <div class="overview-card-num">Step 4</div>
+          <div class="overview-card-title">Netlify Hosting</div>
+          <div class="overview-card-desc">Launch store live with free SSL certificate</div>
+        </div>
+      </div>
+
+      <!-- STEP 1: NEON DATABASE FROM SCRATCH -->
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-title">Create Database on Neon (Free Tier)</div>
+          <div class="step-badge">Database</div>
+        </div>
+        <p style="font-size: 13.5px; color: #4B5563; margin-bottom: 12px;">
+          Neon gives you a modern serverless PostgreSQL database that automatically saves your products, orders, patron shortlist, and reviews.
+        </p>
+
+        <ol class="step-list">
+          <li>Go to <strong style="color: var(--primary);">https://neon.tech</strong> and click <strong>"Sign Up"</strong> (you can sign up with your Google account).</li>
+          <li>Click <strong>"Create a Project"</strong>:
+            <ul style="margin-top: 6px; padding-left: 20px;">
+              <li><strong>Project name:</strong> <code>vitasta-atelier</code></li>
+              <li><strong>Region:</strong> Select <code>Asia Pacific (Singapore)</code> or closest to India.</li>
+              <li><strong>Postgres version:</strong> Default (16 or 17).</li>
+            </ul>
+          </li>
+          <li>Click <strong>"Create Project"</strong>.</li>
+          <li>On the dashboard under <strong>Connection Details</strong>:
+            <ul style="margin-top: 6px; padding-left: 20px;">
+              <li>Check the box for <strong>"Pooled connection"</strong>.</li>
+              <li>Select <strong>Prisma</strong> or <strong>Node.js</strong> connection string format.</li>
+            </ul>
+          </li>
+          <li>Copy your entire connection string. It will look like this:</li>
+        </ol>
+
+        <div class="code-block">
+          <span class="code-comment"># Your DATABASE_URL:</span><br>
+          <span class="code-var">DATABASE_URL</span>=<span class="code-val">"postgresql://neondb_owner:YOUR_PASSWORD@ep-young-dust-aoun8xk9-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&schema=vitasta"</span>
+        </div>
+
+        <div class="callout callout-info">
+          <span class="callout-icon">💡</span>
+          <span><strong>Pro Tip:</strong> Append <code>&schema=vitasta</code> to the end of the URL to ensure all tables are organized in your atelier schema.</span>
+        </div>
+      </div>
+
+      <!-- STEP 2: CLOUDINARY FROM SCRATCH -->
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-title">Create Media Storage on Cloudinary (Free Tier)</div>
+          <div class="step-badge">Photos & Video CDN</div>
+        </div>
+        <p style="font-size: 13.5px; color: #4B5563; margin-bottom: 12px;">
+          Cloudinary serves ultra-fast HD saree photography and pre-dispatch Loom inspection videos worldwide.
+        </p>
+
+        <ol class="step-list">
+          <li>Go to <strong style="color: var(--primary);">https://cloudinary.com/users/register_free</strong> and create a free account.</li>
+          <li>Once logged in, look at your main <strong>Dashboard</strong> under <strong>"Product Environment Credentials"</strong>.</li>
+          <li>You will see three values:
+            <ul style="margin-top: 6px; padding-left: 20px;">
+              <li><strong>Cloud Name</strong> (e.g. <code>sjl1rfvu</code>)</li>
+              <li><strong>API Key</strong> (e.g. <code>278911177331486</code>)</li>
+              <li><strong>API Secret</strong> (click the eye icon to reveal)</li>
+            </ul>
+          </li>
+        </ol>
+
+        <div class="code-block">
+          <span class="code-var">CLOUDINARY_CLOUD_NAME</span>=<span class="code-val">"YOUR_CLOUD_NAME"</span><br>
+          <span class="code-var">CLOUDINARY_API_KEY</span>=<span class="code-val">"YOUR_API_KEY"</span><br>
+          <span class="code-var">CLOUDINARY_API_SECRET</span>=<span class="code-val">"YOUR_API_SECRET"</span>
+        </div>
+      </div>
+
+      <!-- STEP 3: GOOGLE OAUTH FROM SCRATCH -->
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-title">Create Google 1-Click Login (Google Cloud)</div>
+          <div class="step-badge">Google Sign-In</div>
+        </div>
+        <p style="font-size: 13.5px; color: #4B5563; margin-bottom: 12px;">
+          Allows your customers to sign in with one tap using their Google accounts.
+        </p>
+
+        <ol class="step-list">
+          <li>Go to <strong style="color: var(--primary);">https://console.cloud.google.com</strong> and sign in with your business Google account.</li>
+          <li>Click the project dropdown at the top > click <strong>"New Project"</strong> > Name it <code>Vitasta Saree Atelier</code> > click <strong>Create</strong>.</li>
+          <li>In the search bar, type <strong>"OAuth consent screen"</strong> and open it:
+            <ul style="margin-top: 6px; padding-left: 20px;">
+              <li>User Type: <strong>External</strong> > click <strong>Create</strong>.</li>
+              <li>App name: <code>Vitasta Saree Atelier</code></li>
+              <li>User support email: <code>vitastabysmita@gmail.com</code></li>
+              <li>Developer contact: Your email.</li>
+              <li>Click <strong>Save and Continue</strong> through the scopes and test users.</li>
+            </ul>
+          </li>
+          <li>In the left sidebar, click <strong>"Credentials"</strong> > click <strong>"+ CREATE CREDENTIALS"</strong> > select <strong>"OAuth client ID"</strong>:
+            <ul style="margin-top: 6px; padding-left: 20px;">
+              <li>Application type: <strong>Web application</strong>.</li>
+              <li>Name: <code>Vitasta Web Client</code>.</li>
+              <li><strong>Authorized JavaScript origins:</strong> Add your Netlify URL or custom domain (e.g. <code>https://vitasta.luxury</code> or <code>https://vitasta.netlify.app</code>).</li>
+              <li><strong>Authorized redirect URIs:</strong> Add your domain followed by <code>/api/auth/callback/google</code> (e.g. <code>https://vitasta.luxury/api/auth/callback/google</code>).</li>
+            </ul>
+          </li>
+          <li>Click <strong>Create</strong>. A popup will display your <strong>Client ID</strong> and <strong>Client Secret</strong>.</li>
+        </ol>
+
+        <div class="code-block">
+          <span class="code-var">GOOGLE_CLIENT_ID</span>=<span class="code-val">"YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"</span><br>
+          <span class="code-var">GOOGLE_CLIENT_SECRET</span>=<span class="code-val">"YOUR_GOOGLE_CLIENT_SECRET"</span>
+        </div>
+      </div>
+
+      <!-- STEP 4: NETLIFY SETUP & DEPLOY -->
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div class="step-title">Deploy on Netlify & Add Environment Variables</div>
+          <div class="step-badge">Live Deployment</div>
+        </div>
+        <p style="font-size: 13.5px; color: #4B5563; margin-bottom: 12px;">
+          Connect your GitHub repository to Netlify, paste your keys, and launch the site live.
+        </p>
+
+        <ol class="step-list">
+          <li>Go to <strong style="color: var(--primary);">https://app.netlify.com</strong> and click <strong>"Sign Up"</strong> (using your GitHub account).</li>
+          <li>Click <strong>"Add new site"</strong> > select <strong>"Import an existing project"</strong> > choose <strong>GitHub</strong>.</li>
+          <li>Select your <strong>Vitasta</strong> repository.</li>
+          <li>Under <strong>Build settings</strong>, Netlify will auto-detect Next.js:
+            <ul style="margin-top: 6px; padding-left: 20px;">
+              <li><strong>Build command:</strong> <code>npm run build</code> (or <code>prisma generate && next build</code>)</li>
+              <li><strong>Publish directory:</strong> <code>.next</code></li>
+            </ul>
+          </li>
+          <li>Click on <strong>"Add environment variables"</strong> (or go to <strong>Site configuration > Environment variables</strong>).</li>
+          <li>Copy and paste the entire master list below into your Netlify variables!</li>
+        </ol>
+
+        <!-- MASTER ENV BLOCK -->
+        <div class="code-block">
+          <span class="code-comment"># --- Copy & Paste this entire block into Netlify (Replace YOUR_ values) ---</span><br><br>
+          <span class="code-var">DATABASE_URL</span>=<span class="code-val">"postgresql://neondb_owner:YOUR_DATABASE_PASSWORD@YOUR_NEON_HOST-pooler.c-2.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&schema=vitasta"</span><br>
+          <span class="code-var">BETTER_AUTH_SECRET</span>=<span class="code-val">"fn/sIN6//a6izWd3gmKk4Dj7Y4MeMJh5+fimMHwschA="</span><br>
+          <span class="code-var">BETTER_AUTH_URL</span>=<span class="code-val">"https://your-site.netlify.app"</span><br>
+          <span class="code-var">NEXT_PUBLIC_APP_URL</span>=<span class="code-val">"https://your-site.netlify.app"</span><br>
+          <span class="code-var">GOOGLE_CLIENT_ID</span>=<span class="code-val">"YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com"</span><br>
+          <span class="code-var">GOOGLE_CLIENT_SECRET</span>=<span class="code-val">"YOUR_GOOGLE_CLIENT_SECRET"</span><br>
+          <span class="code-var">CLOUDINARY_CLOUD_NAME</span>=<span class="code-val">"YOUR_CLOUDINARY_CLOUD_NAME"</span><br>
+          <span class="code-var">CLOUDINARY_API_KEY</span>=<span class="code-val">"YOUR_CLOUDINARY_API_KEY"</span><br>
+          <span class="code-var">CLOUDINARY_API_SECRET</span>=<span class="code-val">"YOUR_CLOUDINARY_API_SECRET"</span><br>
+          <span class="code-var">NEXT_PUBLIC_ENABLE_DEMO_LOGIN</span>=<span class="code-val">"false"</span>
+        </div>
+
+        <ol class="step-list" start="7">
+          <li>Click <strong>"Deploy Vitasta"</strong>.</li>
+          <li>Netlify will build your site and provide your live URL (e.g. <code>https://vitasta-atelier.netlify.app</code>)!</li>
+        </ol>
+
+        <div class="callout callout-success">
+          <span class="callout-icon">👑</span>
+          <span><strong>First Time Seed:</strong> Once deployed, your products and admin account (<code>admin@vitasta.com</code>) are ready in the database. You can immediately sign in to <code>/admin-controls</code> and start managing your sarees!</span>
+        </div>
+      </div>
+
+      <!-- SUMMARY TABLE -->
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 20px; color: var(--primary); margin: 32px 0 12px 0;">
+        Quick Reference: All 10 Environment Variables
+      </h2>
+
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Variable Key</th>
+            <th>Service / Purpose</th>
+            <th>Where to Get It</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="key-badge">DATABASE_URL</span></td>
+            <td>Neon PostgreSQL (Pooled)</td>
+            <td><a href="https://console.neon.tech" target="_blank" style="color: #0369A1; font-weight: 600;">Neon Console</a> > Project > Connection String</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">BETTER_AUTH_SECRET</span></td>
+            <td>256-bit Session Encryption Key</td>
+            <td>Pre-generated ready in this guide</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">BETTER_AUTH_URL</span></td>
+            <td>Your Live Domain URL</td>
+            <td>Your Netlify URL or custom domain (e.g. <code>https://vitasta.luxury</code>)</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">NEXT_PUBLIC_APP_URL</span></td>
+            <td>Public Frontend Domain</td>
+            <td>Same live URL with <code>https://</code></td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">GOOGLE_CLIENT_ID</span></td>
+            <td>Google Cloud OAuth</td>
+            <td><a href="https://console.cloud.google.com" target="_blank" style="color: #0369A1; font-weight: 600;">Google Cloud Console</a> > APIs & Services > Credentials</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">GOOGLE_CLIENT_SECRET</span></td>
+            <td>Google Cloud OAuth Secret</td>
+            <td>Same OAuth Client ID details popup</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">CLOUDINARY_CLOUD_NAME</span></td>
+            <td>Cloudinary Account Name</td>
+            <td><a href="https://cloudinary.com/console" target="_blank" style="color: #0369A1; font-weight: 600;">Cloudinary Dashboard</a> > Account Details</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">CLOUDINARY_API_KEY</span></td>
+            <td>Cloudinary Access Key</td>
+            <td>Cloudinary Dashboard > API Key</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">CLOUDINARY_API_SECRET</span></td>
+            <td>Cloudinary Private Secret</td>
+            <td>Cloudinary Dashboard > API Secret</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">NEXT_PUBLIC_ENABLE_DEMO_LOGIN</span></td>
+            <td>Production Security Toggle</td>
+            <td>Set to <code>false</code> to disable 1-click test buttons</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p><strong>VITASTA Saree Atelier</strong> • Handcrafted Royal Sarees of Jodhpur, Rajasthan</p>
+      <p style="margin-top: 4px;">Atelier Concierge: +91 88240 17443 • vitastabysmita@gmail.com</p>
+    </div>
+  </div>
+
+</body>
+</html>

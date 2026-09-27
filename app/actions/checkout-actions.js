@@ -6,7 +6,7 @@ import { placeOrderSchema } from '@/lib/validations';
 import { revalidatePath } from 'next/cache';
 
 /**
- * Place a new Atelier Bespoke Order / Consultation with Atomic Inventory Locks
+ * Place a new Atelier Bespoke Order / Consultation with Atomic Inventory Locks & Server-Side Price Verification
  */
 export async function createOrder(orderInput) {
   try {
@@ -24,15 +24,48 @@ export async function createOrder(orderInput) {
       }
     }
 
-    const subtotal = validated.items.reduce(
-      (sum, item) => sum + Number(item.price) * Number(item.quantity),
-      0
-    );
+    // 1. Server-Side Price Verification: Fetch canonical products from DB to prevent client price tampering
+    const productIds = validated.items.map((i) => i.id);
+    const dbProducts = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        isActive: true,
+        stockStatus: true,
+        primaryImage: true,
+        fabric: true,
+        color: true,
+        category: { select: { name: true } },
+      },
+    });
+
+    const productMap = new Map(dbProducts.map((p) => [p.id, p]));
+
+    // Verify all requested products exist and are active
+    for (const item of validated.items) {
+      const dbProduct = productMap.get(item.id);
+      if (!dbProduct) {
+        return { success: false, error: `Product "${item.title}" is no longer available in the atelier catalog.` };
+      }
+      if (!dbProduct.isActive) {
+        return { success: false, error: `Product "${dbProduct.title}" is currently unavailable.` };
+      }
+    }
+
+    // Compute canonical subtotal from DB prices
+    const subtotal = validated.items.reduce((sum, item) => {
+      const dbProduct = productMap.get(item.id);
+      const verifiedUnitPrice = Number(dbProduct.price);
+      return sum + verifiedUnitPrice * Number(item.quantity);
+    }, 0);
+
     const total = subtotal; // Complimentary shipping & finishing
 
     // Execute atomic transaction for inventory lock & order creation
     const createdOrder = await prisma.$transaction(async (tx) => {
-      // 1. Concurrency Lock & Stock Verification for every saree in the bag
+      // Concurrency Lock & Stock Verification for every saree in the bag
       for (const item of validated.items) {
         let inv = await tx.inventory.findUnique({
           where: { productId: item.id },
@@ -78,7 +111,7 @@ export async function createOrder(orderInput) {
         }
       }
 
-      // 2. Handle Address Book Integration
+      // Handle Address Book Integration
       let addressId = validated.addressId || null;
       if (userId && validated.saveAddress && !addressId) {
         try {
@@ -103,7 +136,7 @@ export async function createOrder(orderInput) {
 
       const orderNumber = `VSA-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
 
-      // 3. Create Order and all related entities atomically
+      // Create Order and all related entities atomically with verified server-side prices
       const order = await tx.order.create({
         data: {
           orderNumber,
@@ -136,16 +169,19 @@ export async function createOrder(orderInput) {
             },
           ]),
           items: {
-            create: validated.items.map((item) => ({
-              productId: item.id,
-              title: item.title,
-              category: item.category || 'Royal Saree',
-              fabric: item.fabric || 'Pure Silk',
-              color: item.color || 'Royal Classic',
-              unitPrice: Number(item.price),
-              quantity: Number(item.quantity),
-              image: item.image,
-            })),
+            create: validated.items.map((item) => {
+              const dbProduct = productMap.get(item.id);
+              return {
+                productId: item.id,
+                title: dbProduct.title || item.title,
+                category: dbProduct.category?.name || item.category || 'Royal Saree',
+                fabric: dbProduct.fabric || item.fabric || 'Pure Silk',
+                color: dbProduct.color || item.color || 'Royal Classic',
+                unitPrice: Number(dbProduct.price), // Verified DB price
+                quantity: Number(item.quantity),
+                image: dbProduct.primaryImage || item.image,
+              };
+            }),
           },
           payment: {
             create: {
@@ -195,9 +231,9 @@ export async function createOrder(orderInput) {
 }
 
 /**
- * Fetch Order details by ID (for Confirmation / Invoice / Status Tracking)
+ * Fetch Order details by ID (with Owner/Admin verification for PII security)
  */
-export async function getOrderById(orderId) {
+export async function getOrderById(orderId, options = {}) {
   try {
     let order = await prisma.order.findUnique({
       where: { id: orderId },
@@ -229,7 +265,18 @@ export async function getOrderById(orderId) {
       return { success: false, error: 'Order not found' };
     }
 
-    return { success: true, order };
+    // Authorization & IDOR protection:
+    // If strict authorization is enabled or checked, verify user matches or is admin
+    const session = await getSession();
+    const isOwner = session?.userId && (order.userId === session.userId || order.userEmail?.toLowerCase() === session.user?.email?.toLowerCase());
+    const isAdmin = session?.user && (session.user.role === 'ADMIN' || session.user.role === 'OWNER');
+
+    // If caller is neither owner nor admin and requested in a secure context:
+    if (!isOwner && !isAdmin && options.requireAuth) {
+      return { success: false, error: 'Unauthorized access to order invoice' };
+    }
+
+    return { success: true, order, isAuthorized: isOwner || isAdmin };
   } catch (error) {
     console.error('getOrderById error:', error);
     return { success: false, error: 'Failed to fetch order details' };

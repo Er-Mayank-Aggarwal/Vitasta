@@ -136,9 +136,9 @@ export default function AuthForm({ onSuccess, onClose, isModal = false, customTi
 
       {/* Header */}
       <div className="text-center mb-4">
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-[#0B3B60]/10 text-[#0B3B60] border border-[#0B3B60]/20 mb-1.5">
-          <Sparkles className="w-3 h-3 text-[#C1272D]" />
-          Vitasta Royal Portal
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#0B3B60]/10 text-[#0B3B60] border border-[#0B3B60]/20 mb-2">
+          <Sparkles className="w-3.5 h-3.5 text-[#C1272D]" />
+          <span className="font-brand font-samarkan text-sm tracking-wide">Vitasta</span> Royal Portal
         </span>
         <h2 className="text-lg sm:text-2xl font-serif font-bold text-[#0B3B60] tracking-wide">
           {customTitle || (isLogin ? 'Sign In to Atelier' : 'Create an Account')}
@@ -150,37 +150,39 @@ export default function AuthForm({ onSuccess, onClose, isModal = false, customTi
         </p>
       </div>
 
-      {/* 1-Click Quick Demo Login Shortcuts */}
-      <div className="mb-3 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 text-xs">
-        <div className="font-semibold text-[#0B3B60] mb-1.5 flex items-center justify-between text-[11px]">
-          <span className="flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-[#C1272D]" /> 1-Click Demo Login
-          </span>
-          <span className="text-[9px] uppercase font-bold tracking-wider text-[#C1272D]">Instant Access</span>
+      {/* 1-Click Quick Demo Login Shortcuts (Development & Sandbox Mode Only) */}
+      {(process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_ENABLE_DEMO_LOGIN === 'true') && (
+        <div className="mb-3 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 text-xs">
+          <div className="font-semibold text-[#0B3B60] mb-1.5 flex items-center justify-between text-[11px]">
+            <span className="flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-[#C1272D]" /> 1-Click Demo Login
+            </span>
+            <span className="text-[9px] uppercase font-bold tracking-wider text-[#C1272D]">Instant Access</span>
+          </div>
+          <div className="grid grid-cols-2 gap-1.5">
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('admin@vitasta.com', 'password123', 'Smita Saraswat')}
+              className="p-2 rounded-lg bg-white border border-neutral-200 text-left hover:border-[#0B3B60] hover:bg-neutral-50 transition shadow-xs cursor-pointer"
+            >
+              <div className="font-bold text-[#0B3B60] text-[11px] flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-[#0B3B60]" /> Atelier Admin
+              </div>
+              <div className="text-[10px] text-neutral-600 font-mono truncate">admin@vitasta.com</div>
+            </button>
+            <button
+              type="button"
+              onClick={() => handleQuickLogin('patron@vitasta.luxury', 'password123', 'Maharani Gayatri Devi')}
+              className="p-2 rounded-lg bg-white border border-neutral-200 text-left hover:border-[#0B3B60] hover:bg-neutral-50 transition shadow-xs cursor-pointer"
+            >
+              <div className="font-bold text-neutral-800 text-[11px] flex items-center gap-1">
+                <User className="w-3 h-3 text-neutral-600" /> Customer Demo
+              </div>
+              <div className="text-[10px] text-neutral-600 font-mono truncate">patron@vitasta.luxury</div>
+            </button>
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-1.5">
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('admin@vitasta.com', 'password123', 'Smita Saraswat')}
-            className="p-2 rounded-lg bg-white border border-neutral-200 text-left hover:border-[#0B3B60] hover:bg-neutral-50 transition shadow-xs cursor-pointer"
-          >
-            <div className="font-bold text-[#0B3B60] text-[11px] flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3 text-[#0B3B60]" /> Atelier Admin
-            </div>
-            <div className="text-[10px] text-neutral-600 font-mono truncate">admin@vitasta.com</div>
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickLogin('patron@vitasta.luxury', 'password123', 'Maharani Gayatri Devi')}
-            className="p-2 rounded-lg bg-white border border-neutral-200 text-left hover:border-[#0B3B60] hover:bg-neutral-50 transition shadow-xs cursor-pointer"
-          >
-            <div className="font-bold text-neutral-800 text-[11px] flex items-center gap-1">
-              <User className="w-3 h-3 text-neutral-600" /> Customer Demo
-            </div>
-            <div className="text-[10px] text-neutral-600 font-mono truncate">patron@vitasta.luxury</div>
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Alerts */}
       {error && (

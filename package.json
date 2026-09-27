@@ -2,12 +2,18 @@
   "name": "vitasta-saree-atelier",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "imports": {
+    "@/*": "./*"
+  },
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "node --max-http-header-size=65536 node_modules/next/dist/bin/next dev",
     "build": "prisma generate && next build",
     "start": "node --max-http-header-size=65536 node_modules/next/dist/bin/next start",
     "serve": "npx serve -l 3000 .",
+    "test": "node --loader ./test_loader.mjs --env-file=.env test_suite.mjs",
+    "test:endpoints": "node test_endpoints.mjs",
     "lint": "eslint",
     "seed": "node --env-file=.env prisma/seed.mjs"
   },

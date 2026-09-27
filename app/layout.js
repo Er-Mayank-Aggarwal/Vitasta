@@ -44,6 +44,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable} scroll-smooth`}>
+      <head>
+        <link
+          rel="preload"
+          href="/fonts/samarkan.woff"
+          as="font"
+          type="font/woff"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="font-sans antialiased bg-[#FAF9F6] text-[#1A1A1A] min-h-screen">
         <NextTopLoader color="#C1272D" showSpinner={false} height={3} />
         <LayoutShell>{children}</LayoutShell>

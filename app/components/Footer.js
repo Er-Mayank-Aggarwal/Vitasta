@@ -76,11 +76,14 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
           {/* Brand & Newsletter (Full width on mobile top) */}
           <div className="col-span-2 md:col-span-1 space-y-2.5">
-            <Link href="/" className="inline-block">
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-[0.2em] text-white">
-                <span className="text-[#C1272D]">V</span>ITASTA
+            <Link href="/" className="inline-block group">
+              <span className="font-brand font-samarkan text-3xl font-normal tracking-wide text-white group-hover:text-[#F3E5AB] transition-colors">
+                <span className="text-[#C1272D]">V</span>itasta
               </span>
-              <p className="text-[9px] uppercase tracking-[0.2em] text-[#90c4ff] font-sans font-semibold">
+              <p className="font-brand font-samarkan text-xs tracking-wider text-[#90c4ff]">
+                unfolding serenity
+              </p>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-sans font-semibold mt-1">
                 by Smita Saraswat • Jodhpur
               </p>
             </Link>

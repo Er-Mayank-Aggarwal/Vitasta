@@ -1,7 +1,34 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Samarkan';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/samarkan.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/5790/SAMARN__.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Samakarn';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/samakarn.woff') format('woff'),
+       url('https://fonts.cdnfonts.com/s/5790/SAMARN__.woff') format('woff');
+  font-display: swap;
+}
+
+@theme {
+  --font-samarkan: 'Samarkan', 'Samakarn', 'Playfair Display', Georgia, serif;
+  --font-samakarn: 'Samakarn', 'Samarkan', 'Playfair Display', Georgia, serif;
+  --font-brand: 'Samarkan', 'Samakarn', 'Playfair Display', Georgia, serif;
+}
+
 @layer base {
   :root {
+    --font-samarkan: 'Samarkan', 'Samakarn', 'Playfair Display', Georgia, serif;
+    --font-samakarn: 'Samakarn', 'Samarkan', 'Playfair Display', Georgia, serif;
+    --font-brand: 'Samarkan', 'Samakarn', 'Playfair Display', Georgia, serif;
     --font-serif: 'Playfair Display', Georgia, serif;
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
     --royal-navy: #0B3B60;
@@ -22,6 +49,10 @@
 
   h1, h2, h3, h4, .font-serif {
     font-family: var(--font-serif);
+  }
+
+  .font-samarkan, .font-samakarn, .font-brand {
+    font-family: var(--font-samarkan);
   }
 
   /* Accessible touch targets on mobile */

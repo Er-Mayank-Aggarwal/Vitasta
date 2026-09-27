@@ -62,18 +62,25 @@ export default async function InvoicePage({ params }) {
       <div className="bg-white border border-neutral-200 rounded-3xl p-8 sm:p-12 shadow-xl space-y-8 print:shadow-none print:border-none print:p-0">
         {/* Invoice Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-neutral-200 pb-8">
-          <div>
-            <span className="font-serif text-3xl font-bold tracking-[0.25em] text-[#0B3B60]">
-              <span className="text-[#C1272D]">V</span>ITASTA
-            </span>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#C1272D] font-sans font-semibold">
-              by Smita Saraswat • Jodhpur
-            </p>
-            <p className="text-xs text-neutral-500 mt-2">
-              House No. 10A, Kanti, Paota B Road, Near Jalam Niwas<br />
-              Jodhpur, Rajasthan – 342001, India<br />
-              WhatsApp: +91 88240 17443
-            </p>
+          <div className="flex items-center gap-3.5">
+            <div className="w-14 h-14 rounded-xl overflow-hidden relative shrink-0 border border-neutral-200 shadow-2xs">
+              <img
+                src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg"
+                alt="Vitasta Saree Atelier"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div>
+              <span className="font-brand font-samarkan text-3xl sm:text-4xl font-normal tracking-wide text-[#0B3B60]">
+                <span className="text-[#C1272D]">V</span>itasta
+              </span>
+              <p className="font-brand font-samarkan text-xs sm:text-sm text-[#0B3B60]/80">
+                unfolding serenity
+              </p>
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-[#C1272D] font-sans font-semibold">
+                by Smita Saraswat • Jodhpur
+              </p>
+            </div>
           </div>
 
           <div className="text-left sm:text-right space-y-1">
