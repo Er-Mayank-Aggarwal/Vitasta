@@ -217,7 +217,7 @@ export default function Header() {
                     <span className="inline-block bg-[rgba(193,39,45,0.3)] border border-[rgba(193,39,45,0.5)] text-[#ff8a8e] px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider">
                       Royal Atelier
                     </span>
-                    <span>Thoughtfully Handcrafted in Jodhpur, Rajasthan</span>
+                    <span>Wrapped in the Elegance of Rajasthan</span>
                   </div>
                   <span className="text-[#90c4ff]/50 text-[10px]">◆</span>
                   <span className="text-[#90c4ff] font-semibold">
@@ -712,7 +712,7 @@ export default function Header() {
                 <Phone className="w-4 h-4" /> WhatsApp Contact
               </a>
               <p className="text-[10px] text-neutral-400 text-center tracking-wide">
-                Thoughtfully Handcrafted in Jodhpur, Rajasthan
+                Wrapped in the Elegance of Rajasthan
               </p>
             </div>
           </div>
