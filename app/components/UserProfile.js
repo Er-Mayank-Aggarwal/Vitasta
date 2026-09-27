@@ -371,7 +371,7 @@ export default function UserProfile({ user = {}, orders = [], addresses = [] }) 
     setIsSaving(false);
     if (res.success) {
       setIsEditing(false);
-      setSuccessMsg('Royal Patron details saved successfully!');
+      setSuccessMsg('Profile details saved successfully!');
       setTimeout(() => setSuccessMsg(null), 3000);
     } else {
       setError(res.error || 'Failed to update profile');
@@ -465,7 +465,7 @@ export default function UserProfile({ user = {}, orders = [], addresses = [] }) 
                 </span>
               </div>
               <p className="text-xs text-neutral-200 mt-0.5 font-light">
-                Manage all 21 sarees, live dispatch loom video verifications, orders, coupons, and patron directory.
+                Manage handcrafted sarees, live dispatch loom video verifications, orders, coupons, and customer directory.
               </p>
             </div>
           </div>
@@ -514,11 +514,11 @@ export default function UserProfile({ user = {}, orders = [], addresses = [] }) 
 
             <div>
               <h2 className="text-lg font-serif font-bold text-[#0B3B60] truncate">
-                {user.name || 'Royal Patron'}
+                {user.name || 'Customer'}
               </h2>
               <p className="text-xs text-neutral-500 truncate">{user.email}</p>
               <span className="inline-block mt-2 px-3 py-1 rounded-full text-[10px] font-semibold bg-[#0B3B60]/10 text-[#0B3B60] border border-[#0B3B60]/20">
-                👑 {user.membershipTier || 'Imperial Patron'}
+                👑 {user.membershipTier || 'Member'}
               </span>
             </div>
 
@@ -623,10 +623,10 @@ export default function UserProfile({ user = {}, orders = [], addresses = [] }) 
               <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
                 <div>
                   <h3 className="text-xl font-serif font-bold text-[#0B3B60]">
-                    Personal Patron Information
+                    Personal Information
                   </h3>
                   <p className="text-xs text-neutral-500">
-                    Manage your identity for bespoke embroidery consultations and delivery updates.
+                    Manage your profile details for embroidery consultations and delivery updates.
                   </p>
                 </div>
                 {!isEditing ? (
@@ -669,9 +669,9 @@ export default function UserProfile({ user = {}, orders = [], addresses = [] }) 
                     </p>
                   </div>
                   <div className="p-4 rounded-xl bg-[#FAF9F6] border border-neutral-200 space-y-1">
-                    <span className="text-neutral-500 font-medium">Patron Membership Tier</span>
+                    <span className="text-neutral-500 font-medium">Membership Tier</span>
                     <p className="text-sm font-serif font-bold text-[#0B3B60]">
-                      👑 {user.membershipTier || 'Imperial Patron'}
+                      👑 {user.membershipTier || 'Member'}
                     </p>
                   </div>
                 </div>
@@ -781,7 +781,7 @@ export default function UserProfile({ user = {}, orders = [], addresses = [] }) 
                     href="/shop"
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0B3B60] hover:bg-[#071E3D] text-white font-bold text-xs uppercase tracking-wider shadow-lg transition"
                   >
-                    Explore 21 Royal Sarees <ArrowRight size={14} />
+                    Explore Royal Sarees <ArrowRight size={14} />
                   </Link>
                 </div>
               ) : (

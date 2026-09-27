@@ -4,6 +4,24 @@ import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, Sparkles, CheckCircle2, AlertCircle, Clock, Video } from 'lucide-react';
 import { submitContactMessage } from '@/app/actions/contact-actions';
 
+function InstagramIcon({ className = "w-5 h-5" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
@@ -42,7 +60,7 @@ export default function ContactPage() {
     <div className="min-h-screen py-12 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest text-[#0B3B60] bg-blue-50 border border-blue-200">
-          <Sparkles className="w-3.5 h-3.5 text-[#0B3B60]" /> Royal Atelier Concierge
+          <Sparkles className="w-3.5 h-3.5 text-[#0B3B60]" /> Contact Us
         </span>
         <h1 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B3B60]">
           Connect with Our Jodhpur Atelier
@@ -75,7 +93,7 @@ export default function ContactPage() {
               <div className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-[#0B3B60] shrink-0 mt-0.5" />
                 <div>
-                  <strong className="block text-neutral-900">Concierge & WhatsApp</strong>
+                  <strong className="block text-neutral-900">Contact & WhatsApp</strong>
                   <a href="tel:+918824017443" className="hover:text-[#0B3B60] block">
                     +91 88240 17443
                   </a>
@@ -86,6 +104,29 @@ export default function ContactPage() {
                     className="text-[#C1272D] font-semibold hover:underline inline-block mt-0.5"
                   >
                     Chat on WhatsApp →
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <InstagramIcon className="w-5 h-5 text-[#C1272D] shrink-0 mt-0.5" />
+                <div>
+                  <strong className="block text-neutral-900">Instagram Official</strong>
+                  <a
+                    href="https://www.instagram.com/vitastabysmita/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-[#0B3B60] block font-medium"
+                  >
+                    @vitastabysmita
+                  </a>
+                  <a
+                    href="https://www.instagram.com/vitastabysmita/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#C1272D] font-semibold hover:underline inline-block mt-0.5"
+                  >
+                    Follow on Instagram →
                   </a>
                 </div>
               </div>
@@ -127,7 +168,7 @@ export default function ContactPage() {
             {success && (
               <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5" />
-                <span>Thank you! Your message has been received by our concierge team.</span>
+                <span>Thank you! Your message has been received by our team.</span>
               </div>
             )}
 
@@ -175,7 +216,7 @@ export default function ContactPage() {
               <input
                 type="email"
                 required
-                placeholder="patron@vitasta.luxury"
+                placeholder="yourname@email.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full p-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50 text-neutral-900 focus:outline-none focus:border-[#0B3B60]"
@@ -195,7 +236,7 @@ export default function ContactPage() {
                 <option value="Bridal Drape Inquiry">Bridal Drape Inquiry</option>
                 <option value="Custom Blouse Tailoring">Custom Blouse Tailoring</option>
                 <option value="Pre-Dispatch Loom Video Status">Pre-Dispatch Loom Video Status</option>
-                <option value="Other Concierge Request">Other Concierge Request</option>
+                <option value="Other Inquiry">Other Inquiry</option>
               </select>
             </div>
 
@@ -216,11 +257,11 @@ export default function ContactPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3.5 px-6 rounded-xl bg-[#0B3B60] hover:bg-[#062238] text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-sm transition"
+              className="w-full py-3.5 px-6 rounded-xl bg-[#0B3B60] hover:bg-[#062238] text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
             >
               {loading ? 'Submitting...' : (
                 <>
-                  Send Message to Concierge <Send className="w-4 h-4" />
+                  Send Message <Send className="w-4 h-4" />
                 </>
               )}
             </button>

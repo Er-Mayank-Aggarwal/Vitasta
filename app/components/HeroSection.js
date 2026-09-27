@@ -20,12 +20,12 @@ export default function HeroSection() {
             {/* Royal Heritage Tag */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[rgba(193,39,45,0.18)] border border-[rgba(193,39,45,0.35)] text-[#ff8a8e] text-xs font-semibold uppercase tracking-widest backdrop-blur-md">
               <span className="w-2 h-2 rounded-full bg-[#C1272D] animate-pulse" />
-              <span>Royal Heritage of Jodhpur, Rajasthan</span>
+              <span>Wrapped in the Elegance of Rajasthan</span>
             </div>
 
             {/* Main Brand Title & Tagline */}
             <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
-              Vitasta
+              <span className="text-[#C1272D]">V</span>itasta
               <span className="block font-serif italic text-2xl sm:text-3xl lg:text-4xl text-[#90c4ff] font-normal mt-1">
                 by Smita Saraswat
               </span>
@@ -57,8 +57,8 @@ export default function HeroSection() {
             {/* 3 Royal Stats */}
             <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/15 max-w-md mx-auto lg:mx-0">
               <div>
-                <span className="font-serif text-2xl sm:text-3xl font-bold text-white block">21</span>
-                <span className="text-[11px] text-neutral-300 font-light uppercase tracking-wider">Handcrafted Sarees</span>
+                <span className="font-serif text-2xl sm:text-3xl font-bold text-white block">100%</span>
+                <span className="text-[11px] text-neutral-300 font-light uppercase tracking-wider">Handcrafted</span>
               </div>
               <div>
                 <span className="font-serif text-2xl sm:text-3xl font-bold text-white block">15–30</span>
@@ -66,7 +66,7 @@ export default function HeroSection() {
               </div>
               <div>
                 <span className="font-serif text-2xl sm:text-3xl font-bold text-white block">100%</span>
-                <span className="text-[11px] text-neutral-300 font-light uppercase tracking-wider">Pure Silk & Fabric</span>
+                <span className="text-[11px] text-neutral-300 font-light uppercase tracking-wider">Only Pure Fabrics</span>
               </div>
             </div>
           </div>

@@ -225,7 +225,7 @@ export default function AdminOrdersClient({ initialOrders = [] }) {
             <thead className="bg-neutral-50 border-b border-neutral-200 uppercase tracking-wider text-neutral-500 font-serif">
               <tr>
                 <th className="p-4">Order ID & Date</th>
-                <th className="p-4">Royal Patron</th>
+                <th className="p-4">Customer</th>
                 <th className="p-4">Items</th>
                 <th className="p-4">Total Amount</th>
                 <th className="p-4">Crafting Status</th>

@@ -5,6 +5,24 @@ import Link from 'next/link';
 import { Mail, Phone, MapPin, Sparkles, Send, ShieldCheck, Video, CheckCircle2 } from 'lucide-react';
 import { subscribeNewsletter } from '@/app/actions/contact-actions';
 
+function InstagramIcon({ className = "w-3.5 h-3.5" }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -60,7 +78,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1 space-y-2.5">
             <Link href="/" className="inline-block">
               <span className="font-serif text-xl sm:text-2xl font-bold tracking-[0.2em] text-white">
-                VIT<span className="text-[#C1272D]">A</span>STA
+                <span className="text-[#C1272D]">V</span>ITASTA
               </span>
               <p className="text-[9px] uppercase tracking-[0.2em] text-[#90c4ff] font-sans font-semibold">
                 by Smita Saraswat • Jodhpur
@@ -127,7 +145,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/shop" className="text-[#90c4ff] font-semibold hover:underline inline-block pt-0.5">
-                  All 21 Sarees →
+                  100% Handcrafted Sarees →
                 </Link>
               </li>
             </ul>
@@ -156,16 +174,16 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/account" className="hover:text-[#90c4ff] transition">
-                  Patron Portal
+                  My Account
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Concierge Info Column */}
+          {/* Contact Us Column */}
           <div className="col-span-2 md:col-span-1">
             <h4 className="font-serif text-xs font-bold text-white uppercase tracking-wider mb-2.5">
-              Jodhpur Concierge
+              Contact Us
             </h4>
             <ul className="space-y-1.5 text-[11px] sm:text-xs text-neutral-300">
               <li className="flex items-start gap-2">
@@ -178,6 +196,17 @@ export default function Footer() {
                 <Phone className="w-3.5 h-3.5 text-[#C1272D] shrink-0" />
                 <a href="tel:+918824017443" className="hover:text-[#90c4ff] transition">
                   +91 88240 17443
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <InstagramIcon className="w-3.5 h-3.5 text-[#C1272D] shrink-0" />
+                <a
+                  href="https://www.instagram.com/vitastabysmita/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#90c4ff] transition flex items-center gap-1"
+                >
+                  <span>Instagram: @vitastabysmita</span>
                 </a>
               </li>
               <li className="flex items-center gap-2">
@@ -196,9 +225,9 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <Link href="/about" className="hover:text-white transition">Heritage</Link>
             <span>•</span>
-            <Link href="/contact" className="hover:text-white transition">Concierge</Link>
+            <Link href="/contact" className="hover:text-white transition">Contact Us</Link>
             <span>•</span>
-            <Link href="/account" className="hover:text-white transition">Account</Link>
+            <Link href="/account" className="hover:text-white transition">My Account</Link>
           </div>
         </div>
       </div>

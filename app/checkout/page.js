@@ -279,14 +279,14 @@ export default function CheckoutPage() {
           <div className="flex items-center gap-2.5">
             <Sparkles className="w-4 h-4 text-[#C1272D] shrink-0" />
             <span>
-              Already a Royal Patron? Sign in to automatically access your saved addresses & order history.
+              Already have an account? Sign in to automatically access your saved addresses & order history.
             </span>
           </div>
           <Link
             href="/account"
             className="px-4 py-1.5 rounded-full bg-[#0B3B60] hover:bg-[#071E3D] text-white font-bold text-[11px] uppercase tracking-wider transition shrink-0"
           >
-            Patron Sign In
+            Sign In
           </Link>
         </div>
       )}
@@ -304,7 +304,7 @@ export default function CheckoutPage() {
           {/* Section 1: Contact Information */}
           <div className="bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200 shadow-sm space-y-4">
             <h2 className="font-serif text-lg font-bold text-[#0B3B60] flex items-center gap-2">
-              <User className="w-4 h-4 text-[#C1272D]" /> 1. Royal Patron Contact
+              <User className="w-4 h-4 text-[#C1272D]" /> 1. Contact Information
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -344,7 +344,7 @@ export default function CheckoutPage() {
               <input
                 type="email"
                 required
-                placeholder="patron@vitasta.luxury"
+                placeholder="yourname@email.com"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
@@ -542,7 +542,7 @@ export default function CheckoutPage() {
                       className="w-4 h-4 rounded text-[#0B3B60] focus:ring-[#0B3B60] border-neutral-300"
                     />
                     <label htmlFor="saveAddress" className="text-xs text-neutral-700 cursor-pointer">
-                      Save this delivery address to my Royal Patron account for future orders
+                      Save this delivery address to my account for future orders
                     </label>
                   </div>
                 )}

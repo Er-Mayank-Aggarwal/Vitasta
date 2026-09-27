@@ -55,10 +55,10 @@ export default function ValuesSection() {
                 <Award className="w-5 h-5" />
               </div>
               <h3 className="font-serif font-bold text-[#0B3B60] text-base">
-                Certified Pure Silks
+                Certified Pure Fabrics
               </h3>
               <p className="text-xs text-neutral-600">
-                Only genuine Habutai, Khaddi Georgette, Organza Silk, and authentic Banarasi handloom weaves are selected.
+                Only pure fabrics, genuine Habutai, Khaddi Georgette, Organza Silk, and authentic Banarasi handloom weaves are selected.
               </p>
             </div>
 

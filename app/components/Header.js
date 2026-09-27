@@ -285,7 +285,7 @@ export default function Header() {
               </div>
               <div className="flex flex-col">
                 <span className="font-serif text-xl sm:text-2xl font-bold text-[#0B3B60] tracking-tight leading-none">
-                  Vit<span className="text-[#C1272D]">a</span>sta
+                  <span className="text-[#C1272D]">V</span>itasta
                 </span>
                 <span className="font-serif italic text-[11px] text-neutral-500 tracking-wide mt-0.5">
                   unfolding serenity
@@ -359,7 +359,7 @@ export default function Header() {
                                 onClick={() => setIsCollectionsHovered(false)}
                                 className="w-full py-2 px-3 rounded-xl bg-[#0B3B60] hover:bg-[#062238] text-white text-[11px] font-bold text-center block transition uppercase tracking-wider"
                               >
-                                Browse All 21 Handcrafted Sarees →
+                                Browse All Handcrafted Sarees →
                               </Link>
                             </div>
                           </div>
@@ -449,7 +449,7 @@ export default function Header() {
                         </p>
                         <p className="text-[10px] text-neutral-500 truncate">{session.user.email}</p>
                         <span className="inline-block mt-1 text-[9px] px-2 py-0.5 rounded-full bg-blue-50 text-[#0B3B60] font-semibold border border-blue-200">
-                          {session.user.role === 'ADMIN' ? 'Atelier Administrator' : 'Royal Patron'}
+                          {session.user.role === 'ADMIN' ? 'Atelier Administrator' : 'Customer'}
                         </span>
                       </div>
 
@@ -550,7 +550,7 @@ export default function Header() {
                   </div>
                   <div>
                     <span className="font-serif text-lg font-bold text-white tracking-wider">
-                      VITASTA
+                      <span className="text-[#C1272D]">V</span>ITASTA
                     </span>
                     <span className="block text-[10px] text-[#90c4ff] font-serif italic">
                       unfolding serenity
@@ -632,7 +632,7 @@ export default function Header() {
                 >
                   <span className="flex items-center gap-3">
                     <ShoppingBag className="w-4 h-4 text-[#90c4ff]" />
-                    <span>Saree Catalog (21)</span>
+                    <span>Handcrafted Saree Catalog</span>
                   </span>
                   <ChevronRight className="w-4 h-4 text-white/30" />
                 </Link>
@@ -709,7 +709,7 @@ export default function Header() {
                 rel="noopener noreferrer"
                 className="w-full py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg transition"
               >
-                <Phone className="w-4 h-4" /> WhatsApp Atelier Concierge
+                <Phone className="w-4 h-4" /> WhatsApp Contact
               </a>
               <p className="text-[10px] text-neutral-400 text-center tracking-wide">
                 Thoughtfully Handcrafted in Jodhpur, Rajasthan

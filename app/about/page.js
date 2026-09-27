@@ -108,7 +108,7 @@ export default function AboutPage() {
           Experience Vitasta Craftsmanship
         </h3>
         <p className="text-xs text-neutral-500 max-w-md mx-auto">
-          Schedule a private bespoke consultation or explore our 21 handcrafted sarees.
+          Schedule a private bespoke consultation or explore our 100% handcrafted sarees.
         </p>
         <div className="flex justify-center gap-4 pt-2">
           <Link

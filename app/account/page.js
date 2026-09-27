@@ -6,8 +6,8 @@ import { getUserProfile, getUserOrders, getUserAddresses } from '../actions/user
 export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: 'My Royal Account | VITASTA Saree Atelier',
-  description: 'Manage your Vitasta Atelier bespoke saree orders, loom video verification, addresses, and royal patron profile.',
+  title: 'My Account | VITASTA Saree Atelier',
+  description: 'Manage your Vitasta Atelier bespoke saree orders, loom video verification, addresses, and customer profile.',
 };
 
 export default async function AccountPage() {

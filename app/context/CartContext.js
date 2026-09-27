@@ -44,7 +44,7 @@ export function CartProvider({ children }) {
     // Gate: User must be signed in to add items to bag
     if (!session?.user) {
       setAuthModalSubtitle(
-        `Please sign in or register your Royal Patron account to add "${product.title}" to your Atelier Bag.`
+        `Please sign in or create an account to add "${product.title}" to your Atelier Bag.`
       );
       setIsAuthModalOpen(true);
       return false;

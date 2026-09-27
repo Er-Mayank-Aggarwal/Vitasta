@@ -76,12 +76,12 @@ export default function AuthForm({ onSuccess, onClose, isModal = false, customTi
         });
 
         if (authError) {
-          setError(authError.message || 'Failed to create patron account.');
+          setError(authError.message || 'Failed to create account.');
           setIsLoading(false);
           return;
         }
 
-        setSuccess('Royal Patron account created successfully!');
+        setSuccess('Account created successfully!');
         setTimeout(() => {
           if (onSuccess) onSuccess();
           router.refresh();
@@ -109,9 +109,10 @@ export default function AuthForm({ onSuccess, onClose, isModal = false, customTi
     setError(null);
     setIsGoogleLoading(true);
     try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : '';
       await signIn.social({
         provider: 'google',
-        callbackURL: window.location.origin + '/account',
+        callbackURL: `${origin}/account`,
       });
     } catch (err) {
       setError(err.message || 'Google sign-in failed. Please try again.');
@@ -140,12 +141,12 @@ export default function AuthForm({ onSuccess, onClose, isModal = false, customTi
           Vitasta Royal Portal
         </span>
         <h2 className="text-lg sm:text-2xl font-serif font-bold text-[#0B3B60] tracking-wide">
-          {customTitle || (isLogin ? 'Sign In to Atelier' : 'Become a Royal Patron')}
+          {customTitle || (isLogin ? 'Sign In to Atelier' : 'Create an Account')}
         </h2>
         <p className="text-[11px] sm:text-xs text-neutral-500 mt-0.5">
           {customSubtitle || (isLogin
-            ? 'Access your bespoke orders, Loom video proof & admin tools'
-            : 'Register for exclusive saree previews and concierge care')}
+            ? 'Access your orders, Loom video proof & support'
+            : 'Register for orders, wishlist and updates')}
         </p>
       </div>
 
@@ -174,7 +175,7 @@ export default function AuthForm({ onSuccess, onClose, isModal = false, customTi
             className="p-2 rounded-lg bg-white border border-neutral-200 text-left hover:border-[#0B3B60] hover:bg-neutral-50 transition shadow-xs cursor-pointer"
           >
             <div className="font-bold text-neutral-800 text-[11px] flex items-center gap-1">
-              <User className="w-3 h-3 text-neutral-600" /> Royal Patron
+              <User className="w-3 h-3 text-neutral-600" /> Customer Demo
             </div>
             <div className="text-[10px] text-neutral-600 font-mono truncate">patron@vitasta.luxury</div>
           </button>
@@ -294,7 +295,7 @@ export default function AuthForm({ onSuccess, onClose, isModal = false, customTi
             </>
           ) : (
             <>
-              <UserPlus className="w-3.5 h-3.5" /> Create Patron Account
+              <UserPlus className="w-3.5 h-3.5" /> Create Account
             </>
           )}
         </button>

@@ -38,7 +38,7 @@ export default async function ShopPage({ searchParams }) {
           Royal Handcrafted Sarees
         </h1>
         <p className="text-xs sm:text-sm text-neutral-600 mt-2">
-          Discover 21 authentic handloom creations crafted in Jodhpur with pure silks, fine chiffons, and intricate Adda embroidery.
+          Discover 100% handcrafted authentic creations made in Jodhpur with only pure fabrics, fine chiffons, and intricate Adda embroidery.
         </p>
       </div>
 

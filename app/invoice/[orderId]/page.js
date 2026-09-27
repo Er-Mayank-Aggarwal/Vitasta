@@ -53,7 +53,7 @@ export default async function InvoicePage({ params }) {
             Order Successfully Placed with Vitasta Atelier!
           </h2>
           <p className="text-xs text-emerald-700 mt-0.5">
-            Your handcrafted saree order <strong>{order.orderNumber}</strong> has been registered. Our concierge team will reach out via WhatsApp with your bespoke loom video before dispatch.
+            Your handcrafted saree order <strong>{order.orderNumber}</strong> has been registered. Our team will reach out via WhatsApp with your bespoke loom video before dispatch.
           </p>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default async function InvoicePage({ params }) {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-neutral-200 pb-8">
           <div>
             <span className="font-serif text-3xl font-bold tracking-[0.25em] text-[#0B3B60]">
-              VITASTA
+              <span className="text-[#C1272D]">V</span>ITASTA
             </span>
             <p className="text-[10px] uppercase tracking-[0.3em] text-[#C1272D] font-sans font-semibold">
               by Smita Saraswat • Jodhpur
@@ -72,7 +72,7 @@ export default async function InvoicePage({ params }) {
             <p className="text-xs text-neutral-500 mt-2">
               House No. 10A, Kanti, Paota B Road, Near Jalam Niwas<br />
               Jodhpur, Rajasthan – 342001, India<br />
-              Concierge WhatsApp: +91 88240 17443
+              WhatsApp: +91 88240 17443
             </p>
           </div>
 
@@ -100,7 +100,7 @@ export default async function InvoicePage({ params }) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 text-xs">
           <div>
             <h3 className="font-serif font-bold text-sm text-[#0B3B60] uppercase tracking-wider mb-2">
-              Client & Patron Details
+              Customer Details
             </h3>
             <p className="font-semibold text-neutral-900">{order.userName}</p>
             <p className="text-neutral-600">{order.userEmail}</p>

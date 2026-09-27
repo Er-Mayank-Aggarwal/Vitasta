@@ -38,7 +38,7 @@ export default async function HomePage() {
             href="/shop"
             className="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C1272D] hover:underline"
           >
-            Explore All 21 Sarees <ArrowRight className="w-4 h-4" />
+            Explore All Handcrafted Sarees <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 

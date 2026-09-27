@@ -44,17 +44,17 @@ const navItems = [
     icon: Warehouse,
   },
   {
-    label: 'Royal Patrons',
+    label: 'Customers',
     href: '/admin-controls/customers',
     icon: Users,
   },
   {
-    label: 'Royal Coupons',
+    label: 'Coupons',
     href: '/admin-controls/coupons',
     icon: Tag,
   },
   {
-    label: 'Patron Reviews',
+    label: 'Customer Reviews',
     href: '/admin-controls/reviews',
     icon: Star,
   },

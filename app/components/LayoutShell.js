@@ -37,7 +37,7 @@ function CartAuthModal() {
           customTitle="Sign In to Add to Bag"
           customSubtitle={
             authModalSubtitle ||
-            'Please sign in or register your Royal Patron account to add handcrafted sarees to your Atelier Bag.'
+            'Please sign in or create an account to add handcrafted sarees to your Atelier Bag.'
           }
         />
       </div>

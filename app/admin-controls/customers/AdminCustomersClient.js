@@ -52,19 +52,19 @@ export default function AdminCustomersClient({ initialCustomers = [] }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="text-xs uppercase tracking-widest text-[#0B3B60] font-bold flex items-center gap-1.5 mb-1">
-            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> Royal Connoisseurs & Patrons
+            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> Customer Directory
           </span>
           <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0B3B60]">
-            Clientele & Patron Directory
+            Customer & Client Directory
           </h1>
           <p className="text-xs text-neutral-500 mt-0.5">
-            Manage registered royal patrons, order histories, privilege tiers, and permissions
+            Manage registered customers, order histories, account tiers, and permissions
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <span className="px-3.5 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-[#0B3B60] font-serif font-bold text-xs shadow-sm">
-            Total Patrons: {customers.length}
+            Total Customers: {customers.length}
           </span>
         </div>
       </div>

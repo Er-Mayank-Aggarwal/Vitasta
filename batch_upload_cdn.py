@@ -7,11 +7,11 @@ import urllib.parse
 import mimetypes
 import concurrent.futures
 
-CLOUD_NAME = "sjl1rfvu"
-API_KEY = "278911177331486"
-API_SECRET = "7UAdol5iOcqAwazN7GVhYXnOuY8"
+CLOUD_NAME = os.environ.get("CLOUDINARY_CLOUD_NAME", "")
+API_KEY = os.environ.get("CLOUDINARY_API_KEY", "")
+API_SECRET = os.environ.get("CLOUDINARY_API_SECRET", "")
 
-UPLOAD_URL = f"https://api.cloudinary.com/v1_1/{CLOUD_NAME}/image/upload"
+UPLOAD_URL = f"https://api.cloudinary.com/v1_1/{CLOUD_NAME}/image/upload" if CLOUD_NAME else ""
 MAPPING_FILE = "data/cdn_mapping.json"
 
 def generate_signature(params, api_secret):
