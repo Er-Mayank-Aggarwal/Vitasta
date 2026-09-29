@@ -66,10 +66,14 @@ export async function createOrder(orderInput) {
     // Execute atomic transaction for inventory lock & order creation
     const createdOrder = await prisma.$transaction(async (tx) => {
       // Concurrency Lock & Stock Verification for every saree in the bag
-      for (const item of validated.items) {
+      // Deterministically sort by product ID to prevent PostgreSQL row lock deadlock cycles during concurrent multi-item checkouts
+      const sortedItems = [...validated.items].sort((a, b) => a.id.localeCompare(b.id));
+
+      for (const item of sortedItems) {
         let inv = await tx.inventory.findUnique({
           where: { productId: item.id },
         });
+
 
         // If inventory record doesn't exist yet, initialize it
         if (!inv) {
@@ -90,26 +94,24 @@ export async function createOrder(orderInput) {
           );
         }
 
-        // Deduct available stock & increment reserved count
-        const newQty = inv.quantity - item.quantity;
-        const newReserved = inv.reservedQuantity + item.quantity;
-
-        await tx.inventory.update({
+        // Atomically deduct available stock & increment reserved count using SQL-level atomic arithmetic
+        const updatedInv = await tx.inventory.update({
           where: { productId: item.id },
           data: {
-            quantity: newQty,
-            reservedQuantity: newReserved,
+            quantity: { decrement: item.quantity },
+            reservedQuantity: { increment: item.quantity },
           },
         });
 
         // If stock is exhausted, update product stockStatus
-        if (newQty === 0) {
+        if (updatedInv.quantity <= 0) {
           await tx.product.update({
             where: { id: item.id },
             data: { stockStatus: 'OUT_OF_STOCK' },
           });
         }
       }
+
 
       // Handle Address Book Integration
       let addressId = validated.addressId || null;

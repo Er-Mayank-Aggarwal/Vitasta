@@ -97,9 +97,8 @@ export default function AdminLayoutClient({ children, user }) {
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#0B3B60] border-r border-[#062238]/40 flex flex-col justify-between transition-transform duration-300 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        }`}
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#0B3B60] border-r border-[#062238]/40 flex flex-col justify-between transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          }`}
       >
         <div className="flex flex-col h-full overflow-y-auto">
           {/* Logo Header */}
@@ -134,11 +133,10 @@ export default function AdminLayoutClient({ children, user }) {
                   href={item.href}
                   prefetch={true}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition duration-150 ${
-                    isActive
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition duration-150 ${isActive
                       ? 'bg-[#D4AF37] text-[#062238] font-bold shadow-sm'
                       : 'text-white/80 hover:bg-white/10 hover:text-white'
-                  }`}
+                    }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" strokeWidth={isActive ? 2.3 : 1.8} />
                   <span>{item.label}</span>

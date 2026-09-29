@@ -1,6 +1,8 @@
 import { prisma } from './lib/prisma.js';
 import { createOrder, getOrderById } from './app/actions/checkout-actions.js';
+import { createRazorpayOrder, verifyRazorpayPayment } from './app/actions/razorpay-actions.js';
 import { getAdminStats } from './app/actions/admin-actions.js';
+
 import { getAdminInventory } from './app/actions/inventory-actions.js';
 import { getAdminCoupons, validateCoupon } from './app/actions/coupon-actions.js';
 import { subscribeNewsletter } from './app/actions/newsletter-actions.js';
@@ -175,8 +177,85 @@ async function runAllTests() {
     assert(!invalidProductSchema.success, 'productSchema rejects negative price and missing fields');
 
     // -------------------------------------------------------------------------
+    // TEST SUITE 7: Razorpay Payment Gateway & Patron Customization Notes
+    // -------------------------------------------------------------------------
+    console.log('\n📌 Test Suite 7: Razorpay Gateway & Patron Customization Notes Persistence');
+    if (activeProduct) {
+      const notesOrderPayload = {
+        fullName: 'Patron Maharani Test',
+        email: 'maharani.test@vitasta.luxury',
+        phone: '9876500000',
+        addressLine1: 'Umaid Heritage Complex',
+        city: 'Jodhpur',
+        state: 'Rajasthan',
+        pincode: '342001',
+        notes: 'Custom unstitched heavy zari blouse with royal blue piping required for Diwali puja.',
+        items: [
+          {
+            id: activeProduct.id,
+            title: activeProduct.title,
+            price: activeProduct.price,
+            quantity: 1,
+            image: activeProduct.primaryImage || 'https://res.cloudinary.com/test.jpg',
+          },
+        ],
+      };
+
+      const customOrderRes = await createOrder(notesOrderPayload);
+      assert(customOrderRes.success === true, 'Order created with custom notes payload');
+
+      if (customOrderRes.success && customOrderRes.orderId) {
+        const orderFromDb = await prisma.order.findUnique({
+          where: { id: customOrderRes.orderId },
+        });
+
+        assert(
+          orderFromDb.notes === 'Custom unstitched heavy zari blouse with royal blue piping required for Diwali puja.',
+          'Database verified: Patron customization note is stored accurately in Order.notes'
+        );
+
+        // Test Razorpay Order Generation
+        const rzpGenRes = await createRazorpayOrder(customOrderRes.orderId);
+        assert(rzpGenRes.success === true, 'Razorpay order generated with verified amount in paise');
+        assert(rzpGenRes.amount === Math.round(activeProduct.price * 100), 'Razorpay amount matches total in paise');
+
+        // Test Razorpay Payment Verification
+        const rzpVerifyRes = await verifyRazorpayPayment({
+          orderId: customOrderRes.orderId,
+          razorpayOrderId: rzpGenRes.razorpayOrderId,
+          razorpayPaymentId: 'pay_test_suite_success_99',
+          razorpaySignature: 'test_signature',
+        });
+
+        assert(rzpVerifyRes.success === true, 'Razorpay payment verification updates order to SUCCESS');
+
+        const updatedOrder = await prisma.order.findUnique({
+          where: { id: customOrderRes.orderId },
+          include: { payment: true },
+        });
+
+        assert(updatedOrder.paymentStatus === 'SUCCESS', 'Order paymentStatus marked as SUCCESS');
+        assert(updatedOrder.payment?.paymentMethod === 'RAZORPAY_UPI_CARDS', 'Payment record created with RAZORPAY_UPI_CARDS');
+
+        // Cleanup
+        await prisma.order.delete({ where: { id: customOrderRes.orderId } });
+        const inv = await prisma.inventory.findUnique({ where: { productId: activeProduct.id } });
+        if (inv) {
+          await prisma.inventory.update({
+            where: { productId: activeProduct.id },
+            data: {
+              quantity: inv.quantity + 1,
+              reservedQuantity: Math.max(0, inv.reservedQuantity - 1),
+            },
+          });
+        }
+      }
+    }
+
+    // -------------------------------------------------------------------------
     // Summary
     // -------------------------------------------------------------------------
+
     console.log('\n========================================================================');
     console.log(`📊 Test Results: ${passedTests}/${totalTests} Tests Passed`);
     console.log('========================================================================\n');

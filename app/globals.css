@@ -5,7 +5,7 @@
   font-style: normal;
   font-weight: 400;
   src: url('/fonts/samarkan.woff') format('woff'),
-       url('https://fonts.cdnfonts.com/s/5790/SAMARN__.woff') format('woff');
+    url('https://fonts.cdnfonts.com/s/5790/SAMARN__.woff') format('woff');
   font-display: swap;
 }
 
@@ -14,7 +14,7 @@
   font-style: normal;
   font-weight: 400;
   src: url('/fonts/samakarn.woff') format('woff'),
-       url('https://fonts.cdnfonts.com/s/5790/SAMARN__.woff') format('woff');
+    url('https://fonts.cdnfonts.com/s/5790/SAMARN__.woff') format('woff');
   font-display: swap;
 }
 
@@ -47,16 +47,23 @@
     text-rendering: optimizeLegibility;
   }
 
-  h1, h2, h3, h4, .font-serif {
+  h1,
+  h2,
+  h3,
+  h4,
+  .font-serif {
     font-family: var(--font-serif);
   }
 
-  .font-samarkan, .font-samakarn, .font-brand {
+  .font-samarkan,
+  .font-samakarn,
+  .font-brand {
     font-family: var(--font-samarkan);
   }
 
   /* Accessible touch targets on mobile */
-  button, a {
+  button,
+  a {
     touch-action: manipulation;
   }
 }
@@ -66,18 +73,17 @@
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .gold-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(212, 175, 55, 0.1) 0%,
-    rgba(212, 175, 55, 0.4) 50%,
-    rgba(212, 175, 55, 0.1) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(212, 175, 55, 0.1) 0%,
+      rgba(212, 175, 55, 0.4) 50%,
+      rgba(212, 175, 55, 0.1) 100%);
   background-size: 200% 100%;
   animation: shimmer 3s infinite;
 }
@@ -120,6 +126,7 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -131,6 +138,7 @@
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
   }
+
   100% {
     -webkit-transform: translate3d(-50%, 0, 0);
     transform: translate3d(-50%, 0, 0);
@@ -142,6 +150,7 @@
     -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
   }
+
   100% {
     -webkit-transform: translate3d(-50%, 0, 0);
     transform: translate3d(-50%, 0, 0);
@@ -169,4 +178,3 @@
     animation-play-state: paused;
   }
 }
-

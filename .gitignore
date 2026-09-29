@@ -1,38 +1,95 @@
+# =========================================================================
+# Vitasta Saree Atelier — Git Ignore Rules
+# =========================================================================
+
 # Dependencies
 node_modules/
 /.pnp
 .pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
 
-# Next.js build output
+# Next.js Build & Outputs
 .next/
 out/
 build/
 dist/
+*.tsbuildinfo
 
-# Generated Prisma Client
+# Generated Prisma Engine & Client
 generated/
+prisma/*.db
+prisma/*.db-journal
 
-# Environment variables
+# Environment Variables (Strictly block secrets; allow example templates)
 .env
 .env*.local
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
+*.env
+*.env.*
+!.env.example
+!.env.production.example
 
-# Logs
+# Netlify & Vercel Artifacts
+.netlify/
+.vercel/
+
+# Debug Logs & Error Traces
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 *.log
 
-# Temp and OS
+# Testing & Coverage
+coverage/
+.nyc_output/
+
+# OS Specific Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
+
+# IDE & Editor Files
 .vscode/
 .idea/
+*.sublime-workspace
+*.sublime-project
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Scratch Assets, Raw Media & Local Archive Dumps
 .tempmediaStorage/
 assets/
 extracted_chat/
 *.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Python Utilities Cache (for helper scripts)
 __pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/

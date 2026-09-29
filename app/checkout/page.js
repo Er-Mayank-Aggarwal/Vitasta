@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useCart } from '@/app/context/CartContext';
 import { useSession } from '@/lib/auth-client';
 import { createOrder } from '@/app/actions/checkout-actions';
+import { createRazorpayOrder, verifyRazorpayPayment } from '@/app/actions/razorpay-actions';
 import { getUserAddresses, getUserProfile } from '@/app/actions/user-actions';
 import {
   ShoppingBag,
@@ -24,7 +25,11 @@ import {
   User,
   Check,
   ChevronRight,
+  CreditCard,
+  QrCode,
+  Banknote,
 } from 'lucide-react';
+
 
 const INDIAN_STATES = [
   'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam',
@@ -62,6 +67,23 @@ export default function CheckoutPage() {
   const [pincodeError, setPincodeError] = useState('');
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('RAZORPAY'); // 'RAZORPAY' or 'CONSULTATION'
+
+  // Helper to dynamically load Razorpay checkout script
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (typeof window !== 'undefined' && window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
 
   // Load user profile & saved addresses when session is available
   useEffect(() => {
@@ -241,6 +263,7 @@ export default function CheckoutPage() {
         })),
       };
 
+      // Step 1: Create verified order with atomic inventory locks
       const result = await createOrder(orderPayload);
 
       if (!result.success) {
@@ -249,14 +272,100 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Clear Cart and route to Invoice / Confirmation page
-      clearCart();
-      router.push(`/invoice/${result.orderId}`);
+      // Step 2: Handle Razorpay Online Payment Flow
+      if (paymentMethod === 'RAZORPAY') {
+        const isLoaded = await loadRazorpayScript();
+        if (!isLoaded) {
+          setError('Payment gateway network timed out. Order saved; you can view your invoice.');
+          clearCart();
+          router.push(`/invoice/${result.orderId}`);
+          return;
+        }
+
+        const rzpOrderRes = await createRazorpayOrder(result.orderId);
+        if (!rzpOrderRes.success) {
+          setError(rzpOrderRes.error || 'Failed to initialize Razorpay checkout.');
+          setIsSubmitting(false);
+          return;
+        }
+
+        // Check if sandbox / demo fallback
+        if (rzpOrderRes.isDemoMode || !window.Razorpay) {
+          await verifyRazorpayPayment({
+            orderId: result.orderId,
+            razorpayOrderId: rzpOrderRes.razorpayOrderId,
+            razorpayPaymentId: `pay_demo_${Date.now()}`,
+            razorpaySignature: 'demo_signature_valid',
+          });
+          clearCart();
+          router.push(`/invoice/${result.orderId}`);
+          return;
+        }
+
+        const razorpayOptions = {
+          key: rzpOrderRes.keyId,
+          amount: rzpOrderRes.amount,
+          currency: rzpOrderRes.currency || 'INR',
+          name: 'Vitasta by Smita Saraswat',
+          description: `Handcrafted Saree Order #${rzpOrderRes.orderNumber}`,
+          image: 'https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg',
+          order_id: rzpOrderRes.razorpayOrderId,
+          prefill: {
+            name: formData.fullName,
+            email: formData.email,
+            contact: formData.phone,
+          },
+          theme: {
+            color: '#0B3B60',
+          },
+          handler: async function (paymentResponse) {
+            try {
+              const verifyRes = await verifyRazorpayPayment({
+                orderId: result.orderId,
+                razorpayOrderId: paymentResponse.razorpay_order_id || rzpOrderRes.razorpayOrderId,
+                razorpayPaymentId: paymentResponse.razorpay_payment_id,
+                razorpaySignature: paymentResponse.razorpay_signature,
+              });
+
+              if (verifyRes.success) {
+                clearCart();
+                router.push(`/invoice/${result.orderId}`);
+              } else {
+                setError(verifyRes.error || 'Payment signature verification failed.');
+                setIsSubmitting(false);
+              }
+            } catch (err) {
+              setError('Error verifying payment. Order saved.');
+              clearCart();
+              router.push(`/invoice/${result.orderId}`);
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              setIsSubmitting(false);
+              clearCart();
+              router.push(`/invoice/${result.orderId}`);
+            },
+          },
+        };
+
+        const rzp = new window.Razorpay(razorpayOptions);
+        rzp.on('payment.failed', function (resp) {
+          setError(`Payment declined: ${resp.error?.description || 'Transaction unsuccessful.'}`);
+          setIsSubmitting(false);
+        });
+        rzp.open();
+      } else {
+        // Atelier Consultation & Bank Transfer / COD
+        clearCart();
+        router.push(`/invoice/${result.orderId}`);
+      }
     } catch (err) {
       setError(err.message || 'An unexpected error occurred during checkout.');
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <div className="min-h-screen py-10 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -550,17 +659,113 @@ export default function CheckoutPage() {
             )}
 
             {/* Customization / Adda Notes */}
-            <div className="pt-3 border-t border-neutral-100">
-              <label className="block text-xs font-semibold text-neutral-700 mb-1">
-                Special Adda Customization / Event Date Notes (Optional)
+            <div className="pt-4 border-t border-neutral-100">
+              <label className="block text-xs font-semibold text-neutral-700 mb-1.5 flex items-center justify-between">
+                <span>Special Adda Customization / Event Date Notes (Optional)</span>
+                <span className="text-[10px] text-neutral-400 font-normal">Sent to Master Weavers</span>
               </label>
               <textarea
                 rows={2}
                 placeholder="Mention any specific blouse unstitched requirements, auspicious dates, or custom fall-pico instructions..."
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                className="w-full px-3.5 py-2 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
+                className="w-full px-3.5 py-2.5 text-xs rounded-xl border border-neutral-300 bg-neutral-50/50 text-[#1A1A1A] focus:outline-none focus:ring-2 focus:ring-[#0B3B60] focus:bg-white"
               />
+            </div>
+          </div>
+
+          {/* Section 3: Payment Method Selection */}
+          <div className="bg-white p-6 sm:p-8 rounded-2xl border border-neutral-200 shadow-sm space-y-4">
+            <h2 className="font-serif text-lg font-bold text-[#0B3B60] flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-[#C1272D]" /> 3. Select Payment Mode
+            </h2>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
+              {/* Option 1: Razorpay */}
+              <div
+                onClick={() => setPaymentMethod('RAZORPAY')}
+                className={`p-4 rounded-xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                  paymentMethod === 'RAZORPAY'
+                    ? 'border-[#0B3B60] bg-blue-50/40 shadow-xs'
+                    : 'border-neutral-200 hover:border-neutral-300 bg-neutral-50/30'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#0B3B60] text-white flex items-center justify-center font-bold text-xs">
+                      ₹
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-[#0B3B60]">
+                        Razorpay Secure Gateway
+                      </h4>
+                      <p className="text-[10px] text-neutral-500">
+                        Instant Online Payment
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      paymentMethod === 'RAZORPAY'
+                        ? 'border-[#0B3B60] bg-[#0B3B60]'
+                        : 'border-neutral-300'
+                    }`}
+                  >
+                    {paymentMethod === 'RAZORPAY' && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-neutral-200/60 flex flex-wrap items-center gap-1.5 text-[9px] text-neutral-600 font-medium">
+                  <span className="px-1.5 py-0.5 rounded bg-white border border-neutral-200">UPI / QR</span>
+                  <span className="px-1.5 py-0.5 rounded bg-white border border-neutral-200">GPay</span>
+                  <span className="px-1.5 py-0.5 rounded bg-white border border-neutral-200">PhonePe</span>
+                  <span className="px-1.5 py-0.5 rounded bg-white border border-neutral-200">Cards</span>
+                  <span className="px-1.5 py-0.5 rounded bg-white border border-neutral-200">NetBanking</span>
+                </div>
+              </div>
+
+              {/* Option 2: Atelier Consultation / Bank Transfer / COD */}
+              <div
+                onClick={() => setPaymentMethod('CONSULTATION')}
+                className={`p-4 rounded-xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                  paymentMethod === 'CONSULTATION'
+                    ? 'border-[#0B3B60] bg-blue-50/40 shadow-xs'
+                    : 'border-neutral-200 hover:border-neutral-300 bg-neutral-50/30'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-[#FAF9F6] border border-neutral-300 text-neutral-700 flex items-center justify-center font-bold text-xs">
+                      <Banknote className="w-4 h-4 text-emerald-700" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-neutral-900">
+                        Atelier Concierge / COD
+                      </h4>
+                      <p className="text-[10px] text-neutral-500">
+                        Direct Bank Transfer or Pay on Loom Verification
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      paymentMethod === 'CONSULTATION'
+                        ? 'border-[#0B3B60] bg-[#0B3B60]'
+                        : 'border-neutral-300'
+                    }`}
+                  >
+                    {paymentMethod === 'CONSULTATION' && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-neutral-200/60 text-[9.5px] text-neutral-600 font-light">
+                  Loom video verification provided prior to dispatch.
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -640,7 +845,11 @@ export default function CheckoutPage() {
               className="w-full py-4 px-6 rounded-xl bg-[#C1272D] hover:bg-[#A01F25] text-white font-bold text-xs uppercase tracking-widest shadow-xl hover:shadow-2xl transition active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2 cursor-pointer"
             >
               {isSubmitting ? (
-                'Registering Atelier Order...'
+                paymentMethod === 'RAZORPAY' ? 'Launching Razorpay Gateway...' : 'Registering Atelier Order...'
+              ) : paymentMethod === 'RAZORPAY' ? (
+                <>
+                  Pay {formattedTotal} via Razorpay <ArrowRight className="w-4 h-4" />
+                </>
               ) : (
                 <>
                   Confirm Order & Generate Invoice <ArrowRight className="w-4 h-4" />
@@ -653,3 +862,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

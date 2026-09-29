@@ -199,15 +199,13 @@ export default function Header() {
   return (
     <>
       <div
-        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${
-          isVisible ? 'translate-y-0' : '-translate-y-full'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'
+          }`}
       >
         {/* Top Royal Announcement Bar - Infinite Running Line (Right to Left) */}
         <div
-          className={`bg-[#071E3D] text-[#FAF9F6] text-[10px] sm:text-xs overflow-hidden border-b border-white/10 tracking-wider transition-all duration-300 select-none ${
-            isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden' : 'py-1.5 opacity-100'
-          }`}
+          className={`bg-[#071E3D] text-[#FAF9F6] text-[10px] sm:text-xs overflow-hidden border-b border-white/10 tracking-wider transition-all duration-300 select-none ${isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden' : 'py-1.5 opacity-100'
+            }`}
         >
           <div className="relative w-full overflow-hidden whitespace-nowrap pointer-events-none">
             <div className="animate-marquee flex items-center shrink-0">
@@ -245,11 +243,10 @@ export default function Header() {
 
         {/* Main Navigation Header */}
         <header
-          className={`transition-all duration-300 border-b ${
-            isScrolled
+          className={`transition-all duration-300 border-b ${isScrolled
               ? 'bg-white/95 backdrop-blur-md shadow-md border-neutral-200 py-2.5 sm:py-3'
               : 'bg-white border-neutral-200 py-3.5 sm:py-4'
-          }`}
+            }`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             {/* Left: Mobile Menu Toggle Button */}
@@ -374,9 +371,8 @@ export default function Header() {
                     key={link.name}
                     href={link.href}
                     onClick={(e) => handleNavClick(e, link.href)}
-                    className={`hover:text-[#C1272D] transition py-1 relative ${
-                      isExactActive ? 'text-[#C1272D] font-bold' : ''
-                    }`}
+                    className={`hover:text-[#C1272D] transition py-1 relative ${isExactActive ? 'text-[#C1272D] font-bold' : ''
+                      }`}
                   >
                     {link.name}
                   </Link>
@@ -595,9 +591,8 @@ export default function Header() {
                       <span>Collections</span>
                     </span>
                     <ChevronDown
-                      className={`w-4 h-4 text-white/40 transition-transform duration-200 ${
-                        isMobileCollectionsOpen ? 'rotate-180' : ''
-                      }`}
+                      className={`w-4 h-4 text-white/40 transition-transform duration-200 ${isMobileCollectionsOpen ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 

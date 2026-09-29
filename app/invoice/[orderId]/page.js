@@ -112,6 +112,14 @@ export default async function InvoicePage({ params }) {
             <p className="font-semibold text-neutral-900">{order.userName}</p>
             <p className="text-neutral-600">{order.userEmail}</p>
             <p className="text-neutral-600">{order.userPhone}</p>
+            <div className="mt-2">
+              <span className={`inline-block px-2 py-0.5 rounded text-[10.5px] font-bold uppercase ${order.paymentStatus === 'SUCCESS'
+                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                  : 'bg-amber-100 text-amber-800 border border-amber-300'
+                }`}>
+                Payment: {order.paymentStatus === 'SUCCESS' ? '✓ Verified (Razorpay Online)' : 'Atelier Consultation / Pending'}
+              </span>
+            </div>
           </div>
 
           <div>
@@ -131,6 +139,19 @@ export default async function InvoicePage({ params }) {
             )}
           </div>
         </div>
+
+        {/* Special Adda Customization / Event Notes if provided */}
+        {order.notes && (
+          <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-xs space-y-1">
+            <h4 className="font-serif font-bold text-[#0B3B60] uppercase tracking-wider flex items-center gap-1.5">
+              <span>✨ Patron Customization & Event Notes</span>
+            </h4>
+            <p className="text-neutral-700 italic bg-white/70 p-3 rounded-xl border border-amber-200/50">
+              "{order.notes}"
+            </p>
+          </div>
+        )}
+
 
         {/* Itemized Saree Table */}
         <div className="border border-neutral-200 rounded-2xl overflow-hidden">

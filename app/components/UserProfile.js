@@ -140,6 +140,14 @@ function OrderCard({ order }) {
           ))}
         </div>
 
+        {/* Patron Customization Notes */}
+        {order.notes && (
+          <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900">
+            <span className="font-semibold text-[#0B3B60]">✨ Your Customization / Adda Request:</span>{' '}
+            <span className="italic">{order.notes}</span>
+          </div>
+        )}
+
         {/* Pre-Dispatch Video Verification Spotlight */}
         {order.preDispatchVideoUrl && (
           <div className="p-4 rounded-xl bg-[#071E3D] border border-[#0B3B60] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">

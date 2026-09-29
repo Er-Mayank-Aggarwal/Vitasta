@@ -170,8 +170,10 @@ export async function updateOrderStatus(orderIdOrParams, optionalData = {}) {
       const isNowCancelled = newStatusUpper === 'CANCELLED' || newStatusUpper === 'RETURNED';
 
       if (wasActive && isNowCancelled && existingOrder.items.length > 0) {
-        for (const item of existingOrder.items) {
+        const sortedItems = [...existingOrder.items].sort((a, b) => a.productId.localeCompare(b.productId));
+        for (const item of sortedItems) {
           const inv = await tx.inventory.findUnique({ where: { productId: item.productId } });
+
           if (inv) {
             const newQty = inv.quantity + item.quantity;
             const newReserved = Math.max(0, inv.reservedQuantity - item.quantity);

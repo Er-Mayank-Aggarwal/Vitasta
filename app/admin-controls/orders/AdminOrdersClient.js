@@ -265,14 +265,29 @@ export default function AdminOrdersClient({ initialOrders = [] }) {
                       <td className="p-4">
                         <p className="font-semibold text-neutral-900">{customerName}</p>
                         <p className="text-[11px] text-neutral-500">{order.customer?.phone || order.userPhone}</p>
+                        {order.notes && (
+                          <div className="mt-1 flex items-center gap-1 text-[10px] text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 w-fit">
+                            <span>📝 Note:</span>
+                            <span className="truncate max-w-[140px] italic">{order.notes}</span>
+                          </div>
+                        )}
                       </td>
                       <td className="p-4">
                         <span className="px-2.5 py-1 rounded-full bg-neutral-100 text-neutral-800 text-[10px] font-semibold">
                           👗 {itemCount} {itemCount === 1 ? 'Saree' : 'Sarees'}
                         </span>
                       </td>
-                      <td className="p-4 font-serif font-bold text-[#0B3B60] text-sm">
-                        ₹{Number(order.total).toLocaleString('en-IN')}
+                      <td className="p-4">
+                        <p className="font-serif font-bold text-[#0B3B60] text-sm">
+                          ₹{Number(order.total).toLocaleString('en-IN')}
+                        </p>
+                        <span className={`inline-block px-1.5 py-0.5 rounded text-[9.5px] font-semibold uppercase ${
+                          order.paymentStatus === 'SUCCESS'
+                            ? 'bg-emerald-100 text-emerald-800'
+                            : 'bg-amber-100 text-amber-800'
+                        }`}>
+                          {order.paymentStatus === 'SUCCESS' ? '✓ Paid (Online)' : 'Pending'}
+                        </span>
                       </td>
                       <td className="p-4">
                         <select
@@ -363,6 +378,47 @@ export default function AdminOrdersClient({ initialOrders = [] }) {
               </button>
             </div>
 
+            {/* Patron & Order Info */}
+            <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-200 text-xs space-y-2">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-bold text-neutral-900 text-sm">
+                    {selectedOrder.userName || selectedOrder.customer?.name}
+                  </p>
+                  <p className="text-neutral-500">
+                    📞 {selectedOrder.userPhone || selectedOrder.customer?.phone} • ✉️ {selectedOrder.userEmail || selectedOrder.customer?.email}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="font-serif font-bold text-[#0B3B60] text-sm">
+                    ₹{Number(selectedOrder.total).toLocaleString('en-IN')}
+                  </p>
+                  <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                    selectedOrder.paymentStatus === 'SUCCESS'
+                      ? 'bg-emerald-100 text-emerald-800'
+                      : 'bg-amber-100 text-amber-800'
+                  }`}>
+                    Payment: {selectedOrder.paymentStatus === 'SUCCESS' ? 'SUCCESS (Razorpay/Online)' : 'PENDING'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Display Patron Notes Prominently */}
+              {selectedOrder.notes ? (
+                <div className="mt-3 p-3 rounded-lg bg-amber-50/90 border border-amber-300 text-amber-950 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-[#0B3B60]">
+                    <Sparkles className="w-3.5 h-3.5 text-[#C1272D]" />
+                    <span>Patron Customization & Special Adda Instructions:</span>
+                  </div>
+                  <p className="text-xs italic bg-white/80 p-2 rounded border border-amber-200 text-neutral-800">
+                    "{selectedOrder.notes}"
+                  </p>
+                </div>
+              ) : (
+                <p className="text-[11px] text-neutral-400 italic">No additional notes provided by patron at checkout.</p>
+              )}
+            </div>
+
             <form onSubmit={handleSaveModalUpdates} className="space-y-4 text-xs">
               <div>
                 <label className="block text-neutral-700 font-semibold mb-1">
@@ -446,6 +502,7 @@ export default function AdminOrdersClient({ initialOrders = [] }) {
           </div>
         </div>
       )}
+
     </div>
   );
 }
