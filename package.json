@@ -15,7 +15,6 @@
     "test": "node --loader ./test_loader.mjs --env-file=.env test_suite.mjs",
     "test:deep": "node --loader ./test_loader.mjs --env-file=.env test_deep_dive.mjs",
     "test:endpoints": "node test_endpoints.mjs",
-
     "lint": "eslint",
     "seed": "node --env-file=.env prisma/seed.mjs"
   },
@@ -47,10 +46,13 @@
   "optionalDependencies": {
     "@next/swc-linux-x64-gnu": "16.2.10",
     "@next/swc-linux-x64-musl": "16.2.10",
+    "@next/swc-win32-x64-msvc": "16.2.10",
     "@tailwindcss/oxide-linux-x64-gnu": "4.3.2",
     "@tailwindcss/oxide-linux-x64-musl": "4.3.2",
+    "@tailwindcss/oxide-win32-x64-msvc": "^4.3.2",
     "lightningcss-linux-x64-gnu": "1.32.0",
-    "lightningcss-linux-x64-musl": "1.32.0"
+    "lightningcss-linux-x64-musl": "1.32.0",
+    "lightningcss-win32-x64-msvc": "1.32.0"
   },
   "prisma": {
     "seed": "node --env-file=.env prisma/seed.mjs"

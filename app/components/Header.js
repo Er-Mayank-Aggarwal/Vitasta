@@ -80,8 +80,6 @@ export default function Header() {
   const { cartCount, setIsDrawerOpen } = useCart();
 
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-  const lastScrollYRef = useRef(0);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileCollectionsOpen, setIsMobileCollectionsOpen] = useState(false);
@@ -92,18 +90,10 @@ export default function Header() {
   const [isCollectionsHovered, setIsCollectionsHovered] = useState(false);
   const collectionsTimeoutRef = useRef(null);
 
-  // Scroll detection: auto-hide on scroll down past 150px, show on scroll up
+  // Scroll detection: collapse ticker on scroll past 20px, keep navbar permanently fixed
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      setIsScrolled(currentScrollY > 20);
-
-      if (currentScrollY > 150 && currentScrollY > lastScrollYRef.current) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
-      lastScrollYRef.current = currentScrollY;
+      setIsScrolled(window.scrollY > 20);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -198,10 +188,7 @@ export default function Header() {
 
   return (
     <>
-      <div
-        className={`fixed top-0 left-0 right-0 z-50 transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'
-          }`}
-      >
+      <div className="fixed top-0 left-0 right-0 z-50">
         {/* Top Royal Announcement Bar - Infinite Running Line (Right to Left) */}
         <div
           className={`bg-[#071E3D] text-[#FAF9F6] text-[10px] sm:text-xs overflow-hidden border-b border-white/10 tracking-wider transition-all duration-300 select-none ${isScrolled ? 'h-0 py-0 opacity-0 overflow-hidden' : 'py-1.5 opacity-100'

@@ -34,8 +34,8 @@ function encodePng(width, height, rgbaBuffer) {
   const ihdrData = Buffer.alloc(13);
   ihdrData.writeUInt32BE(width, 0);
   ihdrData.writeUInt32BE(height, 4);
-  ihdrData.writeUInt8(8, 8); // bit depth
-  ihdrData.writeUInt8(6, 9); // RGBA
+  ihdrData.writeUInt8(8, 8);
+  ihdrData.writeUInt8(6, 9);
   ihdrData.writeUInt8(0, 10);
   ihdrData.writeUInt8(0, 11);
   ihdrData.writeUInt8(0, 12);
@@ -46,7 +46,7 @@ function encodePng(width, height, rgbaBuffer) {
   for (let y = 0; y < height; y++) {
     const srcRow = y * rowSize;
     const dstRow = y * (rowSize + 1);
-    scanlines[dstRow] = 0; // filter None
+    scanlines[dstRow] = 0;
     rgbaBuffer.copy(scanlines, dstRow + 1, srcRow, srcRow + rowSize);
   }
   
@@ -108,33 +108,16 @@ function decodePng(filePath) {
   return { width, height, raw };
 }
 
-const decoded = decodePng('data/Vitasta.png');
-// Find tight bounding box
-let minX = decoded.width, maxX = 0, minY = decoded.height, maxY = 0;
-for (let y = 0; y < decoded.height; y++) {
-  for (let x = 0; x < decoded.width; x++) {
-    const idx = (y * decoded.width + x) * 4;
-    const a = decoded.raw[idx + 3];
-    if (a > 15) {
-      if (x < minX) minX = x;
-      if (x > maxX) maxX = x;
-      if (y < minY) minY = y;
-      if (y > maxY) maxY = y;
-    }
-  }
-}
+// Use Vitasta copy.png which contains the full logo and tagline
+const decoded = decodePng('data/Vitasta copy.png');
+const cropX = 410;
+const cropY = 190;
+const cropW = 1110;
+const cropH = 490;
 
-// Add padding
-const pad = 12;
-const cropX = Math.max(0, minX - pad);
-const cropY = Math.max(0, minY - pad);
-const cropW = Math.min(decoded.width - cropX, (maxX - minX + 1) + pad * 2);
-const cropH = Math.min(decoded.height - cropY, (maxY - minY + 1) + pad * 2);
+console.log('Cropping Vitasta copy.png to:', { cropX, cropY, cropW, cropH });
 
-console.log('Detected Logo bounding box:', { minX, maxX, minY, maxY, w: maxX - minX + 1, h: maxY - minY + 1 });
-console.log('Cropped dimensions:', { cropW, cropH });
-
-// 1. White logo (for dark backgrounds: Hero, Footer, Loom Video, etc.)
+// 1. White logo (for dark backgrounds)
 const whiteBuf = Buffer.alloc(cropW * cropH * 4);
 for (let y = 0; y < cropH; y++) {
   for (let x = 0; x < cropW; x++) {
@@ -144,8 +127,7 @@ for (let y = 0; y < cropH; y++) {
   }
 }
 
-// 2. Navy/Dark logo (for light backgrounds: Header, Invoices, Modals, etc.)
-// Navy color: #0B3B60 (R:11, G:59, B:96)
+// 2. Navy logo (for light backgrounds)
 const navyBuf = Buffer.alloc(cropW * cropH * 4);
 for (let y = 0; y < cropH; y++) {
   for (let x = 0; x < cropW; x++) {
@@ -156,15 +138,13 @@ for (let y = 0; y < cropH; y++) {
     const b = decoded.raw[srcIdx+2];
     const a = decoded.raw[srcIdx+3];
     
-    // Check if pixel is part of the red 'V'
-    const isRed = (r > 130 && g < 110 && b < 110);
+    const isRed = (r > 130 && g < 110 && b < 110) || (r > 180 && g > 60 && g < 120 && b < 70);
     if (isRed) {
       navyBuf[dstIdx] = r;
       navyBuf[dstIdx+1] = g;
       navyBuf[dstIdx+2] = b;
       navyBuf[dstIdx+3] = a;
     } else if (a > 0) {
-      // White letters: transform to #0B3B60 preserving smooth alpha/anti-aliasing
       const intensity = (r + g + b) / (3 * 255);
       navyBuf[dstIdx] = Math.round(11 * intensity);
       navyBuf[dstIdx+1] = Math.round(59 * intensity);
@@ -180,5 +160,6 @@ if (!fs.existsSync('public/images')) {
 
 fs.writeFileSync('public/images/vitasta-logo-white.png', encodePng(cropW, cropH, whiteBuf));
 fs.writeFileSync('public/images/vitasta-logo-navy.png', encodePng(cropW, cropH, navyBuf));
-fs.copyFileSync('data/Vitasta.png', 'public/images/vitasta-logo-full.png');
-console.log('Successfully generated logo assets in public/images/');
+fs.writeFileSync('public/images/vitasta-logo.png', encodePng(cropW, cropH, whiteBuf));
+fs.copyFileSync('data/Vitasta copy.png', 'public/images/vitasta-copy.png');
+console.log('Successfully generated logo assets from Vitasta copy.png in public/images/');
