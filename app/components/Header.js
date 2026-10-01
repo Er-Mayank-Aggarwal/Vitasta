@@ -265,28 +265,30 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Brand Logo matching Git latest commit */}
+            {/* Brand Logo with Thumbnail & Authentic Logo */}
             <Link
               href="/"
               onClick={(e) => handleNavClick(e, '/')}
-              className="flex items-center gap-2.5 group text-left"
+              className="flex items-center gap-2 sm:gap-2.5 group text-left"
             >
-              <div className="w-10 h-10 rounded-lg overflow-hidden relative shrink-0 border border-neutral-200 shadow-2xs">
+              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden relative shrink-0 border border-neutral-200 shadow-2xs group-hover:border-[#0B3B60]/40 transition">
                 <Image
-                  src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg"
+                  src="/images/vitasta_logo_banner.jpg"
                   alt="Vitasta unfolding serenity logo"
                   fill
-                  sizes="40px"
-                  className="object-cover"
+                  sizes="44px"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <div className="flex flex-col">
-                <span className="font-brand font-samarkan text-2xl sm:text-3xl font-normal text-[#0B3B60] tracking-wide leading-tight group-hover:text-[#C1272D] transition-colors">
-                  <span className="text-[#C1272D]">V</span>itasta
-                </span>
-                <span className="font-brand font-samarkan text-[11px] text-neutral-500 tracking-wide">
-                  unfolding serenity
-                </span>
+              <div className="bg-[#071E3D] px-2.5 sm:px-3 py-1.5 rounded-xl border border-[#0B3B60]/40 shadow-xs flex items-center group-hover:bg-[#0B3B60] transition-colors">
+                <Image
+                  src="/images/vitasta-logo-white.png"
+                  alt="Vitasta unfolding serenity"
+                  width={130}
+                  height={38}
+                  priority
+                  className="h-6 sm:h-7 w-auto object-contain"
+                />
               </div>
             </Link>
 
@@ -535,23 +537,22 @@ export default function Header() {
               {/* Drawer Header with Prominent Close Button */}
               <div className="border-b border-white/10 pb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg overflow-hidden relative border border-white/20">
+                  <div className="w-9 h-9 rounded-xl overflow-hidden relative border border-white/20 shrink-0">
                     <Image
-                      src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg"
+                      src="/images/vitasta_logo_banner.jpg"
                       alt="Vitasta logo"
                       fill
-                      sizes="32px"
+                      sizes="36px"
                       className="object-cover"
                     />
                   </div>
-                  <div>
-                    <span className="font-brand font-samarkan text-2xl font-normal text-white tracking-wide">
-                      <span className="text-[#C1272D]">V</span>itasta
-                    </span>
-                    <span className="block text-[10px] text-[#90c4ff] font-brand font-samarkan tracking-wide">
-                      unfolding serenity
-                    </span>
-                  </div>
+                  <Image
+                    src="/images/vitasta-logo-white.png"
+                    alt="Vitasta unfolding serenity"
+                    width={130}
+                    height={38}
+                    className="h-7 w-auto object-contain"
+                  />
                 </div>
 
                 {/* Clear Close Cross Button */}
