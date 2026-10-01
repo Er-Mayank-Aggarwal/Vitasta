@@ -117,7 +117,7 @@ const cropH = 490;
 
 console.log('Cropping Vitasta copy.png to:', { cropX, cropY, cropW, cropH });
 
-// 1. White logo (for dark backgrounds)
+// 1. White logo (for dark surfaces: Hero, Footer, Loom Video, Modals)
 const whiteBuf = Buffer.alloc(cropW * cropH * 4);
 for (let y = 0; y < cropH; y++) {
   for (let x = 0; x < cropW; x++) {
@@ -127,7 +127,8 @@ for (let y = 0; y < cropH; y++) {
   }
 }
 
-// 2. Navy logo (for light backgrounds)
+// 2. Navy logo with red accents (for transparent white navbar & light surfaces)
+// Navy color: #0B3B60 (R: 11, G: 59, B: 96)
 const navyBuf = Buffer.alloc(cropW * cropH * 4);
 for (let y = 0; y < cropH; y++) {
   for (let x = 0; x < cropW; x++) {
@@ -138,18 +139,22 @@ for (let y = 0; y < cropH; y++) {
     const b = decoded.raw[srcIdx+2];
     const a = decoded.raw[srcIdx+3];
     
-    const isRed = (r > 130 && g < 110 && b < 110) || (r > 180 && g > 60 && g < 120 && b < 70);
-    if (isRed) {
+    if (a === 0) continue;
+
+    // Check if pixel is part of red/orange wing or underline
+    const isRedAccent = (r - Math.max(g, b) > 20) || (r > 160 && g < 120 && b < 120);
+    if (isRedAccent) {
       navyBuf[dstIdx] = r;
       navyBuf[dstIdx+1] = g;
       navyBuf[dstIdx+2] = b;
       navyBuf[dstIdx+3] = a;
-    } else if (a > 0) {
+    } else {
+      // White/grayscale letter pixel: convert to royal navy #0B3B60 with anti-aliasing
       const intensity = (r + g + b) / (3 * 255);
       navyBuf[dstIdx] = Math.round(11 * intensity);
       navyBuf[dstIdx+1] = Math.round(59 * intensity);
       navyBuf[dstIdx+2] = Math.round(96 * intensity);
-      navyBuf[dstIdx+3] = a;
+      navyBuf[dstIdx+3] = Math.round(a * intensity);
     }
   }
 }
@@ -162,4 +167,4 @@ fs.writeFileSync('public/images/vitasta-logo-white.png', encodePng(cropW, cropH,
 fs.writeFileSync('public/images/vitasta-logo-navy.png', encodePng(cropW, cropH, navyBuf));
 fs.writeFileSync('public/images/vitasta-logo.png', encodePng(cropW, cropH, whiteBuf));
 fs.copyFileSync('data/Vitasta copy.png', 'public/images/vitasta-copy.png');
-console.log('Successfully generated logo assets from Vitasta copy.png in public/images/');
+console.log('Successfully generated transparent logo assets in public/images/');

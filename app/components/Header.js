@@ -252,11 +252,11 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Brand Logo with Thumbnail & Authentic Logo */}
+            {/* Brand Logo with Thumbnail & Authentic Transparent Logo */}
             <Link
               href="/"
               onClick={(e) => handleNavClick(e, '/')}
-              className="flex items-center gap-2 sm:gap-2.5 group text-left"
+              className="flex items-center gap-2.5 sm:gap-3 group text-left"
             >
               <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl overflow-hidden relative shrink-0 border border-neutral-200 shadow-2xs group-hover:border-[#0B3B60]/40 transition">
                 <Image
@@ -267,16 +267,14 @@ export default function Header() {
                   className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <div className="bg-[#071E3D] px-2.5 sm:px-3 py-1.5 rounded-xl border border-[#0B3B60]/40 shadow-xs flex items-center group-hover:bg-[#0B3B60] transition-colors">
-                <Image
-                  src="/images/vitasta-logo-white.png"
-                  alt="Vitasta unfolding serenity"
-                  width={130}
-                  height={38}
-                  priority
-                  className="h-6 sm:h-7 w-auto object-contain"
-                />
-              </div>
+              <Image
+                src="/images/vitasta-logo-navy.png"
+                alt="Vitasta unfolding serenity"
+                width={150}
+                height={55}
+                priority
+                className="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-102"
+              />
             </Link>
 
             {/* Desktop Navigation Links */}
