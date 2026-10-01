@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
@@ -103,10 +104,14 @@ export default function AdminLayoutClient({ children, user }) {
         <div className="flex flex-col h-full overflow-y-auto">
           {/* Logo Header */}
           <div className="p-6 border-b border-white/10 flex items-center justify-between">
-            <Link href="/admin-controls" className="flex flex-col">
-              <span className="font-brand font-samarkan text-2xl font-normal tracking-wide text-[#F3E5AB]">
-                <span className="text-[#ff8a8e]">V</span>itasta
-              </span>
+            <Link href="/admin-controls" className="flex flex-col gap-1">
+              <Image
+                src="/images/vitasta-logo-white.png"
+                alt="Vitasta"
+                width={130}
+                height={38}
+                className="h-7 w-auto object-contain"
+              />
               <span className="text-[9px] uppercase tracking-[0.25em] text-[#D4AF37] font-semibold flex items-center gap-1 mt-0.5">
                 👑 Atelier Admin Panel
               </span>

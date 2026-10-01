@@ -62,22 +62,14 @@ export default async function InvoicePage({ params }) {
       <div className="bg-white border border-neutral-200 rounded-3xl p-8 sm:p-12 shadow-xl space-y-8 print:shadow-none print:border-none print:p-0">
         {/* Invoice Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-neutral-200 pb-8">
-          <div className="flex items-center gap-3.5">
-            <div className="w-14 h-14 rounded-xl overflow-hidden relative shrink-0 border border-neutral-200 shadow-2xs">
+          <div className="flex items-center gap-3.5 bg-[#071E3D] px-4 py-3 rounded-2xl border border-[#0B3B60]/30 shadow-xs">
+            <div className="flex flex-col">
               <img
-                src="https://res.cloudinary.com/sjl1rfvu/image/upload/v1789675005/vitasta/brand/vitasta_logo_banner.jpg"
+                src="/images/vitasta-logo-white.png"
                 alt="Vitasta Saree Atelier"
-                className="w-full h-full object-cover"
+                className="h-10 w-auto object-contain"
               />
-            </div>
-            <div>
-              <span className="font-brand font-samarkan text-3xl sm:text-4xl font-normal tracking-wide text-[#0B3B60]">
-                <span className="text-[#C1272D]">V</span>itasta
-              </span>
-              <p className="font-brand font-samarkan text-xs sm:text-sm text-[#0B3B60]/80">
-                unfolding serenity
-              </p>
-              <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-[#C1272D] font-sans font-semibold">
+              <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.25em] text-[#90c4ff] font-sans font-semibold mt-1">
                 by Smita Saraswat • Jodhpur
               </p>
             </div>

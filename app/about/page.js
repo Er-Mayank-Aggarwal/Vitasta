@@ -16,14 +16,21 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen py-12 sm:py-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
       {/* Hero Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest text-[#C1272D] bg-rose-50 border border-rose-200">
+      <div className="bg-gradient-to-br from-[#071E3D] via-[#0B3B60] to-[#071E3D] text-white rounded-3xl p-8 sm:p-12 text-center max-w-4xl mx-auto space-y-4 shadow-xl border border-white/10">
+        <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest text-[#ff8a8e] bg-[rgba(193,39,45,0.2)] border border-[rgba(193,39,45,0.35)]">
           <Sparkles className="w-3.5 h-3.5" /> Born in Jodhpur, Rajasthan
         </span>
-        <h1 className="font-brand font-samarkan text-4xl sm:text-6xl font-normal text-[#0B3B60] tracking-wide">
-          unfolding serenity
-        </h1>
-        <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-light">
+        <div className="flex justify-center py-1">
+          <Image
+            src="/images/vitasta-logo-white.png"
+            alt="Vitasta unfolding serenity"
+            width={320}
+            height={92}
+            priority
+            className="h-14 sm:h-18 w-auto object-contain drop-shadow-md"
+          />
+        </div>
+        <p className="text-sm sm:text-base text-neutral-200 leading-relaxed font-light max-w-2xl mx-auto">
           Vitasta by Smita Saraswat is a premium handcrafted saree atelier from Jodhpur, Rajasthan, inspired by the timeless grace and grandeur of the royal women of Rajasthan.
         </p>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { User, Lock, Mail, UserPlus, LogIn, CheckCircle2, AlertCircle, Eye, EyeOff, Sparkles, ShieldCheck, X } from 'lucide-react';
 import { signIn, signUp } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
@@ -136,10 +137,15 @@ export default function AuthForm({ onSuccess, onClose, isModal = false, customTi
 
       {/* Header */}
       <div className="text-center mb-4">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#0B3B60]/10 text-[#0B3B60] border border-[#0B3B60]/20 mb-2">
-          <Sparkles className="w-3.5 h-3.5 text-[#C1272D]" />
-          <span className="font-brand font-samarkan text-sm tracking-wide">Vitasta</span> Royal Portal
-        </span>
+        <div className="inline-flex items-center justify-center bg-[#071E3D] px-4 py-2 rounded-xl mb-3 border border-[#0B3B60]/40 shadow-sm">
+          <Image
+            src="/images/vitasta-logo-white.png"
+            alt="Vitasta unfolding serenity"
+            width={140}
+            height={40}
+            className="h-7 w-auto object-contain"
+          />
+        </div>
         <h2 className="text-lg sm:text-2xl font-serif font-bold text-[#0B3B60] tracking-wide">
           {customTitle || (isLogin ? 'Sign In to Atelier' : 'Create an Account')}
         </h2>

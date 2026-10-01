@@ -24,12 +24,22 @@ export default function HeroSection() {
             </div>
 
             {/* Main Brand Title & Tagline */}
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.1]">
-              <span className="text-[#C1272D]">V</span>itasta
-              <span className="block font-serif italic text-2xl sm:text-3xl lg:text-4xl text-[#90c4ff] font-normal mt-1">
-                by Smita Saraswat
-              </span>
-            </h1>
+            <div className="space-y-2">
+              <h1 className="sr-only">Vitasta unfolding serenity by Smita Saraswat</h1>
+              <div className="flex justify-center lg:justify-start">
+                <Image
+                  src="/images/vitasta-logo-white.png"
+                  alt="Vitasta unfolding serenity"
+                  width={380}
+                  height={110}
+                  priority
+                  className="h-16 sm:h-20 lg:h-24 w-auto object-contain drop-shadow-md"
+                />
+              </div>
+              <p className="font-serif italic text-xl sm:text-2xl lg:text-3xl text-[#90c4ff] font-normal tracking-wide">
+                by Smita Saraswat • Jodhpur
+              </p>
+            </div>
 
             {/* Description */}
             <p className="text-sm sm:text-base text-neutral-200 leading-relaxed max-w-xl mx-auto lg:mx-0 font-light">

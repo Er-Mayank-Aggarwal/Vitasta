@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mail, Phone, MapPin, Sparkles, Send, ShieldCheck, Video, CheckCircle2 } from 'lucide-react';
 import { subscribeNewsletter } from '@/app/actions/contact-actions';
 
@@ -77,13 +78,14 @@ export default function Footer() {
           {/* Brand & Newsletter (Full width on mobile top) */}
           <div className="col-span-2 md:col-span-1 space-y-2.5">
             <Link href="/" className="inline-block group">
-              <span className="font-brand font-samarkan text-3xl font-normal tracking-wide text-white group-hover:text-[#F3E5AB] transition-colors">
-                <span className="text-[#C1272D]">V</span>itasta
-              </span>
-              <p className="font-brand font-samarkan text-xs tracking-wider text-[#90c4ff]">
-                unfolding serenity
-              </p>
-              <p className="text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-sans font-semibold mt-1">
+              <Image
+                src="/images/vitasta-logo-white.png"
+                alt="Vitasta unfolding serenity"
+                width={170}
+                height={50}
+                className="h-10 w-auto object-contain transition-transform duration-200 group-hover:scale-102"
+              />
+              <p className="text-[9px] uppercase tracking-[0.2em] text-neutral-400 font-sans font-semibold mt-1.5">
                 by Smita Saraswat • Jodhpur
               </p>
             </Link>
