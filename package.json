@@ -9,7 +9,9 @@
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "node --max-http-header-size=65536 node_modules/next/dist/bin/next dev",
-    "build": "prisma generate && next build",
+    "db:init": "node scripts/init-db.mjs",
+    "build:pdf": "python scripts/build_pdf.py",
+    "build": "node scripts/init-db.mjs && prisma generate && next build",
     "start": "node --max-http-header-size=65536 node_modules/next/dist/bin/next start",
     "serve": "npx serve -l 3000 .",
     "test": "node --loader ./test_loader.mjs --env-file=.env test_suite.mjs",

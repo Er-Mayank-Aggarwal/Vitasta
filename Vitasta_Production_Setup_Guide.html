@@ -790,34 +790,37 @@ d>
           <span class="code-var">CLOUDINARY_API_SECRET</span>=<span class="code-val">"YOUR_CLOUDINARY_API_SECRET"</span><br>
           <span class="code-var">RAZORPAY_KEY_ID</span>=<span class="code-val">"rzp_live_YOUR_RAZORPAY_KEY_ID"</span><br>
           <span class="code-var">RAZORPAY_KEY_SECRET</span>=<span class="code-val">"YOUR_RAZORPAY_KEY_SECRET"</span><br>
-          <span class="code-var">NEXT_PUBLIC_RAZORPAY_KEY_ID</span>=<span class="code-val">"rzp_live_YOUR_RAZORPAY_KEY_ID"</span><br>
+          <span class="code-var">NEXT_PUBLIC_RAZORPAY_KEY_ID</span>=<span class="code-val">"rzp_live_YOUR_RAZORPAY_KEY_ID"</span><br><br>
+          <span class="code-comment"># Initial Store Owner / Admin Login Credentials (Auto-created on deploy)</span><br>
+          <span class="code-var">ADMIN_EMAIL</span>=<span class="code-val">"admin@vitasta.com"</span><br>
+          <span class="code-var">ADMIN_PASSWORD</span>=<span class="code-val">"YourSecurePassword123!"</span><br>
+          <span class="code-var">ADMIN_NAME</span>=<span class="code-val">"Smita Saraswat"</span><br><br>
+          <span class="code-comment"># Production Security Toggle (disables test buttons)</span><br>
           <span class="code-var">NEXT_PUBLIC_ENABLE_DEMO_LOGIN</span>=<span class="code-val">"false"</span>
         </div>
 
         <ol class="step-list" start="8">
           <li>Click <strong>"Deploy Vitasta"</strong>.</li>
-          <li>Netlify will automatically build and publish your site with a free SSL certificate!</li>
+          <li>Netlify will automatically build, create all database tables, register your admin credentials, and publish your royal atelier!</li>
         </ol>
 
         <div class="callout callout-success">
           <span class="callout-icon">👑</span>
-          <span><strong>First Time Admin Access:</strong> Once deployed, your products and default admin account (<code>admin@vitasta.com</code>) are ready in the database. Navigate to <code>/admin-controls</code> to manage your orders and saree catalog!</span>
+          <span><strong>Zero-Terminal Admin Auto-Setup:</strong> When Netlify deploys, it automatically creates your database tables and registers the <code>ADMIN_EMAIL</code> and <code>ADMIN_PASSWORD</code> you specified above. You can immediately log into your store dashboard at <code>/admin-controls</code>!</span>
         </div>
       </div>
 
       <!-- SUMMARY TABLE -->
       <h2 style="font-family: 'Playfair Display', serif; font-size: 20px; color: var(--primary); margin: 32px 0 12px 0;">
-        Quick Reference: All 13 Environment Variables
+        Quick Reference: All 16 Environment Variables
       </h2>
-
-
 
       <table class="summary-table">
         <thead>
           <tr>
             <th>Variable Key</th>
             <th>Service / Purpose</th>
-            <th>Where to Get It</th>
+            <th>Where to Get / What to Enter</th>
           </tr>
         </thead>
         <tbody>
@@ -825,6 +828,21 @@ d>
             <td><span class="key-badge">DATABASE_URL</span></td>
             <td>Neon PostgreSQL (Pooled)</td>
             <td><a href="https://console.neon.tech" target="_blank" style="color: #0369A1; font-weight: 600;">Neon Console</a> > Project > Connection String</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">ADMIN_EMAIL</span></td>
+            <td>Store Owner Admin Email</td>
+            <td>Your preferred login email (e.g. <code>admin@vitasta.com</code> or personal email)</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">ADMIN_PASSWORD</span></td>
+            <td>Store Owner Admin Password</td>
+            <td>Your chosen secure admin password (e.g. <code>RoyalVitasta2026!</code>)</td>
+          </tr>
+          <tr>
+            <td><span class="key-badge">ADMIN_NAME</span></td>
+            <td>Store Owner Full Name</td>
+            <td>Your name (e.g. <code>Smita Saraswat</code>)</td>
           </tr>
           <tr>
             <td><span class="key-badge">BETTER_AUTH_SECRET</span></td>
