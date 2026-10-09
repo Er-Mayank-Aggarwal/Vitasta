@@ -144,6 +144,7 @@ model Category {
   fabric      String?
   description String?
   gradient    String?
+  type        String? @default("saree")
 
   products  Product[]
   createdAt DateTime  @default(now())
@@ -175,6 +176,15 @@ model Product {
   origin              String  @default("Jodhpur, Rajasthan, India")
   stockStatus         String  @default("MADE_TO_ORDER")
   preDispatchVideoUrl String?
+
+  // Suit & Apparel Specific Attributes
+  productType   String? @default("SAREE")
+  bottomFabric  String?
+  bottomWork    String?
+  dupattaFabric String?
+  dupattaWork   String?
+  setIncludes   String?
+  occasion      String?
 
   isActive   Boolean @default(true)
   isFeatured Boolean @default(true)

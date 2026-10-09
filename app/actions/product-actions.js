@@ -38,6 +38,8 @@ export async function getProducts(options = {}) {
 
     const {
       categoryId,
+      department,
+      productType,
       fabric,
       search,
       sort = 'featured',
@@ -49,7 +51,17 @@ export async function getProducts(options = {}) {
       isActive: true,
     };
 
+    if (department === 'suits' || productType === 'SUIT') {
+      where.OR = [
+        { productType: 'SUIT' },
+        { categoryId: { in: ['modal-bandhej-suits', 'cotton-bandhej-cutwork-suits'] } }
+      ];
+    } else if (department === 'sarees' || productType === 'SAREE') {
+      where.categoryId = { notIn: ['modal-bandhej-suits', 'cotton-bandhej-cutwork-suits'] };
+    }
+
     if (categoryId && categoryId !== 'all') {
+      delete where.OR;
       where.categoryId = categoryId;
     }
 

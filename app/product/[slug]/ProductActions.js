@@ -129,10 +129,10 @@ export default function ProductActions({ product }) {
       {/* Assurance Callout */}
       <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 space-y-2.5 text-xs text-neutral-700">
         <div className="flex items-center gap-2 text-[#0B3B60] font-bold uppercase tracking-wider text-[11px]">
-          <Video className="w-4 h-4 text-[#C1272D]" /> Pre-Dispatch Loom Video Guarantee
+          <Video className="w-4 h-4 text-[#C1272D]" /> Pre-Dispatch Video Guarantee
         </div>
         <p className="leading-relaxed">
-          Before your handcrafted saree is packed and dispatched from Jodhpur, our master artisan team records a detailed HD video of the complete product and shares it directly to your WhatsApp for transparent verification.
+          Before your handcrafted {product.productType === 'SUIT' || product.categoryId?.includes('suit') ? 'suit set' : 'saree'} is packed and dispatched from Jodhpur, our master artisan team records a detailed HD video of the complete product and shares it directly to your WhatsApp for transparent verification.
         </p>
         <div className="grid grid-cols-2 gap-2 pt-2 border-t border-blue-200/60 text-[11px]">
           <span className="flex items-center gap-1.5 font-medium text-[#0B3B60]">

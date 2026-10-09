@@ -31,7 +31,7 @@ const collectionsList = [
     name: 'Riwaayat-e-Chiffon',
     slug: 'riwaayat-e-chiffon',
     desc: 'Pure Chiffon with delicate Cutdana & Pitta',
-    count: '5 Sarees',
+    count: '7 Sarees',
     href: '/shop?category=riwaayat-e-chiffon',
   },
   {
@@ -45,28 +45,46 @@ const collectionsList = [
     name: 'Silk Noorani',
     slug: 'silk-noorani',
     desc: 'Pure Katan Silks with heirloom Gota Patti',
-    count: '7 Sarees',
+    count: '5 Sarees',
     href: '/shop?category=silk-noorani',
   },
   {
     name: 'Organza Adaa',
     slug: 'organza-adaa',
     desc: 'Pure Organza with scalloped Aari borders',
-    count: '3 Sarees',
+    count: '1 Saree',
     href: '/shop?category=organza-adaa',
   },
   {
     name: 'Banarasi Virasat',
     slug: 'banarasi-virasat',
     desc: 'Sovereign Banarasi weaves with regal antique zari',
-    count: '2 Sarees',
+    count: '4 Sarees',
     href: '/shop?category=banarasi-virasat',
+  },
+];
+
+const suitsList = [
+  {
+    name: 'Modal Bandhej Zari Suits',
+    slug: 'modal-bandhej-suits',
+    desc: 'Pure Modal with Intricate Zari Weaving & Bandhani',
+    count: '3 Suits',
+    href: '/shop?category=modal-bandhej-suits',
+  },
+  {
+    name: 'Cotton Bandhej Cutwork Suits',
+    slug: 'cotton-bandhej-cutwork-suits',
+    desc: 'Pure Cotton with Cutwork & Chiffon Bandhej Dupatta',
+    count: '5 Suits',
+    href: '/shop?category=cotton-bandhej-cutwork-suits',
   },
 ];
 
 const navLinks = [
   { name: 'Home', href: '/' },
-  { name: 'Collections', href: '/#collections', isDropdown: true },
+  { name: 'Sarees', href: '/shop?department=sarees', isSareeDropdown: true },
+  { name: 'Suits', href: '/shop?department=suits', isSuitDropdown: true },
   { name: 'Catalog', href: '/shop' },
   { name: 'Promise', href: '/#values' },
   { name: 'Craft', href: '/about' },
@@ -83,12 +101,15 @@ export default function Header() {
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileCollectionsOpen, setIsMobileCollectionsOpen] = useState(false);
+  const [isMobileSuitsOpen, setIsMobileSuitsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isCollectionsHovered, setIsCollectionsHovered] = useState(false);
+  const [isSuitsHovered, setIsSuitsHovered] = useState(false);
   const collectionsTimeoutRef = useRef(null);
+  const suitsTimeoutRef = useRef(null);
 
   // Scroll detection: collapse ticker on scroll past 20px, keep navbar permanently fixed
   useEffect(() => {
@@ -119,6 +140,7 @@ export default function Header() {
     setIsSearchOpen(false);
     setIsUserDropdownOpen(false);
     setIsCollectionsHovered(false);
+    setIsSuitsHovered(false);
   }, [pathname]);
 
   // Lock body scroll when mobile menu or auth modal is open
@@ -139,6 +161,7 @@ export default function Header() {
   const handleNavClick = (e, href) => {
     setIsMobileMenuOpen(false);
     setIsCollectionsHovered(false);
+    setIsSuitsHovered(false);
 
     if (href.startsWith('/#')) {
       const sectionId = href.replace('/#', '');
@@ -181,6 +204,17 @@ export default function Header() {
   const handleMouseLeaveCollections = () => {
     collectionsTimeoutRef.current = setTimeout(() => {
       setIsCollectionsHovered(false);
+    }, 200);
+  };
+
+  const handleMouseEnterSuits = () => {
+    if (suitsTimeoutRef.current) clearTimeout(suitsTimeoutRef.current);
+    setIsSuitsHovered(true);
+  };
+
+  const handleMouseLeaveSuits = () => {
+    suitsTimeoutRef.current = setTimeout(() => {
+      setIsSuitsHovered(false);
     }, 200);
   };
 
@@ -282,7 +316,7 @@ export default function Header() {
               {navLinks.map((link) => {
                 const isExactActive = pathname === link.href;
 
-                if (link.isDropdown) {
+                if (link.isSareeDropdown) {
                   return (
                     <div
                       key={link.name}
@@ -299,13 +333,13 @@ export default function Header() {
                         <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" />
                       </Link>
 
-                      {/* Collections Dropdown Mega Menu */}
+                      {/* Sarees Dropdown Mega Menu */}
                       {isCollectionsHovered && (
                         <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[340px] z-50 animate-in fade-in zoom-in-95 duration-150">
                           <div className="bg-white border border-neutral-200 rounded-2xl shadow-2xl p-3 space-y-1">
                             <div className="px-3 py-1.5 border-b border-neutral-100 flex items-center justify-between">
                               <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-                                The 5 Royal Collections
+                                The 5 Royal Saree Weaves
                               </span>
                               <Link
                                 href="/#collections"
@@ -339,11 +373,82 @@ export default function Header() {
 
                             <div className="pt-2 border-t border-neutral-100">
                               <Link
-                                href="/shop"
+                                href="/shop?department=sarees"
                                 onClick={() => setIsCollectionsHovered(false)}
                                 className="w-full py-2 px-3 rounded-xl bg-[#0B3B60] hover:bg-[#062238] text-white text-[11px] font-bold text-center block transition uppercase tracking-wider"
                               >
                                 Browse All Handcrafted Sarees →
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                if (link.isSuitDropdown) {
+                  return (
+                    <div
+                      key={link.name}
+                      className="relative"
+                      onMouseEnter={handleMouseEnterSuits}
+                      onMouseLeave={handleMouseLeaveSuits}
+                    >
+                      <Link
+                        href={link.href}
+                        onClick={(e) => handleNavClick(e, link.href)}
+                        className="hover:text-[#C1272D] transition py-2 inline-flex items-center gap-1 group"
+                      >
+                        <span>{link.name}</span>
+                        <ChevronDown className="w-3.5 h-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                      </Link>
+
+                      {/* Suits Dropdown Mega Menu */}
+                      {isSuitsHovered && (
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-[340px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                          <div className="bg-white border border-neutral-200 rounded-2xl shadow-2xl p-3 space-y-1">
+                            <div className="px-3 py-1.5 border-b border-neutral-100 flex items-center justify-between">
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                                Bespoke Royal Suits
+                              </span>
+                              <Link
+                                href="/shop?department=suits"
+                                onClick={(e) => handleNavClick(e, '/shop?department=suits')}
+                                className="text-[10px] font-bold text-[#C1272D] hover:underline"
+                              >
+                                View All Suits
+                              </Link>
+                            </div>
+
+                            {suitsList.map((col) => (
+                              <Link
+                                key={col.slug}
+                                href={col.href}
+                                onClick={() => setIsSuitsHovered(false)}
+                                className="block p-2.5 rounded-xl hover:bg-[#FAF9F6] transition group border border-transparent hover:border-neutral-200"
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="font-serif font-bold text-[#0B3B60] text-sm group-hover:text-[#C1272D] transition">
+                                    {col.name}
+                                  </span>
+                                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-rose-50 text-[#C1272D] font-semibold border border-rose-200">
+                                    {col.count}
+                                  </span>
+                                </div>
+                                <p className="text-[11px] text-neutral-500 font-normal lowercase tracking-normal mt-0.5 capitalize truncate">
+                                  {col.desc}
+                                </p>
+                              </Link>
+                            ))}
+
+                            <div className="pt-2 border-t border-neutral-100">
+                              <Link
+                                href="/shop?department=suits"
+                                onClick={() => setIsSuitsHovered(false)}
+                                className="w-full py-2 px-3 rounded-xl bg-[#C1272D] hover:bg-[#9B1B1E] text-white text-[11px] font-bold text-center block transition uppercase tracking-wider"
+                              >
+                                Explore All Unstitched Suits →
                               </Link>
                             </div>
                           </div>
@@ -565,7 +670,7 @@ export default function Header() {
                   <ChevronRight className="w-4 h-4 text-white/30" />
                 </Link>
 
-                {/* Mobile Collections Expandable Accordion */}
+                {/* Mobile Sarees Expandable Accordion */}
                 <div>
                   <button
                     type="button"
@@ -574,7 +679,7 @@ export default function Header() {
                   >
                     <span className="flex items-center gap-3 text-white">
                       <Layers className="w-4 h-4 text-[#90c4ff]" />
-                      <span>Collections</span>
+                      <span>Royal Sarees</span>
                     </span>
                     <ChevronDown
                       className={`w-4 h-4 text-white/40 transition-transform duration-200 ${isMobileCollectionsOpen ? 'rotate-180' : ''
@@ -596,11 +701,52 @@ export default function Header() {
                         </Link>
                       ))}
                       <Link
-                        href="/#collections"
-                        onClick={(e) => handleNavClick(e, '/#collections')}
+                        href="/shop?department=sarees"
+                        onClick={() => setIsMobileMenuOpen(false)}
                         className="block text-[11px] font-semibold text-[#90c4ff] hover:underline pt-1 px-3 normal-case tracking-normal"
                       >
-                        View Interactive Slideshow →
+                        Explore All Royal Sarees →
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                {/* Mobile Suits Expandable Accordion */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setIsMobileSuitsOpen(!isMobileSuitsOpen)}
+                    className="w-full flex items-center justify-between py-3 px-3.5 rounded-xl hover:bg-white/10 transition text-left cursor-pointer"
+                  >
+                    <span className="flex items-center gap-3 text-white">
+                      <Sparkles className="w-4 h-4 text-[#ff8a8e]" />
+                      <span>Bespoke Suits</span>
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-white/40 transition-transform duration-200 ${isMobileSuitsOpen ? 'rotate-180' : ''
+                        }`}
+                    />
+                  </button>
+
+                  {isMobileSuitsOpen && (
+                    <div className="pl-6 pr-2 py-2 space-y-1 border-l border-white/15 ml-5 my-1">
+                      {suitsList.map((col) => (
+                        <Link
+                          key={col.slug}
+                          href={col.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center justify-between py-2 px-3 rounded-lg text-xs normal-case tracking-normal hover:bg-white/10 text-neutral-300 hover:text-white"
+                        >
+                          <span className="font-serif font-medium">{col.name}</span>
+                          <span className="text-[10px] text-[#ff8a8e]">{col.count}</span>
+                        </Link>
+                      ))}
+                      <Link
+                        href="/shop?department=suits"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block text-[11px] font-semibold text-[#ff8a8e] hover:underline pt-1 px-3 normal-case tracking-normal"
+                      >
+                        Explore All Unstitched Suits →
                       </Link>
                     </div>
                   )}
@@ -613,7 +759,7 @@ export default function Header() {
                 >
                   <span className="flex items-center gap-3">
                     <ShoppingBag className="w-4 h-4 text-[#90c4ff]" />
-                    <span>Handcrafted Saree Catalog</span>
+                    <span>Complete Atelier Catalog</span>
                   </span>
                   <ChevronRight className="w-4 h-4 text-white/30" />
                 </Link>

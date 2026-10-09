@@ -90,7 +90,7 @@ export default function Footer() {
               </p>
             </Link>
             <p className="text-[11px] sm:text-xs text-neutral-300 leading-relaxed font-light">
-              Heirloom royal sarees handcrafted on traditional addas in Jodhpur, Rajasthan.
+              Heirloom royal sarees and bespoke unstitched suit sets handcrafted on traditional addas in Jodhpur, Rajasthan.
             </p>
 
             {/* Newsletter Input */}
@@ -125,22 +125,27 @@ export default function Footer() {
           {/* Collections Column */}
           <div>
             <h4 className="font-serif text-xs font-bold text-white uppercase tracking-wider mb-2.5">
-              Collections
+              Atelier Collections
             </h4>
             <ul className="space-y-1.5 text-[11px] sm:text-xs">
               <li>
+                <Link href="/shop?department=sarees" className="hover:text-[#90c4ff] transition">
+                  Royal Sarees
+                </Link>
+              </li>
+              <li>
+                <Link href="/shop?category=modal-bandhej-suits" className="hover:text-[#90c4ff] transition">
+                  Modal Bandhej Suits
+                </Link>
+              </li>
+              <li>
+                <Link href="/shop?category=cotton-bandhej-cutwork-suits" className="hover:text-[#90c4ff] transition">
+                  Cotton Cutwork Suits
+                </Link>
+              </li>
+              <li>
                 <Link href="/shop?category=riwaayat-e-chiffon" className="hover:text-[#90c4ff] transition">
                   Riwaayat-e-Chiffon
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=georgette-reet" className="hover:text-[#90c4ff] transition">
-                  Georgette Reet
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=silk-noorani" className="hover:text-[#90c4ff] transition">
-                  Silk Noorani
                 </Link>
               </li>
               <li>
@@ -150,7 +155,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/shop" className="text-[#90c4ff] font-semibold hover:underline inline-block pt-0.5">
-                  100% Handcrafted Sarees →
+                  Complete Atelier Catalog →
                 </Link>
               </li>
             </ul>

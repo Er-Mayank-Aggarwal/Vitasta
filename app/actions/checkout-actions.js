@@ -212,7 +212,7 @@ export async function createOrder(orderInput) {
       });
 
       return order;
-    });
+    }, { maxWait: 15000, timeout: 30000 });
 
     revalidatePath('/account');
     revalidatePath('/admin-controls/orders');

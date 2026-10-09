@@ -9,7 +9,10 @@ import { Sparkles, ArrowRight, Video, CheckCircle2 } from 'lucide-react';
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const { products = [] } = await getProducts({ limit: 8 });
+  const [{ products: sareeProducts = [] }, { products: suitProducts = [] }] = await Promise.all([
+    getProducts({ department: 'sarees', limit: 4 }),
+    getProducts({ department: 'suits', limit: 4 }),
+  ]);
 
   return (
     <div className="space-y-0 bg-[#FFFFFF]">
@@ -27,7 +30,7 @@ export default async function HomePage() {
               <Sparkles className="w-3.5 h-3.5 text-[#0B3B60]" /> Royal Highlights
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B3B60]">
-              Featured Masterpieces
+              Featured Saree Masterpieces
             </h2>
             <p className="text-xs sm:text-sm text-neutral-600 mt-1">
               Handpicked heirloom sarees currently on our Jodhpur artisan addas.
@@ -35,34 +38,76 @@ export default async function HomePage() {
           </div>
 
           <Link
-            href="/shop"
+            href="/shop?department=sarees"
             className="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C1272D] hover:underline"
           >
             Explore All Handcrafted Sarees <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        {/* Products Grid */}
+        {/* Sarees Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-          {products.map((product) => (
+          {sareeProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
 
         <div className="text-center mt-12">
           <Link
-            href="/shop"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#C1272D] hover:bg-[#9B1B1E] text-white font-semibold text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-red-900/20 transition-all transform hover:-translate-y-0.5"
+            href="/shop?department=sarees"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#0B3B60] hover:bg-[#062238] text-white font-semibold text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-blue-950/20 transition-all transform hover:-translate-y-0.5"
           >
-            View Complete Atelier Catalog <ArrowRight className="w-4 h-4" />
+            View Royal Saree Catalog <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
 
-      {/* 4. Craftsmanship Pillars */}
+      {/* 4. NEW: Bespoke Royal Suit Sets Section */}
+      <section className="py-16 sm:py-24 bg-[#FAF9F6] border-y border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16">
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-widest text-[#C1272D] bg-rose-50 mb-2 border border-rose-200">
+                <Sparkles className="w-3.5 h-3.5 text-[#C1272D]" /> New Addition • Unstitched 3-Piece Sets
+              </span>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0B3B60]">
+                Bespoke Royal Suit Sets
+              </h2>
+              <p className="text-xs sm:text-sm text-neutral-600 mt-1">
+                Pure Modal with intricate Zari weaving & breathable Cotton with artisanal cutwork and Bandhani dupattas.
+              </p>
+            </div>
+
+            <Link
+              href="/shop?department=suits"
+              className="mt-4 md:mt-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#C1272D] hover:underline"
+            >
+              Explore All Unstitched Suits <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Suits Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {suitProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link
+              href="/shop?department=suits"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#C1272D] hover:bg-[#9B1B1E] text-white font-semibold text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-red-900/20 transition-all transform hover:-translate-y-0.5"
+            >
+              Discover All Bespoke Suits <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Craftsmanship Pillars */}
       <ValuesSection />
 
-      {/* 5. Pre-Dispatch Loom Video Assurance Spotlight */}
+      {/* 6. Pre-Dispatch Video Assurance Spotlight */}
       <section id="loom-video" className="py-16 sm:py-20 bg-gradient-to-br from-[#071E3D] via-[#0B3B60] to-[#071E3D] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="bg-white/5 border border-white/15 rounded-3xl p-8 sm:p-12 lg:p-16 flex flex-col lg:flex-row items-center justify-between gap-10 backdrop-blur-xs">
@@ -72,10 +117,10 @@ export default async function HomePage() {
                 Uncompromising Quality Assurance
               </span>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-white leading-tight">
-                Every Single Saree Verified on Video Before It Leaves Our Hub
+                Every Single Creation Verified on Video Before It Leaves Our Hub
               </h2>
               <p className="text-xs sm:text-sm text-neutral-200 leading-relaxed font-light">
-                Before your handcrafted order is sealed in royal muslin packaging, our quality specialists record a comprehensive high-definition video of the entire 5.5-metre drape, zari borders, fall-pico, and blouse piece.
+                Before your handcrafted order is sealed in royal muslin packaging, our quality specialists record a comprehensive high-definition video of the entire drape, embroidery, zari borders, and fabric lengths.
               </p>
               <ul className="space-y-2 text-xs text-neutral-200 pt-2">
                 <li className="flex items-center gap-2">
@@ -95,7 +140,7 @@ export default async function HomePage() {
                 href="/shop"
                 className="px-6 py-3.5 rounded-full bg-[#C1272D] hover:bg-[#9B1B1E] text-white font-bold text-xs uppercase tracking-wider transition text-center shadow-lg shadow-red-950/40"
               >
-                Choose Your Saree
+                Explore Complete Catalog
               </Link>
               <Link
                 href="/contact"

@@ -23,23 +23,30 @@ export default async function ProductDetailPage({ params }) {
     maximumFractionDigits: 0,
   }).format(product.price);
 
+  const isSuit =
+    product.productType === 'SUIT' ||
+    product.category?.type === 'suit' ||
+    product.categoryId?.includes('suit') ||
+    product.title?.toLowerCase().includes('suit') ||
+    product.title?.toLowerCase().includes('kurta');
+
   return (
     <div className="min-h-screen py-10 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Breadcrumb Navigation */}
-      <nav className="flex items-center gap-2 text-xs text-neutral-500 mb-8 font-medium">
+      <nav className="flex items-center gap-2 text-xs text-neutral-500 mb-8 font-medium flex-wrap">
         <Link href="/" className="hover:text-[#0B3B60]">
           Atelier Home
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
-        <Link href="/shop" className="hover:text-[#0B3B60]">
-          Royal Sarees
+        <Link href={isSuit ? "/shop?department=suits" : "/shop?department=sarees"} className="hover:text-[#0B3B60]">
+          {isSuit ? "Bespoke Suits" : "Royal Sarees"}
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
         <Link
           href={`/shop?category=${product.categoryId}`}
           className="hover:text-[#0B3B60]"
         >
-          {product.category?.name || 'Collection'}
+          {product.category?.name || (isSuit ? 'Suit Collection' : 'Collection')}
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
         <span className="text-neutral-900 truncate max-w-xs font-semibold">{product.title}</span>
@@ -52,11 +59,11 @@ export default async function ProductDetailPage({ params }) {
           <ProductGallery images={product.images} title={product.title} />
         </div>
 
-        {/* Right Column: Saree Details & Order Options */}
+        {/* Right Column: Details & Order Options */}
         <div className="lg:col-span-6 space-y-6">
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-[#C1272D] bg-rose-50 border border-rose-200 mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-[#C1272D]" /> {product.category?.name || 'Royal Saree'}
+              <Sparkles className="w-3.5 h-3.5 text-[#C1272D]" /> {product.category?.name || (isSuit ? 'Unstitched Suit Set' : 'Royal Saree')}
             </div>
 
             <h1 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0B3B60] leading-snug">
@@ -68,7 +75,7 @@ export default async function ProductDetailPage({ params }) {
                 {formattedPrice}
               </span>
               <span className="text-xs text-neutral-500 font-sans uppercase tracking-wider">
-                (Inclusive of all taxes & handloom finishing)
+                {isSuit ? '(Inclusive of all taxes & sovereign delivery)' : '(Inclusive of all taxes & handloom finishing)'}
               </span>
             </div>
           </div>
@@ -86,44 +93,111 @@ export default async function ProductDetailPage({ params }) {
               Atelier Specifications
             </h3>
             <div className="rounded-2xl border border-neutral-200 overflow-hidden text-xs bg-white shadow-xs">
-              <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
-                <span className="text-neutral-500 font-medium">Saree Fabric</span>
-                <span className="font-semibold text-neutral-900">{product.fabric}</span>
-              </div>
-              {product.blouseFabric && (
-                <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
-                  <span className="text-neutral-500 font-medium">Blouse Fabric</span>
-                  <span className="font-semibold text-neutral-900">{product.blouseFabric}</span>
-                </div>
+              {isSuit ? (
+                <>
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Product Category</span>
+                    <span className="font-semibold text-neutral-900">{product.category?.name || 'Unstitched 3-Piece Suit Set'}</span>
+                  </div>
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Kurta Fabric</span>
+                    <span className="font-semibold text-neutral-900">{product.fabric}</span>
+                  </div>
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Kurta Work</span>
+                    <span className="font-semibold text-neutral-900">{product.work}</span>
+                  </div>
+                  {product.bottomFabric && (
+                    <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                      <span className="text-neutral-500 font-medium">Bottom Fabric</span>
+                      <span className="font-semibold text-neutral-900">{product.bottomFabric}</span>
+                    </div>
+                  )}
+                  {product.bottomWork && (
+                    <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                      <span className="text-neutral-500 font-medium">Bottom Work</span>
+                      <span className="font-semibold text-neutral-900">{product.bottomWork}</span>
+                    </div>
+                  )}
+                  {product.dupattaFabric && (
+                    <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                      <span className="text-neutral-500 font-medium">Dupatta Fabric</span>
+                      <span className="font-semibold text-neutral-900">{product.dupattaFabric}</span>
+                    </div>
+                  )}
+                  {product.dupattaWork && (
+                    <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                      <span className="text-neutral-500 font-medium">Dupatta Work</span>
+                      <span className="font-semibold text-neutral-900">{product.dupattaWork}</span>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Colour Palette</span>
+                    <span className="font-semibold text-neutral-900">{product.color}</span>
+                  </div>
+                  {product.setIncludes && (
+                    <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                      <span className="text-neutral-500 font-medium">Set Includes</span>
+                      <span className="font-semibold text-neutral-900">{product.setIncludes}</span>
+                    </div>
+                  )}
+                  {product.occasion && (
+                    <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                      <span className="text-neutral-500 font-medium">Occasion</span>
+                      <span className="font-semibold text-neutral-900">{product.occasion}</span>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Material Care</span>
+                    <span className="font-semibold text-neutral-900">{product.materialCare}</span>
+                  </div>
+                  <div className="grid grid-cols-2 p-3">
+                    <span className="text-neutral-500 font-medium">Country of Origin</span>
+                    <span className="font-semibold text-neutral-900">{product.origin}</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Saree Fabric</span>
+                    <span className="font-semibold text-neutral-900">{product.fabric}</span>
+                  </div>
+                  {product.blouseFabric && (
+                    <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                      <span className="text-neutral-500 font-medium">Blouse Fabric</span>
+                      <span className="font-semibold text-neutral-900">{product.blouseFabric}</span>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Handwork & Technique</span>
+                    <span className="font-semibold text-neutral-900">{product.work}</span>
+                  </div>
+                  {product.design && (
+                    <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                      <span className="text-neutral-500 font-medium">Design & Motifs</span>
+                      <span className="font-semibold text-neutral-900">{product.design}</span>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Color Palette</span>
+                    <span className="font-semibold text-neutral-900">{product.color}</span>
+                  </div>
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Dimensions</span>
+                    <span className="font-semibold text-neutral-900">
+                      Saree: {product.sareeLength} • Blouse: {product.blouseLength}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
+                    <span className="text-neutral-500 font-medium">Material Care</span>
+                    <span className="font-semibold text-neutral-900">{product.materialCare}</span>
+                  </div>
+                  <div className="grid grid-cols-2 p-3">
+                    <span className="text-neutral-500 font-medium">Country of Origin</span>
+                    <span className="font-semibold text-neutral-900">{product.origin}</span>
+                  </div>
+                </>
               )}
-              <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
-                <span className="text-neutral-500 font-medium">Handwork & Technique</span>
-                <span className="font-semibold text-neutral-900">{product.work}</span>
-              </div>
-              {product.design && (
-                <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
-                  <span className="text-neutral-500 font-medium">Design & Motifs</span>
-                  <span className="font-semibold text-neutral-900">{product.design}</span>
-                </div>
-              )}
-              <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
-                <span className="text-neutral-500 font-medium">Color Palette</span>
-                <span className="font-semibold text-neutral-900">{product.color}</span>
-              </div>
-              <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
-                <span className="text-neutral-500 font-medium">Dimensions</span>
-                <span className="font-semibold text-neutral-900">
-                  Saree: {product.sareeLength} • Blouse: {product.blouseLength}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 p-3 border-b border-neutral-100">
-                <span className="text-neutral-500 font-medium">Material Care</span>
-                <span className="font-semibold text-neutral-900">{product.materialCare}</span>
-              </div>
-              <div className="grid grid-cols-2 p-3">
-                <span className="text-neutral-500 font-medium">Country of Origin</span>
-                <span className="font-semibold text-neutral-900">{product.origin}</span>
-              </div>
             </div>
           </div>
 
