@@ -17,6 +17,7 @@
     "test": "node --loader ./test_loader.mjs --env-file=.env test_suite.mjs",
     "test:deep": "node --loader ./test_loader.mjs --env-file=.env test_deep_dive.mjs",
     "test:endpoints": "node test_endpoints.mjs",
+    "test:connections": "node --loader ./test_loader.mjs --env-file=.env scripts/test-connections.mjs",
     "lint": "eslint",
     "seed": "node --env-file=.env prisma/seed.mjs"
   },
