@@ -53,7 +53,7 @@ export default function ProductCard({ product, isShortlisted = false }) {
   return (
     <div className="group relative bg-white rounded-2xl overflow-hidden border border-neutral-200 hover:border-[#0B3B60]/40 shadow-xs hover:shadow-xl transition-all duration-300 flex flex-col">
       {/* Image Container */}
-      <Link href={`/product/${product.slug}`} className="relative block aspect-[3/4] overflow-hidden bg-neutral-100">
+      <Link href={`/product/${product.slug}`} prefetch={false} className="relative block aspect-[3/4] overflow-hidden bg-neutral-100">
         <Image
           src={primaryImg}
           alt={product.title}
@@ -119,7 +119,7 @@ export default function ProductCard({ product, isShortlisted = false }) {
           <div className="text-[11px] uppercase tracking-wider text-[#C1272D] font-semibold mb-1">
             {product.fabric || 'Pure Royal Silk'}
           </div>
-          <Link href={`/product/${product.slug}`}>
+          <Link href={`/product/${product.slug}`} prefetch={false}>
             <h3 className="font-serif text-sm sm:text-base font-bold text-neutral-900 line-clamp-2 group-hover:text-[#0B3B60] transition">
               {product.title}
             </h3>

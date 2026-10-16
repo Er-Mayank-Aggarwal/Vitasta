@@ -103,6 +103,7 @@ export default async function ShopPage({ searchParams }) {
       <div className="flex items-center justify-center gap-2 sm:gap-3 mb-6">
         <Link
           href={`/shop?department=all${currentSearch ? `&q=${currentSearch}` : ''}`}
+          prefetch={false}
           className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition ${
             currentDepartment === 'all'
               ? 'bg-[#0B3B60] text-white shadow-md'
@@ -113,6 +114,7 @@ export default async function ShopPage({ searchParams }) {
         </Link>
         <Link
           href={`/shop?department=sarees${currentSearch ? `&q=${currentSearch}` : ''}`}
+          prefetch={false}
           className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition ${
             currentDepartment === 'sarees'
               ? 'bg-[#0B3B60] text-white shadow-md'
@@ -123,6 +125,7 @@ export default async function ShopPage({ searchParams }) {
         </Link>
         <Link
           href={`/shop?department=suits${currentSearch ? `&q=${currentSearch}` : ''}`}
+          prefetch={false}
           className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition ${
             currentDepartment === 'suits'
               ? 'bg-[#C1272D] text-white shadow-md shadow-red-900/20'
@@ -143,6 +146,7 @@ export default async function ShopPage({ searchParams }) {
               href={`/shop?department=${currentDepartment}&category=${cat.id}&sort=${currentSort}${
                 currentSearch ? `&q=${currentSearch}` : ''
               }`}
+              prefetch={false}
               className={`px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider whitespace-nowrap transition border ${
                 isActive
                   ? 'bg-[#0B3B60] text-white border-[#0B3B60] shadow-sm'
@@ -176,6 +180,7 @@ export default async function ShopPage({ searchParams }) {
               href={`/shop?department=${currentDepartment}&category=${currentCategory}&sort=featured${
                 currentSearch ? `&q=${currentSearch}` : ''
               }`}
+              prefetch={false}
               className={`px-3 py-1.5 rounded-lg font-medium transition ${
                 currentSort === 'featured'
                   ? 'bg-blue-50 text-[#0B3B60] font-bold border border-blue-200'
@@ -188,6 +193,7 @@ export default async function ShopPage({ searchParams }) {
               href={`/shop?department=${currentDepartment}&category=${currentCategory}&sort=price-low${
                 currentSearch ? `&q=${currentSearch}` : ''
               }`}
+              prefetch={false}
               className={`px-3 py-1.5 rounded-lg font-medium transition ${
                 currentSort === 'price-low'
                   ? 'bg-blue-50 text-[#0B3B60] font-bold border border-blue-200'
@@ -200,6 +206,7 @@ export default async function ShopPage({ searchParams }) {
               href={`/shop?department=${currentDepartment}&category=${currentCategory}&sort=price-high${
                 currentSearch ? `&q=${currentSearch}` : ''
               }`}
+              prefetch={false}
               className={`px-3 py-1.5 rounded-lg font-medium transition ${
                 currentSort === 'price-high'
                   ? 'bg-blue-50 text-[#0B3B60] font-bold border border-blue-200'

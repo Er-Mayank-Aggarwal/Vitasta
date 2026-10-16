@@ -116,6 +116,7 @@ function CategorySlideshowCard({ collection, index }) {
   return (
     <Link
       href={`/shop?category=${collection.id}`}
+      prefetch={false}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-neutral-900 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1.5 border border-neutral-200 flex flex-col justify-end p-5 select-none"
